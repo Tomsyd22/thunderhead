@@ -1,7 +1,7 @@
 ✓ kit footprints re-opened on both pads — 12 kit buildings, 644 cells
-✓ foot path base to base — 1 waypoints, 1351 m, 20.9 ms
-✓ veh path base to base — 9 waypoints, 1357 m, 15.6 ms
-✓ hover path base to base — 8 waypoints, 1361 m, 6.3 ms
+✓ foot path base to base — 1 waypoints, 1351 m, 12.6 ms
+✓ veh path base to base — 9 waypoints, 1357 m, 11.2 ms
+✓ hover path base to base — 8 waypoints, 1361 m, 6.7 ms
 ✓ dock approach B1 (420,1479) is vehicle ground
 ✓ dock approach B1 (483,1479) is vehicle ground
 ✓ dock approach R1 (1381,321) is vehicle ground
@@ -19,12 +19,12 @@
 ✓ nearest-field round trip in the 20–40 s band (player-placed refinery) — 24.0
 ✓ infantry trains and leaves through the barracks door — 3 ready, 3 at the door
 ✓ AI match runs without exceptions — 12.0 game min
-✓ average tick cost leaves room for rendering — avg 0.16 ms/tick, worst 13.6 ms (0 ticks > 20 ms); per-frame sim budget ≈ 16.7 ms
+✓ average tick cost leaves room for rendering — avg 0.14 ms/tick, worst 27.7 ms (1 ticks > 20 ms: 1.0s 28ms); per-frame sim budget ≈ 16.7 ms
 ✓ both AIs harvest — cycles 24 / 20
-✓ AI compact builds a base — power refinery barracks factory radar airpad naval
-✓ AI lattice builds a base — power refinery barracks factory radar
-✓ AI armies are produced — 31 alive, 6 lost | 5 alive, 17 lost
-✓ AI waves are launched and reach the enemy base — 3 waves, first contact H03 team 0 at 459 s
+✓ AI compact builds a base — power refinery barracks factory radar
+✓ AI lattice builds a base — power refinery barracks factory radar airpad naval
+✓ AI armies are produced — 20 alive, 26 lost | 7 alive, 15 lost
+✓ AI waves are launched and reach the enemy base — 3 waves, first contact T01 team 1 at 468 s
 ✓ no ground unit stuck on a path for 20 s — worst 5 s: HV#18 at (365.1, 1526.6) order {"type":"harvest"} v 3.70 path [[409,1521],[420,1480]] pass 1 clear 8.3 deploy null hidden false
-✓ engine counters — shots 1527, hits 1522, kills 29
+✓ engine counters — shots 1203, hits 1202, kills 42
 29/29

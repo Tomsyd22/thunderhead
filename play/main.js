@@ -25,7 +25,8 @@ async function boot() {
   const prog = (t, f) => { $('#loadBar').style.width = `${Math.round(f * 100)}%`; $('#loadText').textContent = t; };
   prog('Loading map', 0.02);
   try { Audio = (await import('./audio.js')).Audio; } catch (e) { C.errors.push('audio: ' + e.message); }
-  const [specRaw, mapping, paceFile, geom] = await Promise.all(['data/unit_specs.json', 'data/faction_mapping.json', 'data/pace.json', 'data/sockets.json'].map((u) => fetch(u).then((r) => r.json())));
+  const [specRaw, mapping, paceFile, geom, combat] = await Promise.all(['data/unit_specs.json', 'data/faction_mapping.json', 'data/pace.json', 'data/sockets.json', 'data/combat.json'].map((u) => fetch(u).then((r) => r.json())));
+  C.combat = combat; if (C.saved && isFinite(C.saved.ttk)) combat.ttk_scale = C.saved.ttk;
   C.specRaw = applyMapping(specRaw, mapping); C.paceFile = paceFile; C.geom = geom; C.mapping = mapping;
   const pace = C.pace = structuredClone(paceFile);
   try { const sv = JSON.parse(localStorage.getItem('thunderhead.settings') || 'null'); if (sv) C.saved = sv; } catch (e) { /* storage unavailable */ }
@@ -66,7 +67,7 @@ function start(opt) {
   if (C.started) return; C.started = true;
   if (Audio) { try { Audio.init(); C.audio = Audio; } catch (e) { C.errors.push('audio init: ' + e.message); } }
   const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, name: FACTIONS[opt.ai].name }];
-  const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players });
+  const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat });
   C.world = M.world; C.game = M.game; C.p = M.game.players[0]; C.enemy = M.game.players[1]; C.spec = M.world.spec;
   C.P = new Presenter({ scene: C.scene, camera: C.camera, T: C.T, world: C.world, game: C.game, protos: C.protos, bprotos: C.bprotos, playerTeam: C.p.team, audio: C.audio });
   C.P.afterStep(); C.world.events.length = 0;   // views for the starting yard and squad
@@ -79,7 +80,8 @@ function start(opt) {
 function setPace(o) {
   const P = C.pace; if (o.game_speed != null) P.game_speed = +o.game_speed; if (o.harvester_speed_ratio != null) P.harvester_speed_ratio = +o.harvester_speed_ratio;
   if (C.world) C.world.setHarvesterSpeed(harvesterSandboxSpeed(P));
-  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
+  if (o.ttk != null) { C.combat.ttk_scale = +o.ttk; if (C.world) C.world.dmgScale = 1 / C.combat.ttk_scale; }
+  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
   if (C.ui) C.ui.paceChanged();
   return { game_speed: P.game_speed, harvester_speed_ratio: P.harvester_speed_ratio, harvester_mps: harvesterSandboxSpeed(P) };
 }

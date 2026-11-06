@@ -846,7 +846,7 @@ export class World {
     if (u.uid === 'A05' || u.uid === 'T05') s.lid = (s.lid + 1) % (u.uid === 'A05' ? 4 : 2);
     if (w.kind === 'hitscan') {
       ev.tracer = !u.m.tracer || n % u.m.tracer === 0; this.emit('fire', ev);
-      this._damage(u, tg, w.damage * (w.multipliers[classOf(tg)] || 0) * vet, w); this.stats.hits++;
+      this._damage(u, tg, w.damage * this.mult(w, tg) * vet, w); this.stats.hits++;
       this.emit('impact', { x: hp[0], y: hp[1], z: hp[2], kind: 'hitscan', uid: u.uid, w: w.i, target: tg.id });
       return;
     }
@@ -887,7 +887,8 @@ export class World {
       p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
       // swept hit test against the target's collision shape
       if (tg && tg.alive && this._segHits(px, py, pz, p.x, p.y, p.z, tg)) {
-        const vet = p.vet || 1; this._damage(this.byId.get(p.owner) || { team: p.team, rank: 0 }, tg, p.w.damage * (p.w.multipliers[classOf(tg)] || 0) * vet, p.w); this.stats.hits++;
+        const vet = p.vet || 1, own = this.byId.get(p.owner) || { team: p.team, rank: 0 }; this._damage(own, tg, p.w.damage * this.mult(p.w, tg) * vet, p.w); this.stats.hits++;
+        if (p.w.shell_splash_m > 0) this._shellSplash(p, own, tg, vet);
         this.emit('impact', { x: p.x, y: p.y, z: p.z, kind: p.kind, uid: p.uid, target: tg.id }); continue;
       }
       const g = this.T.height(p.x, p.y);
@@ -913,12 +914,25 @@ export class World {
       if (!o.alive || o.team === p.team || (o.sp && o.sp.armor === 'air') || o.hidden) continue;
       // radius measured from impact point to the target's collision surface; linear 1 → edge, 0 outside
       const d = o.isBuilding ? segRect(p.ax, p.ay, p.ax, p.ay, o) : Math.max(0, segPointDist2(p.ax, p.ay, this.axis(o)) - o.r);
-      if (d > R) continue; const f = 1 - (1 - edge) * (d / R); const mult = w.multipliers[classOf(o)] || 0; if (!mult) continue;
+      if (d > R) continue; const f = 1 - (1 - edge) * (d / R); const mult = this.mult(w, o); if (!mult) continue;
       this._damage(owner, o, w.damage * mult * f * vet, w); this.stats.hits++;
     }
   }
+  /** damage multiplier of weapon w against target o: the game's weapon-type × armour-type table when set (this.damageMul),
+   *  else the pack's per-weapon multipliers by target class */
+  mult(w, o) { return this.damageMul ? this.damageMul(w, o) : (w.multipliers[classOf(o)] || 0); }
+  /** shell fragments (game damage table: weapon.shell_splash_m): units near the hit take damage falling to
+   *  shell_splash_edge at the radius; the struck target is not hit twice; aircraft are never caught */
+  _shellSplash(p, own, hit, vet) {
+    const w = p.w, R = w.shell_splash_m, edge = w.shell_splash_edge ?? 0.3;
+    for (const o of this.units) {
+      if (o === hit || !o.alive || o.team === p.team || o.dom === 'air' || o.hidden) continue;
+      const d = Math.max(0, segPointDist2(p.x, p.y, this.axis(o)) - o.r); if (d > R) continue;
+      const m = this.mult(w, o); if (!m) continue; this._damage(own, o, w.damage * m * vet * (1 - (1 - edge) * d / R), w);
+    }
+  }
   _damage(src, o, amt, w) {
-    if (!o.alive || amt <= 0) return;
+    if (!o.alive || amt <= 0) return; if (this.dmgScale) amt *= this.dmgScale;   // global time-to-kill setting (game)
     const before = o.hp; o.hp = Math.max(0, o.hp - amt); const dealt = before - o.hp;
     if (src && src.id) { o.dmgLog = o.dmgLog || []; o.dmgLog.push({ id: src.id, a: dealt, t: this.t }); }
     this.emit('damage', { id: o.id, amt: dealt, hp: o.hp, src: src && src.id });

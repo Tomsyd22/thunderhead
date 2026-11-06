@@ -156,7 +156,8 @@ export class UI {
     const C = this.C, P = C.pace, gs = $('#setGs'), hr = $('#setHr');
     gs.min = P.game_speed_range[0]; gs.max = P.game_speed_range[1]; gs.step = 0.1; gs.value = P.game_speed; hr.min = P.harvester_ratio_range[0]; hr.max = P.harvester_ratio_range[1]; hr.step = 0.01; hr.value = P.harvester_speed_ratio;
     gs.oninput = () => C.setPace({ game_speed: +gs.value }); hr.oninput = () => C.setPace({ harvester_speed_ratio: +hr.value });
-    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio }); gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; };
+    const tk = $('#setTtk'); tk.value = C.combat ? C.combat.ttk_scale : 1; tk.oninput = () => C.setPace({ ttk: +tk.value });
+    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1 }); gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
     for (const [id, bus] of [['setVol', 'master'], ['setVoice', 'voice']]) { const s = $('#' + id); s.oninput = () => { if (C.audio) try { C.audio.setVolume(bus, +s.value); if (bus === 'voice') C.audio.setVolume('announcer', +s.value); } catch (e) { /* optional */ } }; }
     $('#setEdge').onchange = (e) => { C.rcam.edge = e.target.checked; };
     $('#setQuality').value = C.quality; $('#setQuality').onchange = (e) => { C.quality = e.target.value; try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, quality: C.quality })); } catch (err) { /* ignore */ } this.toast('Graphics quality applies after a reload'); };
@@ -165,7 +166,7 @@ export class UI {
   }
   paceChanged() {
     const C = this.C, P = C.pace; if (!$('#setGsV')) return; const v = harvesterSandboxSpeed(P);
-    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
+    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; if (C.combat) $('#setTtkV').textContent = `${C.combat.ttk_scale.toFixed(1)}× (fights ${C.combat.ttk_scale >= 1 ? 'longer' : 'shorter'})`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
     $('#setNote').textContent = `Everything runs ${P.game_speed.toFixed(1)}× faster than real time: movement, turning, reloads, harvesting and building. Map and model sizes stay true. Harvester ${v.toFixed(1)} m/s.`;
     const gs = $('#setGs'); if (gs && +gs.value !== P.game_speed) gs.value = P.game_speed;
   }

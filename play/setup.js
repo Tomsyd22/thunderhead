@@ -6,6 +6,7 @@ import { makeMapNav } from './mapnav.js';
 import { Game } from './game.js';
 import { AI } from './ai.js';
 import { FACTIONS } from './rules.js';
+import { applyCombat } from './combat.js';
 
 // The pack has no harvester: it drives the maps' unit_harvester model with the pace settings (data/pace.json)
 export const HV_SPEC = (speed) => ({
@@ -25,12 +26,13 @@ export function applyMapping(spec, mapping) {
  * T: map terrain (mapdata.js); spec: parsed unit_specs.json (+ mapping applied); pace: data/pace.json (live object, sliders
  * write to it); players: [{ faction, isAI, pad: 'B1' | 'R1', name }]; opts.startUnits: extra starting squad.
  */
-export function createMatch({ T, spec, geom = {}, pace, players, startUnits = true }) {
+export function createMatch({ T, spec, geom = {}, pace, players, startUnits = true, combat = null }) {
   spec = structuredClone(spec);
   spec.units = spec.units.filter((u) => u.id !== 'HV'); spec.units.push(HV_SPEC(harvesterSandboxSpeed(pace)));
   MECH.HV.accel = pace.harvester.accel_mps2; MECH.HV.hullTurn = pace.harvester.hull_turn_dps;
   const nav = makeMapNav(T);
   const world = new World({ spec, T, geom, nav }); world.sharedPaths = true; world.planPerTick = 4; world.pace = pace;
+  if (combat) { world.damageMul = applyCombat({ units: Object.values(world.spec) }, combat); world.combat = combat; world.dmgScale = 1 / (combat.ttk_scale || 1); }   // weapon × armour table + time-to-kill
   const pads = T.meta.pads;
   const setup = players.map((p) => ({ ...p, start: Object.assign({ x: 0, y: 0 }, (() => { const pd = pads.find((q) => q.id === p.pad); return { x: pd.center[0], y: pd.center[1], pad: pd }; })()) }));
   const game = new Game({ world, T, players: setup, deposits: T.meta.deposits, dockSites: T.meta.docks || [], pace });
