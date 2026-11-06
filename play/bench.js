@@ -69,7 +69,7 @@ async function run(C, d) {
   const gl = C.renderer.getContext(), dbg = gl.getExtension('WEBGL_debug_renderer_info');
   return {
     quality: C.quality, canvas: [C.renderer.domElement.width, C.renderer.domElement.height], css: [innerWidth, innerHeight], dpr: devicePixelRatio, pixelRatio: C.renderer.getPixelRatio(),
-    gpu: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER), post: !!(C.post && C.post.enabled), units: st.units, calls: st.calls, tris: st.tris, tickAvg: st.tickAvg, tickP99: st.tickP99,
+    gpu: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER), post: !!(C.post && C.post.enabled), resScale: C.resScale, units: st.units, calls: st.calls, tris: st.tris, tickAvg: st.tickAvg, tickP99: st.tickP99,
     frames, long: long.slice(0, 12), longtasks: lt.slice(0, 12), cpu: { tickP50: pct(cpuT, 0.5), tickP95: pct(cpuT, 0.95), renderP50: pct(cpuR, 0.5), renderP95: pct(cpuR, 0.95) }, latency: { n: ok.length, of: lat.length, p50: pct(ok, 0.5), max: ok.length ? Math.max(...ok) : null, refreshMs: med }, ua: navigator.userAgent, hidden: document.hidden, errors: C.errors.slice(0, 5),
   };
 }

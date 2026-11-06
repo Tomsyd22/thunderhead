@@ -1,6 +1,7 @@
 // Thunderhead Stage 2 client: Emerald Strait, 1v1 against the AI. Boots the map, models and the match, then runs the loop:
 // fixed 30 Hz simulation ticks at the game speed (default 2.4×, data/pace.json), interpolated rendering every frame.
 import * as THREE from 'three';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { TICK, MECH } from './engine/mech.js';
 import { harvesterSandboxSpeed } from './engine/pace.js';
 import { loadMapData } from './mapdata.js';
@@ -44,7 +45,8 @@ async function boot() {
   const renderer = C.renderer = new THREE.WebGLRenderer({ canvas: $('#view'), antialias: quality !== 'low' && !postWanted(quality, Q), powerPreference: 'high-performance', preserveDrawingBuffer: Q.has('shots') });
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.enabled = QP.shadows;
-  renderer.setPixelRatio(Q.has('dpr') ? +Q.get('dpr') : QP.pixelRatio(devicePixelRatio)); renderer.setSize(innerWidth, innerHeight, false);
+  C.basePR = Q.has('dpr') ? +Q.get('dpr') : QP.pixelRatio(devicePixelRatio); C.resScale = 1; C.dynRes = quality !== 'low' && Q.get('dynres') !== '0' && !Q.has('dpr');
+  renderer.setPixelRatio(C.basePR); renderer.setSize(innerWidth, innerHeight, false);
   const scene = C.scene = new THREE.Scene(); const camera = C.camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.5, 4000);
   C.light = addMapLighting(THREE, scene, renderer, T, { quality });
   try { C.post = createPost(renderer, scene, camera, { quality, Q }); } catch (e) { C.errors.push('post: ' + e.message); C.post = null; }
@@ -85,7 +87,20 @@ function start(opt) {
   const y = C.world.byId.get(C.p.yard); C.rcam.setFocus(y.x + (C.T.W / 2 - y.x) * 0.05, y.y + (C.T.H / 2 - y.y) * 0.05); C.rcam.dist = C.rcam.distT = 165; C.rcam.fz = y.z;
   C.ui = new UI(C); C.input = new Input(C);
   C.setPace = setPace; setPace({});
+  try { prewarm(); } catch (e) { C.errors.push('prewarm: ' + e.message); }
   C.ui.toast(`${FACTIONS[C.p.faction].name} vs ${FACTIONS[C.enemy.faction].name} · Emerald Strait`);
+}
+/** compile every shader and upload every mesh once at match start, so the first look at a new part of the map or the first
+ * unit of a new type doesn't stall a frame (measured on the M1: 60–190 ms long tasks at camera moves before this) */
+function prewarm() {
+  const R = C.renderer, scene = C.scene, hold = new THREE.Group(), hidden = [];
+  scene.traverse((o) => { if (!o.visible) { hidden.push(o); o.visible = true; } });
+  for (const p of Object.values(C.protos || {})) { const o = p.isSkinned ? SkeletonUtils.clone(p.scene) : p.scene.clone(true); hold.add(o); for (const l of p.lods || []) hold.add(l.clone(true)); }
+  for (const b of Object.values(C.bprotos || {})) hold.add(b.clone(true));
+  hold.traverse((o) => { o.frustumCulled = false; }); hold.position.set(C.T.W / 2, -400, -C.T.H / 2); scene.add(hold);
+  const culled = []; scene.traverse((o) => { if (o.isMesh && o.frustumCulled) { culled.push(o); o.frustumCulled = false; } });
+  R.compile(scene, C.camera); const rt = new THREE.WebGLRenderTarget(64, 64); const prev = R.getRenderTarget(); R.setRenderTarget(rt); R.render(scene, C.camera); R.setRenderTarget(prev); rt.dispose();
+  for (const o of culled) o.frustumCulled = true; for (const o of hidden) o.visible = false; scene.remove(hold);
 }
 function setPace(o) {
   const P = C.pace; if (o.game_speed != null) P.game_speed = +o.game_speed; if (o.harvester_speed_ratio != null) P.harvester_speed_ratio = +o.harvester_speed_ratio;
@@ -106,6 +121,15 @@ function frame(now) {
   C.frames.push(dt * 1000); if (C.frames.length > 600) C.frames.shift();
   const c0 = performance.now(); tick(dt); const c1 = performance.now(); render(); const c2 = performance.now();
   C.cpu.push([c1 - c0, c2 - c1]); if (C.cpu.length > 600) C.cpu.shift();
+  if (C.dynRes && C.started && !C.paused) dynRes(dt * 1000, now);
+}
+/** dynamic resolution (medium / high): when frames run long (the GPU can't keep up, e.g. the wide view), render fewer
+ * pixels — down to 70 % of the preset's scale — and creep back up once there is headroom. Changes are at most every 2 s
+ * (each one reallocates the post-processing targets). */
+function dynRes(ms, now) {
+  C.dynEma = C.dynEma == null ? ms : C.dynEma + (Math.min(ms, 100) - C.dynEma) * 0.08; if (now - (C.dynT || 0) < 2000) return;
+  let s = C.resScale; if (C.dynEma > 19 && s > 0.7) s = Math.max(0.7, s - 0.1); else if (C.dynEma < 15 && s < 1) s = Math.min(1, s + 0.05); else return;
+  C.resScale = s; C.dynT = now; C.renderer.setPixelRatio(C.basePR * s); C.renderer.setSize(innerWidth, innerHeight, false);
 }
 function tick(dt) {
   if (!C.started) { C.rcam.update(dt); C.light.update(C.camera); C.mapView.update(C.camera, dt); return; }
