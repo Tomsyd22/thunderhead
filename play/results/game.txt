@@ -1,4 +1,4 @@
-✓ boot: page loads and the match starts — 9.4 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
+✓ boot: page loads and the match starts — 20.5 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
 ✓ controls: drag box selects the infantry squad — 4 selected
 ✓ orders (2.4×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
 ✓ orders (1×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
@@ -38,6 +38,6 @@
 ✓ movement: three harvesters share one refinery dock without jamming — 3 harvesters, 13 loads delivered in 360 game s (one alone ≈ 6), longest wait in a queue 29 s
 ✓ movement: ten tanks pass the narrowest point of the base-to-base route without jamming — choke at (579, 1278), clearance 4.3 m · 10/10 through in 34 game s (one tank alone ≈ 26 s for the 200 m)
 ✓ smoothness: interpolated motion has no snaps — 20366 unit-frames, worst 65 % of the speed limit, 123 distant-view switches
-✓ performance: simulation cost per tick — avg 0.32 ms, p99 3.5 ms with 34 units
-✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 133 s wall · helix: 5 structures, 4 units, 24 lost, $8000 mined | compact: 9 structures, 26 units, 1 lost, $6000 mined
+✓ performance: simulation cost per tick — avg 0.42 ms, p99 4.6 ms with 34 units
+✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 122 s wall · helix: 5 structures, 4 units, 24 lost, $8000 mined | compact: 9 structures, 26 units, 1 lost, $6000 mined
 42/42

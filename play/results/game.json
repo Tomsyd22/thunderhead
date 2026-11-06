@@ -10,8 +10,8 @@
  "perf": {
   "fps": null,
   "p95": 0,
-  "tickAvg": 0.31988888889706385,
-  "tickP99": 3.5,
+  "tickAvg": 0.42244444443637297,
+  "tickP99": 4.599999999627471,
   "calls": 119,
   "tris": 122698,
   "units": 34,
@@ -37,7 +37,7 @@
  ],
  "match": {
   "t": 612.0000000001007,
-  "wall": 133.22829999999982,
+  "wall": 121.623,
   "errors": [],
   "over": null,
   "players": [
@@ -57,13 +57,13 @@
    }
   ],
   "present": {
-   "hitReactions": 447,
+   "hitReactions": 383,
    "debris": 229,
    "tossed": 2,
-   "flashes": 265,
-   "shakes": 128,
+   "flashes": 251,
+   "shakes": 109,
    "structsBuilt": 16,
-   "sfx": 1146
+   "sfx": 1211
   }
  }
 }

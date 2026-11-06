@@ -140,7 +140,7 @@ const OUT_FRAG = /* glsl */`${COMMON}
 /**
  * Create the post chain for `renderer` / `scene` / `camera` at `quality`, or null when that preset uses none (or WebGL2
  * is missing). Q: the page's URLSearchParams (optional overrides). Returns
- * { enabled, render(), setSize(w, h), setQuality(name), stats(), dispose(), grade, settings }.
+ * { enabled, render(), setSize() (reads the renderer's drawing-buffer size), setQuality(name), stats(), dispose(), grade, applyGrade(), settings }.
  * render() draws the frame to the canvas; renderer.info then counts every pass of the frame (autoReset is turned off and
  * reset at the start of each frame instead).
  */
@@ -184,7 +184,7 @@ export function createPost(renderer, scene, camera, { quality = 'medium', Q = nu
     api.enabled = true;
     msaa = qp('msaa') != null ? +qp('msaa') : P.msaa; msaa = Math.min(Math.max(msaa | 0, 0), renderer.capabilities.maxSamples || 4);
     if (sceneRT.samples !== msaa) { sceneRT.samples = msaa; sceneRT.dispose(); }
-    aoOn = !!P.ao && qp('ao') !== '0'; gradeOn = P.grade && qp('grade') !== '0';
+    aoOn = !!P.ao && qp('ao') !== '0' && hdr === THREE.HalfFloatType; gradeOn = P.grade && qp('grade') !== '0';
     if (aoOn) {
       const a = P.ao, u = aoMat.uniforms;
       if (aoMat.defines.SAMPLES !== a.samples) { aoMat.defines.SAMPLES = a.samples; aoMat.needsUpdate = true; }
