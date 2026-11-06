@@ -1,5 +1,5 @@
 {
- "date": "2026-11-06T13:43:54.541Z",
+ "date": "2026-11-06T14:16:20.772Z",
  "pass": 303,
  "total": 303,
  "checks": [
@@ -1757,9 +1757,9 @@
   },
   {
    "group": "8 collision & smoothness",
-   "name": "sim cost 0.401 ms per 30 Hz tick for 60 units in battle (budget 4 ms)",
+   "name": "sim cost 0.419 ms per 30 Hz tick for 60 units in battle (budget 4 ms)",
    "ok": true,
-   "detail": "722 ms / 1800 ticks; shots 406, kills 27"
+   "detail": "755 ms / 1800 ticks; shots 406, kills 27"
   },
   {
    "group": "9 pace & harvester",

@@ -15,7 +15,7 @@ const get = (url) => new Promise((res, rej) => { const q = http.get(url, (r) => 
 const srv = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], { cwd: DIR, stdio: 'ignore' });
 for (let i = 0; i < 50; i++) { try { if (await get(`http://127.0.0.1:${PORT}/index.local.html`) === 200) break; } catch (e) { /* wait */ } await new Promise((r) => setTimeout(r, 100)); }
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-const page = await browser.newPage({ viewport: { width: 1600, height: 900 } }); const logs = [];
+const page = await browser.newPage({ viewport: { width: 1600, height: 900 } }); const logs = []; page.setDefaultTimeout(180000);
 page.on('pageerror', (e) => logs.push(String(e)));
 await page.route('**/*', (route) => { const u = route.request().url(); if (u.startsWith(CDN)) { const f = path.join(THREE_DIR, u.slice(CDN.length).split('?')[0]); if (fs.existsSync(f)) return route.fulfill({ path: f, contentType: 'application/javascript' }); } return route.continue(); });
 await page.goto(`http://127.0.0.1:${PORT}/index.local.html?autostart=1&manual=1&faction=compact&ai=lattice&quality=${opt('quality', 'high')}&dpr=1&${opt('qs', '')}`);
@@ -56,6 +56,17 @@ if (SCEN === 'rotate') {
   await page.keyboard.press('r'); await ev(() => window.__game.advance(1 / 60)); await snap('rotate_1');
   const bad = await ev(() => { const C = window.__game, G = C.game, p = C.p, y = C.world.byId.get(p.yard); for (let k = 0; k < 4; k++) { for (let a = 0; a < 48; a++) for (let r = 40; r < 80; r += 4) { const x = y.x + Math.cos(a / 48 * 6.283) * r, yy = y.y + Math.sin(a / 48 * 6.283) * r; const c = G.canPlace(p, 'refinery', x, yy, C.input.place.rot); if (!c.ok && /[Dd]ock/.test(c.reason)) { C.lookAt(x, yy, 130); C.advance(0.05); return C.screenOf(x, yy); } } C.input.rotatePlace(1); } return null; });
   if (bad) { await page.mouse.move(bad[0], bad[1]); await ev(() => window.__game.advance(1 / 60)); await snap('rotate_blocked'); }
+}
+if (SCEN === 'ore') {
+  const at = await ev(() => { const C = window.__game, G = C.game, p = C.p; C.testBuild('power'); const ref = C.testBuild('refinery'); C.advance(1, 30, 0);
+    const d = G.deposits.filter((q) => q.nearest === p.start.pad.id).sort((a, b) => Math.hypot(a.pos[0] - ref.x, a.pos[1] - ref.y) - Math.hypot(b.pos[0] - ref.x, b.pos[1] - ref.y))[0];
+    C.lookAt(d.pos[0], d.pos[1], 75); C.advance(0.05, 60, 0); return d.id; });
+  await snap('ore_full');
+  await ev((id) => { const C = window.__game, G = C.game, d = G.deposits.find((q) => q.id === id), W = C.world, p = C.p; const ref = G.structures(p).find((b) => b.kind === 'refinery');
+    for (let k = 0; k < 2; k++) { const h = W.spawn('HV', p.team, ref.dock.approach[0] + k * 8, ref.dock.approach[1], { hdg: ref.dock.face }); h.owner = p.id; W.harvest(h, d, ref.dock); } C.P.afterStep(); W.events.length = 0;
+    C.advance(150, 30, 0); C.lookAt(d.pos[0], d.pos[1], 75); C.advance(0.1, 60, 0); }, at);
+  await snap('ore_mined');
+  await ev(() => { const C = window.__game, p = C.p; C.lookAt(p.start.x, p.start.y, 300); C.advance(0.05, 60, 0); }); await snap('ore_overview');
 }
 if (logs.length) console.log('page errors:', logs.join(' | '));
 await browser.close(); srv.kill();

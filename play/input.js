@@ -49,7 +49,7 @@ export class Input {
       const p = this.proj(new V3(b.x, b.z + sv.h * 0.6, -b.y)); if (p && Math.hypot(p[0] - cx, p[1] - cy) < Math.max(b.w, b.d) * 0.4 * this.pxPerM(new V3(b.x, b.z, -b.y))) best = b; }
     return best;
   }
-  depositAt(g) { if (!g) return null; return this.C.game.deposits.find((d) => Math.hypot(d.pos[0] - g.x, d.pos[1] - g.y) < 32) || null; }
+  depositAt(g) { if (!g) return null; const G = this.C.game; if (G.ore) { const h = G.ore.fieldAt(g.x, g.y, 6); return h ? h.F.dep : null; } return G.deposits.find((d) => Math.hypot(d.pos[0] - g.x, d.pos[1] - g.y) < 32) || null; }
   selUnits() { const C = this.C; return [...C.sel].map((id) => C.world.byId.get(id)).filter((u) => u && u.alive && !u.isBuilding && u.team === C.p.team); }
   selStruct() { const C = this.C; const b = [...C.sel].map((id) => C.world.byId.get(id)).find((o) => o && o.isBuilding && o.alive && o.team === C.p.team); return b || null; }
 
@@ -154,7 +154,7 @@ export class Input {
     if (harv.length && kind === 'smart') {
       const dep = this.depositAt(g); const own = tb && tb.team === C.p.team && tb.dock ? tb : null;
       if (dep || own) { for (const h of harv) { const d0 = dep || (h.harv && h.harv.dep) || C.game.nextDeposit(h); const dock = own ? own.dock : C.game.bestDock(h); if (d0 && dock) W.harvest(h, d0, dock); }
-        this.marker(dep ? dep.svc[0] : own.dock.approach[0], dep ? dep.svc[1] : own.dock.approach[1], COL.harvest); this.ack(harv[0], 'move', g); if (units.length === harv.length) return; }
+        this.marker(dep ? g.x : own.dock.approach[0], dep ? g.y : own.dock.approach[1], COL.harvest); this.ack(harv[0], 'move', g); if (units.length === harv.length) return; }
     }
     if (!g) return;
     const rest = units.filter((u) => !(harv.length && kind === 'smart' && (this.depositAt(g) || (tb && tb.dock && tb.team === C.p.team)) && u.uid === 'HV'));
@@ -206,7 +206,8 @@ export class Input {
   }
   cancelPlace(silent) { const C = this.C; if (!this.place) return; C.scene.remove(this.place.root); if (this.radius) { C.scene.remove(this.radius); this.radius.traverse((o) => o.geometry && o.geometry.dispose()); this.radius = null; } this.place = null; if (!silent) C.ui.modeChanged(null); }
   tryPlace() {
-    const C = this.C, P = this.place; if (!P || !P.c) return;
+    const C = this.C, P = this.place; if (!P) return; this.updateGhost();   // judge the spot under the pointer now, not as of the last frame
+    if (!P.c) return;
     if (!P.c.ok) { if (C.audio) { C.audio.sfx('ui_error'); C.audio.announce('cannot_place'); } C.ui.toast(P.c.reason); return; }
     const r = C.game.place(C.p, P.c.x, P.c.y, P.rot); if (r.ok) { C.acks.push({ t: performance.now(), frame: this.frameNo, kind: 'place', key: P.key }); this.cancelPlace(); }
   }

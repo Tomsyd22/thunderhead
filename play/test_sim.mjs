@@ -24,7 +24,7 @@ const u8 = (f) => { try { const b = rd(f); return new Uint8Array(b.buffer, b.byt
 const T = makeMapTerrain({ meta, height, surface: u8('surface.u8'), nav: u8('nav.u8'), deck: u8('deck.u8'), instances });
 const spec = applyMapping(JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'unit_specs.json'))), JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'faction_mapping.json'))));
 const geom = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'sockets.json')));
-const pace = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'pace.json'))), combat = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'combat.json')));
+const pace = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'pace.json'))), combat = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'combat.json'))), economy = JSON.parse(fs.readFileSync(path.join(HERE, 'data', 'economy.json')));
 
 let pass = 0, fail = 0; const out = [];
 const check = (name, ok, info = '') => { (ok ? pass++ : fail++); const line = `${ok ? '✓' : '✗'} ${name}${info ? ' — ' + info : ''}`; out.push(line); console.log(line); };
@@ -32,7 +32,7 @@ const t0 = Date.now();
 
 // ── 1. navigation on the real map ──
 {
-  const M = createMatch({ T, spec, geom, pace, combat, players: [{ faction: 'compact', pad: 'B1' }, { faction: 'lattice', pad: 'R1' }], startUnits: false });
+  const M = createMatch({ T, spec, geom, pace, combat, economy, players: [{ faction: 'compact', pad: 'B1' }, { faction: 'lattice', pad: 'R1' }], startUnits: false });
   const nav = M.nav; check('kit footprints re-opened on both pads', nav.opened > 50, `${nav.kits.length} kit buildings, ${nav.opened} cells`);
   const B = meta.pads.find((p) => p.id === 'B1').center, R = meta.pads.find((p) => p.id === 'R1').center;
   for (const [dom, r] of [['foot', 0.35], ['veh', 2.2], ['hover', 1.7]]) {
@@ -46,7 +46,7 @@ const t0 = Date.now();
 
 // ── 2. economy and production rules (player-driven, no AI) ──
 {
-  const M = createMatch({ T, spec, geom, pace, combat, players: [{ faction: 'helix', pad: 'B1' }, { faction: 'compact', pad: 'R1' }], startUnits: false });
+  const M = createMatch({ T, spec, geom, pace, combat, economy, players: [{ faction: 'helix', pad: 'B1' }, { faction: 'compact', pad: 'R1' }], startUnits: false });
   const G = M.game, W = M.world, p = G.players[0], step = (sec) => { for (let i = 0; i < Math.round(sec / TICK); i++) { stepMatch(M, TICK); W.events.length = 0; } };
   const c0 = p.credits; G.enqueue(p, 'structure', 'power'); step(5); const spent = c0 - p.credits; G.cancel(p, 'structure', 'power');
   check('cancel refunds every credit spent', Math.abs(p.credits - c0) < 1e-6 && spent > 0, `spent ${spent.toFixed(1)} in 5 s, back to ${p.credits.toFixed(1)}`);
@@ -80,7 +80,7 @@ const t0 = Date.now();
 
 // ── 3. AI vs AI match ──
 {
-  const M = createMatch({ T, spec, geom, pace, combat, players: [{ faction: 'compact', pad: 'B1', isAI: true }, { faction: 'lattice', pad: 'R1', isAI: true }] });
+  const M = createMatch({ T, spec, geom, pace, combat, economy, players: [{ faction: 'compact', pad: 'B1', isAI: true }, { faction: 'lattice', pad: 'R1', isAI: true }] });
   const W = M.world, G = M.game; const ticks = Math.round(MIN * 60 / TICK); let worst = 0, sum = 0, n = 0, err = null; const slow = [];
   const stuck = new Map(); let stuckMax = 0, stuckWho = ''; const cyc = [0, 0]; const tl = []; let waves = 0, contact = null; let seq = 0; const builtKinds = {};
   const base = G.players.map((p) => [p.start.x, p.start.y]);

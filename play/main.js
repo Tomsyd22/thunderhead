@@ -13,6 +13,7 @@ import { FACTIONS, STRUCTURES } from './rules.js';
 import { Input } from './input.js';
 import { UI } from './ui.js';
 import { makeCameos } from './cameos.js';
+import { OreView } from './orerender.js';
 
 const Q = new URLSearchParams(location.search);
 const $ = (s) => document.querySelector(s);
@@ -25,12 +26,14 @@ async function boot() {
   const prog = (t, f) => { $('#loadBar').style.width = `${Math.round(f * 100)}%`; $('#loadText').textContent = t; };
   prog('Loading map', 0.02);
   try { Audio = (await import('./audio.js')).Audio; } catch (e) { C.errors.push('audio: ' + e.message); }
-  const [specRaw, mapping, paceFile, geom, combat] = await Promise.all(['data/unit_specs.json', 'data/faction_mapping.json', 'data/pace.json', 'data/sockets.json', 'data/combat.json'].map((u) => fetch(u).then((r) => r.json())));
+  const [specRaw, mapping, paceFile, geom, combat, economy] = await Promise.all(['data/unit_specs.json', 'data/faction_mapping.json', 'data/pace.json', 'data/sockets.json', 'data/combat.json', 'data/economy.json'].map((u) => fetch(u).then((r) => r.json())));
+  C.economy = economy;
   C.combat = combat; if (C.saved && isFinite(C.saved.ttk)) combat.ttk_scale = C.saved.ttk;
   C.specRaw = addEngineers(applyMapping(specRaw, mapping)); C.paceFile = paceFile; C.geom = geom; C.mapping = mapping;
   const pace = C.pace = structuredClone(paceFile);
   try { const sv = JSON.parse(localStorage.getItem('thunderhead.settings') || 'null'); if (sv) C.saved = sv; } catch (e) { /* storage unavailable */ }
   if (C.saved && isFinite(C.saved.gs)) pace.game_speed = C.saved.gs; if (C.saved && isFinite(C.saved.hr)) pace.harvester_speed_ratio = C.saved.hr;
+  C.regrow = C.saved && isFinite(C.saved.rg) ? C.saved.rg : 1;
   C.unitScale = Q.has('us') ? +Q.get('us') : C.saved && isFinite(C.saved.us) ? C.saved.us : 1.75;
   if (Q.has('gs')) pace.game_speed = +Q.get('gs');
   const T = C.T = await loadMapData('maps/01/');
@@ -69,7 +72,8 @@ function start(opt) {
   if (C.started) return; C.started = true;
   if (Audio) { try { Audio.init(); C.audio = Audio; } catch (e) { C.errors.push('audio init: ' + e.message); } }
   const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, name: FACTIONS[opt.ai].name }];
-  const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat });
+  const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat, economy: C.economy });
+  if (M.game.ore) { M.game.ore.regrowScale = C.regrow; C.oreView = new OreView(C.scene, C.T, M.game.ore); }
   C.world = M.world; C.game = M.game; C.p = M.game.players[0]; C.enemy = M.game.players[1]; C.spec = M.world.spec;
   C.P = new Presenter({ scene: C.scene, camera: C.camera, T: C.T, world: C.world, game: C.game, protos: C.protos, bprotos: C.bprotos, playerTeam: C.p.team, audio: C.audio });
   C.P.unitScale = C.unitScale; C.P.afterStep(); C.world.events.length = 0;   // views for the starting yard and squad
@@ -82,9 +86,10 @@ function start(opt) {
 function setPace(o) {
   const P = C.pace; if (o.game_speed != null) P.game_speed = +o.game_speed; if (o.harvester_speed_ratio != null) P.harvester_speed_ratio = +o.harvester_speed_ratio;
   if (C.world) C.world.setHarvesterSpeed(harvesterSandboxSpeed(P));
+  if (o.regrow != null) { C.regrow = +o.regrow; if (C.game && C.game.ore) C.game.ore.regrowScale = C.regrow; }
   if (o.unit_scale != null) { C.unitScale = +o.unit_scale; if (C.P) C.P.setUnitScale(C.unitScale); }
   if (o.ttk != null) { C.combat.ttk_scale = +o.ttk; if (C.world) C.world.dmgScale = 1 / C.combat.ttk_scale; }
-  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, us: C.unitScale, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
+  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, us: C.unitScale, rg: C.regrow, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
   if (C.ui) C.ui.paceChanged();
   return { game_speed: P.game_speed, harvester_speed_ratio: P.harvester_speed_ratio, harvester_mps: harvesterSandboxSpeed(P) };
 }
@@ -110,7 +115,7 @@ function tick(dt) {
   const alpha = C.acc / TICK, rdt = dt * gs;
   C.rcam.shake.copy(C.P.shakeOff); C.rcam.update(dt);
   C.P.focus = { x: C.rcam.fx, y: C.rcam.fy }; C.P.viewH = C.rcam.dist;
-  C.P.frame(dt, alpha, rdt);
+  C.P.frame(dt, alpha, rdt); if (C.oreView) C.oreView.update(rdt);
   C.light.update(C.camera, new THREE.Vector3(C.rcam.fx, C.rcam.fz, -C.rcam.fy)); C.mapView.update(C.camera, dt);
   if (C.audio) try { C.audio.setListener(C.rcam.fx, C.rcam.fy, C.rcam.dist * Math.sin(C.rcam.el), Math.PI / 2); } catch (e) { /* optional */ }   // north-up view: screen right is +x
   C.ui.frame(dt); C.input.frame(dt);

@@ -1,7 +1,7 @@
 ✓ kit footprints re-opened on both pads — 12 kit buildings, 644 cells
-✓ foot path base to base — 1 waypoints, 1351 m, 22.6 ms
-✓ veh path base to base — 9 waypoints, 1357 m, 10.7 ms
-✓ hover path base to base — 8 waypoints, 1361 m, 6.5 ms
+✓ foot path base to base — 1 waypoints, 1351 m, 13.5 ms
+✓ veh path base to base — 9 waypoints, 1357 m, 10.5 ms
+✓ hover path base to base — 8 waypoints, 1361 m, 10.2 ms
 ✓ dock approach B1 (420,1479) is vehicle ground
 ✓ dock approach B1 (483,1479) is vehicle ground
 ✓ dock approach R1 (1381,321) is vehicle ground
@@ -14,18 +14,18 @@
 ✓ placement on a structure is refused — Too close to a structure
 ✓ refinery placement
 ✓ refinery delivers a free harvester
-✓ harvester completes cycles on the real map — 2 cycles, real round trips 25.1 s at 2.4×
+✓ harvester completes cycles on the real map — 2 cycles, real round trips 24.4 s at 2.4×
 ✓ harvest credits arrive — +1000
-✓ nearest-field round trip in the 20–40 s band (player-placed refinery) — 25.1
+✓ nearest-field round trip in the 20–40 s band (player-placed refinery) — 24.4
 ✓ infantry trains and leaves through the barracks door — 3 ready, 3 at the door
 ✓ AI match runs without exceptions — 12.0 game min
-✓ average tick cost leaves room for rendering — avg 0.16 ms/tick, worst 34.7 ms (2 ticks > 20 ms: 119.0s 35ms, 342.0s 24ms); per-frame sim budget ≈ 16.7 ms
-✓ both AIs harvest — cycles 24 / 20
+✓ average tick cost leaves room for rendering — avg 0.15 ms/tick, worst 36.1 ms (1 ticks > 20 ms: 1.0s 36ms); per-frame sim budget ≈ 16.7 ms
+✓ both AIs harvest — cycles 22 / 17
 ✓ AI compact builds a base — power refinery barracks factory radar airpad naval
 ✓ AI lattice builds a base — power refinery barracks factory radar airpad naval
-✓ AI armies are produced — 15 alive, 24 lost | 12 alive, 10 lost
-✓ AI waves are launched and reach the enemy base — 3 waves, first contact T01 team 1 at 476 s
-✓ no ground unit stuck on a path for 20 s — worst 5 s: HV#18 at (365.1, 1526.6) order {"type":"harvest"} v 3.70 path [[409,1521],[420,1480]] pass 1 clear 8.3 deploy null hidden false
-✓ doors and refinery docks of AI-built bases stay reachable — 8 lanes checked
-✓ engine counters — shots 1438, hits 1437, kills 34
+✓ AI armies are produced — 6 alive, 32 lost | 10 alive, 10 lost
+✓ AI waves are launched and reach the enemy base — 2 waves, first contact T01 team 1 at 476 s
+✓ no ground unit stuck on a path for 20 s — worst 7 s: HV#47 at (490.3, 1517.7) order {"type":"harvest"} v 3.40 path [[485,1505],[484,1480]] pass 1 clear 4.3 deploy null hidden false
+✓ doors and refinery docks of AI-built bases stay reachable — 4 lanes checked
+✓ engine counters — shots 1327, hits 1326, kills 43
 30/30

@@ -154,7 +154,7 @@ const want = (s) => !ONLY || ONLY.includes(s);
         p.queues.structure.length = 0; p.ready = null; G.enqueue(p, 'structure', 'factory'); const it = p.queues.structure[0]; it.spent = it.cost; p.ready = it; C.input.startPlace('factory');
         const y = C.world.byId.get(p.yard); let spot = null; for (let r = 50; r < 240 && !spot; r += 4) for (let a = 0; a < 24 && !spot; a++) { const x = y.x + Math.cos(a / 24 * 6.283) * r, yy = y.y + Math.sin(a / 24 * 6.283) * r;
           if ([0, 1, 2, 3].every((k) => [[0, 0], [4, 0], [-4, 0], [0, 4], [0, -4]].every(([ox, oy]) => G.canPlace(p, 'factory', x + ox, yy + oy, k * Math.PI / 2).ok))) spot = [x, yy]; }   // room to spare: the mouse ray may land a few metres off
-        if (!spot) return { err: 'no spot where all four rotations fit' }; C.lookAt(spot[0], spot[1], 170); C.advance(0.05); return { at: C.screenOf(spot[0], spot[1]), spot }; });
+        if (!spot) return { err: 'no spot where all four rotations fit' }; C.lookAt(spot[0], spot[1], 170); C.advance(0.05); for (const id of ['toast', 'tip', 'subtitle']) { const el = document.getElementById(id); if (el) { el.hidden = true; el.textContent = ''; } } return { at: C.screenOf(spot[0], spot[1]), spot }; });
       if (r0.err) check('rotate: R and the arrow keys turn the ghost in 90° steps', false, r0.err); else {
         await page.mouse.move(r0.at[0], r0.at[1]); const rots = []; const read = () => ev(page, () => { const C = window.__game; C.advance(1 / 60); const P = C.input.place; return { rot: P.c.rot, model: P.model.rotation.y, w: P.c.rect.w, d: P.c.rect.d, btn: !document.querySelector('#btnRotate').hidden }; });
         rots.push(await read()); await page.keyboard.press('r'); rots.push(await read()); await page.keyboard.press('ArrowRight'); rots.push(await read()); await page.keyboard.press('ArrowLeft'); rots.push(await read());
@@ -232,6 +232,8 @@ const want = (s) => !ONLY || ONLY.includes(s);
     }
 
     if (want('movement')) {
+      // the enemy AI's waves (from 4 game minutes) would wander into these timing tests: stop its thinking and clear its army
+      await ev(page, () => { const C = window.__game, W = C.world; C.M.ais.length = 0; for (const u of W.units) if (u.alive && u.team !== C.p.team && !u.isBuilding) W._kill(u, null); C.advance(0.5, 30, 0); });
       const mv = await ev(page, () => { const C = window.__game, W = C.world, y = C.world.byId.get(C.p.yard); const o = W.nav.nearestOk('veh', y.x + 60, y.y - 60, 14, 300), x0 = o[0], y0 = o[1]; const g = [];   // open ground (earlier suites build around the yard)
         for (let k = 0; k < 6; k++) { const u = W.spawn('H01', 0, x0 + (k % 3) * 2, y0 + Math.floor(k / 3) * 2, {}); g.push(u); } for (let k = 0; k < 3; k++) g.push(W.spawn('H03', 0, x0 - 12 - k * 9, y0 + 6, { hdg: 0 }));
         C.P.afterStep(); W.events.length = 0; W.orderGroup(g, { type: 'move', x: x0 + 130, y: y0 - 150 }); let vT = 0, t = 0;

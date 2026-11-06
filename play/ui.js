@@ -166,9 +166,10 @@ export class UI {
     const C = this.C, P = C.pace, gs = $('#setGs'), hr = $('#setHr');
     gs.min = P.game_speed_range[0]; gs.max = P.game_speed_range[1]; gs.step = 0.1; gs.value = P.game_speed; hr.min = P.harvester_ratio_range[0]; hr.max = P.harvester_ratio_range[1]; hr.step = 0.01; hr.value = P.harvester_speed_ratio;
     gs.oninput = () => C.setPace({ game_speed: +gs.value }); hr.oninput = () => C.setPace({ harvester_speed_ratio: +hr.value });
+    const rg = $('#setRegrow'); if (rg) { rg.value = C.regrow; rg.oninput = () => C.setPace({ regrow: +rg.value }); }
     const us = $('#setUs'); us.value = C.unitScale; us.oninput = () => C.setPace({ unit_scale: +us.value });
     const tk = $('#setTtk'); tk.value = C.combat ? C.combat.ttk_scale : 1; tk.oninput = () => C.setPace({ ttk: +tk.value });
-    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1, unit_scale: 1.75 }); $('#setUs').value = 1.75; gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
+    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1, unit_scale: 1.75, regrow: 1 }); $('#setUs').value = 1.75; $('#setRegrow').value = 1; gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
     for (const [id, bus] of [['setVol', 'master'], ['setVoice', 'voice']]) { const s = $('#' + id); s.oninput = () => { if (C.audio) try { C.audio.setVolume(bus, +s.value); if (bus === 'voice') C.audio.setVolume('announcer', +s.value); } catch (e) { /* optional */ } }; }
     $('#setEdge').onchange = (e) => { C.rcam.edge = e.target.checked; };
     $('#setQuality').value = C.quality; $('#setQuality').onchange = (e) => { C.quality = e.target.value; try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, quality: C.quality })); } catch (err) { /* ignore */ } this.toast('Graphics quality applies after a reload'); };
@@ -177,7 +178,7 @@ export class UI {
   }
   paceChanged() {
     const C = this.C, P = C.pace; if (!$('#setGsV')) return; const v = harvesterSandboxSpeed(P);
-    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; $('#setUsV').textContent = `${C.unitScale.toFixed(2)}× (map and sim stay true scale)`; if (C.combat) $('#setTtkV').textContent = `${C.combat.ttk_scale.toFixed(1)}× (fights ${C.combat.ttk_scale >= 1 ? 'longer' : 'shorter'})`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
+    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; if ($('#setRegrowV')) $('#setRegrowV').textContent = `${(C.regrow * (C.economy ? C.economy.regrow_share * 100 : 5)).toFixed(1)} % of mining speed`; $('#setUsV').textContent = `${C.unitScale.toFixed(2)}× (map and sim stay true scale)`; if (C.combat) $('#setTtkV').textContent = `${C.combat.ttk_scale.toFixed(1)}× (fights ${C.combat.ttk_scale >= 1 ? 'longer' : 'shorter'})`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
     $('#setNote').textContent = `Everything runs ${P.game_speed.toFixed(1)}× faster than real time: movement, turning, reloads, harvesting and building. Map and model sizes stay true. Harvester ${v.toFixed(1)} m/s.`;
     const gs = $('#setGs'); if (gs && +gs.value !== P.game_speed) gs.value = P.game_speed;
   }
@@ -224,6 +225,7 @@ export class UI {
     const C = this.C, g = this.mmg, S = this.mm.width, k = S / C.T.W, W = C.world, now = performance.now();
     g.drawImage(this.mmBase, 0, 0, S, S); g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(0, 0, S, S);
     const X = (x) => x * k, Y = (y) => S - y * k;
+    if (C.game.ore) { g.fillStyle = '#e8b53a'; const s = Math.max(1.5, 4 * k), m = C.game.ore.E.min_patch; for (const F of C.game.ore.fields) for (const c of F.cells) if (c.amt >= m) { const z = s * (0.5 + 0.5 * Math.sqrt(c.amt / c.max)); g.fillRect(X(c.x) - z / 2, Y(c.y) - z / 2, z, z); } }   // ore patches
     for (const b of W.buildings) { if (!b.alive) continue; g.fillStyle = hex(TEAM_COLORS[b.team % 4]); g.strokeStyle = 'rgba(0,0,0,0.7)'; g.lineWidth = 1; g.fillRect(X(b.x - b.w / 2), Y(b.y + b.d / 2), Math.max(3, b.w * k), Math.max(3, b.d * k)); g.strokeRect(X(b.x - b.w / 2), Y(b.y + b.d / 2), Math.max(3, b.w * k), Math.max(3, b.d * k)); }
     for (const u of W.units) { if (!u.alive || u.hidden) continue; if (u.team !== C.p.team && !W.visible(C.p.team, u)) continue;
       const sel = C.sel.has(u.id); g.fillStyle = sel ? '#ffffff' : hex(TEAM_COLORS[u.team % 4]); const r = u.kind === 'foot' ? 1.2 : u.kind === 'ship' ? 2.4 : 1.8; g.fillRect(X(u.x) - r, Y(u.y) - r, r * 2, r * 2); }
