@@ -1,68 +1,111 @@
-// Thunderhead Hard AI (round 1 playtest). Same rules, same economy and the same fog of war as the player: it only knows
-// what its own units and structures can see (World.visible), plus the map's start pads and ore rigs that every player
-// sees on the minimap. No resource bonus, no build-time bonus, no map reveal.
+// Thunderhead Hard AI (round 2). Same rules, same economy and the same fog of war as the player: it only knows what its
+// own units and structures can see (World.visible), plus public information every player has (the map's start pads, ore
+// fields and dock sites on the minimap, and the opponent's faction from the lobby). No resource bonus, no build-time bonus,
+// no map reveal.
 //
 // On top of the Normal AI's base building and upkeep (ai.js) it:
-//   scouts   — sends its first infantry round the enemy start and the expansion fields, then keeps a memory of what it saw
-//   expands  — a third refinery by an expansion field once its home ore runs low (or from 7 game minutes), more harvesters
-//   counters — weighs every unit it can build by damage per credit against the enemy army it has seen, and builds the best
+//   economy  — skips Normal's early radar / airpad / naval yard / spare power plants and puts that money into harvesters
+//              and the army; a third refinery by an expansion field; second factory and barracks once it is banking
+//   scouts   — sends its first infantry round the expansions and the enemy start, then keeps a memory of what it saw
+//   counters — for each enemy unit type it has seen (weighted by value) it builds the unit that trades best against it
+//              (damage × health per credit², with a range factor), so the army mirrors the enemy's mix
+//   defends  — keeps the army at home until it out-values the enemy army it knows about; any enemy that comes near the
+//              base meets the whole home army
+//   attacks  — one concentrated force; big forces split into two prongs that wait for each other at flank points and
+//              then close on the target together; production structures and the yard first; new units stream in as
+//              reinforcements; when it runs out of known structures it sweeps the enemy's side of the map until it
+//              finds the rest; it falls back if it is clearly outgunned
 //   raids    — a small fast group hunts enemy harvesters at the fields it has seen them working
-//   focus    — each engaged group picks one target at a time (the one it can kill fastest, worth the most) and shoots it together
-//   pulls back damaged units (under 35 % health) to the base before they die, then reuses them for defence
-//   flanks   — splits its main attack into two prongs that close on the target base from different sides at the same time
+//   focus    — each engaged group picks one target at a time (the one it can kill fastest, worth the most) and shoots it
+//              together, without chasing beyond weapon range
+//   pulls back damaged units (under 30 % health) to the base before they die, then reuses them for defence
+//   deploys  — deployable infantry (Helix MG teams) set up when an enemy is within machine-gun range
 import { STRUCTURES, FACTIONS } from './rules.js';
+import { MECH } from './engine/mech.js';
 import { AI } from './ai.js';
 
-const CLASS = { infantry: 'infantry', light: 'light', medium: 'heavy', heavy: 'heavy', aircraft: 'air', ship: 'naval', structure: 'building' };
+const CLASS = { infantry: 'infantry', light: 'light', medium: 'heavy', heavy: 'heavy', aircraft: 'air', air: 'air', ship: 'naval', naval: 'naval', structure: 'building' };
+const TKEY = { naval: 'ship', air: 'aircraft' };   // spec armour name → combat-table column
 const D = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+const HORDER = ['power', 'refinery', 'barracks', 'refinery', 'factory'];   // the core base; power plants come as demand needs them
+const PRIO = { factory: 0, barracks: 10, yard: 60, airpad: 140, naval: 160, refinery: 180, radar: 220, power: 240 };   // target order (metres of detour it is worth)
 
 export class HardAI extends AI {
   constructor(game, p, kitItems) {
     super(game, p, kitItems); this.level = 'hard';
     this.intel = { structs: new Map(), units: new Map(), harv: new Map() };   // last sightings: id → { x, y, t, ... }
-    this.scout = null; this.scoutPlan = null; this.raid = new Set(); this.lastRaid = -999; this.prongs = null; this.retreating = new Set(); this.focus = new Map();
-    const others = game.players.filter((q) => q.id !== p.id); this.enemyStart = others[0] ? [others[0].start.x, others[0].start.y] : this.stage;
+    this.scout = null; this.scoutPlan = null; this.raid = new Set(); this.lastRaid = -999; this.op = null; this.retreating = new Set();
+    this.focusPrev = new Map(); this.effCache = new Map(); this.killed = 0; this.lastDefend = -99; this.lastRecall = -999;
+    this.home = [p.start.x, p.start.y];
+    this.searched = new Map();   // sweep point "x,y" → game time we last looked there
+    this.updateFront();
   }
+  // ── opponents: every living player on another team (2v1 and free-for-all as well as 1v1) ──
+  foes() { const g = this.g; return typeof AI.prototype.enemies === 'function' ? this.enemies() : g.players.filter((q) => q.team !== this.p.team && !q.lost); }
+  get enemyStart() { return this._front || this.home; }   // start pad of the opponent we're working on: the nearest one still alive
+  updateFront() {
+    const f = this.foes().map((q) => [q.start.x, q.start.y]).sort((a, b) => D(a, this.home) - D(b, this.home)); if (!f.length) return;
+    this._front = f[0]; this.enemyStarts = f;
+    // stage toward the middle of the living opponents (where their waves come from), a little in front of the base
+    const m = [f.reduce((a, q) => a + q[0], 0) / f.length, f.reduce((a, q) => a + q[1], 0) / f.length], dx = m[0] - this.home[0], dy = m[1] - this.home[1], L = Math.hypot(dx, dy) || 1;
+    this.toward = [dx / L, dy / L]; this.stage = this.landPoint([this.home[0] + dx / L * 140, this.home[1] + dy / L * 140]);
+  }
+  get prongs() { return this.op && this.op.groups.length > 1 ? this.op : null; }
   think() {
     const g = this.g, p = this.p; if (p.lost || g.over) return;
+    if (!this._front || (this._frontT || 0) < g.t - 10) { this._frontT = g.t; this.updateFront(); }
     this.observe(); if (p.ready) this.placeReady();
     this.buildStructures(); this.expand(); this.produce(); this.repair();
     this.scoutThink(); this.retreat(); this.raidThink(); this.army(); this.focusFire(); this.deployMicro();
   }
-  // ── deployable infantry (Helix MG teams): set up when a fight starts, the next move order packs them up again ──
-  deployMicro() {
-    const W = this.W; for (const u of this.g.unitsOf(this.p)) { if (!u.m.deploy || u.deploy !== 'mobile' || u.target == null || this.retreating.has(u.id)) continue;
-      const tg = W.byId.get(u.target); if (tg && tg.alive && D([u.x, u.y], [tg.x, tg.y]) < 40 && !(this.prongs && this.prongs.stage === 'flank' && this.wave.has(u.id))) W.order(u, { type: 'deploy' }); }
-  }
   get W() { return this.g.world; }
   enemyOf(o) { return o.team !== this.p.team && o.team >= 0; }
+  armed(u) { return u.alive && u.sys && u.sys.length && u.uid !== 'HV' && !(u.m && u.m.engineer); }
+  val(u) { return u.sp.cost * u.hp / u.maxHp; }
 
   // ── intel: remember what our side sees ──
   observe() {
     const W = this.W, t = this.g.t, I = this.intel, me = this.p.team;
     for (const b of W.buildings) if (b.alive && this.enemyOf(b) && W.visible(me, b)) I.structs.set(b.id, { x: b.x, y: b.y, kind: b.kind, t });
     for (const [id, s] of I.structs) { const b = W.byId.get(id); if ((!b || !b.alive) && this.seesPoint(s.x, s.y)) I.structs.delete(id); }   // gone when we look again
+    this.visEnemies = [];
     for (const u of W.units) if (u.alive && !u.hidden && this.enemyOf(u) && W.visible(me, u)) {
-      I.units.set(u.id, { x: u.x, y: u.y, uid: u.uid, armour: u.sp.armour_type || u.sp.armor, cost: u.sp.cost, t });
+      this.visEnemies.push(u);
+      I.units.set(u.id, { x: u.x, y: u.y, uid: u.uid, armour: u.sp.armour_type || u.sp.armor, cost: u.sp.cost, t, armed: !!u.sys.length });
       if (u.uid === 'HV') I.harv.set(u.id, { x: u.x, y: u.y, t, dep: u.harv && u.harv.dep ? u.harv.dep.id : null });
     }
-    for (const [id, s] of I.units) { const u = W.byId.get(id); if (!u || !u.alive || t - s.t > 240) I.units.delete(id); }
-    for (const [id, s] of I.harv) { const u = W.byId.get(id); if (!u || !u.alive || t - s.t > 300) I.harv.delete(id); }
+    // a unit we were watching a moment ago and is now dead died in front of us; anything else is forgotten when stale
+    for (const [id, s] of I.units) { const u = W.byId.get(id); const dead = !u || !u.alive;
+      if (dead && t - s.t <= 2) { I.units.delete(id); if (s.armed) this.killed += s.cost || 0; } else if (t - s.t > 240) I.units.delete(id); }
+    for (const [id, s] of I.harv) { const u = W.byId.get(id); if (((!u || !u.alive) && t - s.t <= 2) || t - s.t > 300) I.harv.delete(id); }
   }
   seesPoint(x, y) { return this.g.unitsOf(this.p).some((u) => Math.hypot(u.x - x, u.y - y) < (u.sp.sight_m || 30) * 0.8) || this.structs.some((b) => Math.hypot(b.x - x, b.y - y) < 40); }
+  enemyArmyEstimate() { const t = this.g.t; let s = 0; for (const u of this.intel.units.values()) if (u.armed && t - u.t < 200) s += u.cost || 0; return s; }
+
+  // ── base: Normal's order without the early luxuries; extra production once it is banking ──
+  wantStructure() {
+    const g = this.g, p = this.p, pw = p.power; if (p.queues.structure.length || p.ready) return null;
+    if (pw.made - pw.used < 40 && this.count('power') < 10) return 'power';
+    const need = {}; for (const k of HORDER) { need[k] = (need[k] || 0) + 1; if (this.count(k) < need[k]) return g.available(p, 'structure', k) ? k : null; }
+    if (this.shipsSeen() && this.count('naval') < 1 && p.credits > 1500 && g.dockSites.some((s) => this.nearMe(s.water_center, 700)) && g.available(p, 'structure', 'naval')) return 'naval';
+    if (p.credits > 2600 && g.t > 420) for (const [k, n] of [['factory', 2], ['barracks', 2]]) if (this.count(k) < n && g.available(p, 'structure', k)) return k;
+    if (p.credits > 4000 && g.t > 900) for (const k of ['radar', 'airpad']) if (this.count(k) < 1 && g.available(p, 'structure', k)) return k;
+    return null;
+  }
+  shipsSeen() { for (const u of this.intel.units.values()) if (u.armour === 'naval' || u.armour === 'ship') return true; return false; }
 
   // ── economy: three refineries, the third by the nearest expansion field once home ore runs low ──
   expand() {
     const g = this.g, p = this.p, refs = this.structs.filter((b) => b.kind === 'refinery');
     if (!g.has(p, 'factory') || refs.length >= 3 || p.queues.structure.length || p.ready) return;
     const home = g.deposits.filter((d) => d.nearest === p.start.pad.id), low = home.length && home.reduce((a, d) => a + (d.ore || 0), 0) < 0.4 * home.reduce((a, d) => a + (d.field ? d.field.total : 100000), 0);
-    if ((low || g.t > 420) && refs.length === 2 && p.credits > 2400) { g.enqueue(p, 'structure', 'refinery'); this.wantExpansion = true; }
+    if ((low || g.t > 480) && refs.length === 2 && p.credits > 2000 && !this.homeThreat) { g.enqueue(p, 'structure', 'refinery'); this.wantExpansion = true; }
   }
   placeReady() {
     const g = this.g, p = this.p, kind = p.ready.key;
     if (kind === 'refinery' && this.wantExpansion) {   // the expansion refinery: as close to the richest reachable non-home field as the build radius allows
-      const fields = g.deposits.filter((d) => d.nearest !== p.start.pad.id && (d.ore || 0) > 3000 && !g.deposits.some((q) => q === d && q.nearest && q.nearest !== p.start.pad.id && q.kind === 'home'))
-        .sort((a, b) => D(a.pos, [p.start.x, p.start.y]) - D(b.pos, [p.start.x, p.start.y]));
+      const fields = g.deposits.filter((d) => d.nearest !== p.start.pad.id && (d.ore || 0) > 3000 && (this.enemyStarts || []).every((e) => D(d.pos, this.home) < D(d.pos, e)))
+        .sort((a, b) => D(a.pos, this.home) - D(b.pos, this.home));
       for (const d of fields.slice(0, 3)) for (let r = 30; r < 160; r += 8) for (let a = 0; a < 16; a++) {
         const c = g.canPlace(p, kind, d.pos[0] + Math.cos(a / 16 * 6.283) * r, d.pos[1] + Math.sin(a / 16 * 6.283) * r); if (c.ok) { g.place(p, c.x, c.y); this.wantExpansion = false; return; } }
       this.wantExpansion = false;
@@ -71,34 +114,72 @@ export class HardAI extends AI {
   }
 
   // ── production: counter what we've seen ──
-  dpsVs(spec, armour) {
-    const T = this.W.combat && this.W.combat.table, cls = CLASS[armour] || armour; let s = 0;
-    for (const w of spec.weapons || []) { if (w.targets && !w.targets.includes(cls)) continue; const m = T && w.wtype && T[w.wtype] ? T[w.wtype][armour] || 0 : (w.multipliers[cls] || 0);
-      s += w.damage * (w.burst || 1) / Math.max(0.1, w.cycle_s + (w.burst > 1 ? (w.burst - 1) * (w.burst_gap_s || 0) : 0)) * m; }
-    return s;
+  weaponSets(uid, sp) {   // weapon index sets usable at once (deployables: mobile or deployed, never both)
+    const m = MECH[uid], all = (sp.weapons || []).map((_, i) => i);
+    return m && m.deploy ? [m.deploy.mobile, m.deploy.deployed] : [all];
   }
-  pick(cat, list) {
-    const W = this.W, seen = [...this.intel.units.values()].filter((u) => u.armour && u.uid !== 'HV'); if (!seen.length) return null;
-    const mix = {}; for (const u of seen) mix[u.armour] = (mix[u.armour] || 0) + (u.cost || 500); const tot = Object.values(mix).reduce((a, b) => a + b, 0);
-    let best = null, bs = -1; const army = this.g.unitsOf(this.p).filter((u) => u.uid !== 'HV' && u.sys.length), share = (k) => army.length < 6 ? 0 : army.filter((u) => u.uid === k).length / army.length;
-    for (const k of list) { const sp = W.spec[k]; if (!sp || !sp.weapons.length || (list.length > 1 && share(k) > 0.6)) continue; let sc = 0; for (const [a, c] of Object.entries(mix)) sc += c / tot * this.dpsVs(sp, a);
-      sc = sc / sp.cost + 0.15 * sp.health / sp.cost / 10; if (sc > bs) { bs = sc; best = k; } }
-    return best;
+  wDps(w, armour) {
+    const T = this.W.combat && this.W.combat.table, cls = CLASS[armour] || armour, col = TKEY[cls] || armour;
+    if (w.targets && !w.targets.includes(cls)) return 0;
+    const m = T && w.wtype && T[w.wtype] ? (T[w.wtype][col] ?? T[w.wtype][armour] ?? 0) : (w.multipliers[cls] || 0);
+    return w.damage * (w.burst || 1) / Math.max(0.1, w.cycle_s + (w.burst > 1 ? (w.burst - 1) * (w.burst_gap_s || 0) : 0)) * m;
+  }
+  dpsVs(spec, armour, uid = spec.id) {   // best weapon-set dps against an armour class, and that set's reach
+    let best = 0, reach = 0;
+    for (const set of this.weaponSets(uid, spec)) { let s = 0, r = 0; for (const i of set) { const w = spec.weapons[i]; if (!w) continue; const d = this.wDps(w, armour); if (d > 0) { s += d; r = Math.max(r, w.range_m); } }
+      if (s > best) { best = s; reach = r; } }
+    this._reach = reach; return best;
+  }
+  eff(a, b) {   // how well `a` trades against `b` for equal credits (Lanchester square: dps × hp / cost², with a range factor)
+    const key = a + '>' + b; if (this.effCache.has(key)) return this.effCache.get(key);
+    const W = this.W, A = W.spec[a], B = W.spec[b]; let r = 0;
+    if (A && B) {
+      const da = this.dpsVs(A, B.armour_type || B.armor, a), ra = this._reach, db = this.dpsVs(B, A.armour_type || A.armor, b), rb = this._reach;
+      if (da <= 0) r = 0; else if (db <= 0) r = 4;
+      else r = Math.min(4, (da * A.health / (A.cost * A.cost)) / (db * B.health / (B.cost * B.cost)) * Math.max(0.4, Math.min(2.5, Math.pow(ra / rb, 0.8))));
+    }
+    this.effCache.set(key, r); return r;
+  }
+  enemyMix() {   // value share by enemy unit type: what we've seen, topped up by the enemy faction's roster while we've seen little
+    const mix = {}, t = this.g.t; let tot = 0;
+    for (const u of this.intel.units.values()) if (u.armed && t - u.t < 240) { mix[u.uid] = (mix[u.uid] || 0) + (u.cost || 300); tot += u.cost || 300; }
+    if (tot < 4000) { const ros = []; for (const q of this.foes()) { const F = FACTIONS[q.faction]; for (const k of [...F.infantry, ...F.vehicle]) if (this.W.spec[k] && this.W.spec[k].weapons.length) ros.push(k); }
+      for (const k of ros) mix[k] = (mix[k] || 0) + (4000 - tot) / ros.length; }
+    return mix;
+  }
+  composition(cands) {   // desired value share per candidate unit: each enemy type's share goes to its best counters
+    const mix = this.enemyMix(), tot = Object.values(mix).reduce((a, b) => a + b, 0) || 1, want = {}; let used = 0;
+    for (const [e, v] of Object.entries(mix)) {
+      const effs = cands.map((c) => this.eff(c.k, e) * (c.cat === 'air' ? 0.6 : 1)), best = Math.max(...effs); if (best <= 0.05) continue;
+      const w = effs.map((x) => Math.max(0, x - 0.7 * best) ** 2), sw = w.reduce((a, b) => a + b, 0) || 1;
+      cands.forEach((c, i) => { want[c.k] = (want[c.k] || 0) + v / tot * w[i] / sw; }); used += v / tot;
+    }
+    for (const k in want) want[k] /= used || 1;
+    return want;
   }
   produce() {
-    const g = this.g, p = this.p, W = this.W, F = FACTIONS[p.faction], harv = g.unitsOf(p).filter((u) => u.uid === 'HV').length, refs = this.structs.filter((b) => b.kind === 'refinery').length;
+    const g = this.g, p = this.p, W = this.W, F = FACTIONS[p.faction], mine = g.unitsOf(p), harv = mine.filter((u) => u.uid === 'HV').length, refs = this.structs.filter((b) => b.kind === 'refinery').length;
     const vq = p.queues.vehicle, hvq = vq.filter((i) => i.key === 'HV').length, wantHv = Math.min(8, refs * 2 + 1);
     if (g.has(p, 'factory') && harv + hvq < wantHv && hvq < 1) { g.enqueue(p, 'vehicle', 'HV'); const i = vq.findIndex((x) => x.key === 'HV'); if (i > 0) vq.unshift(vq.splice(i, 1)[0]); }
     if (harv + hvq < Math.min(4, wantHv) && p.credits < 1200) return;
-    const army = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer).length; if (army > 50) return;
+    const army = mine.filter((u) => u.uid !== 'HV' && !u.m.engineer); if (army.length > 56) return;
     const sq = p.queues.structure[0]; if (sq && !p.ready && p.credits < Math.min(1500, sq.cost - sq.spent)) return;
-    // second barracks / factory when rich, so the army keeps pace with the economy
-    if (!p.queues.structure.length && !p.ready && p.credits > 3500 && g.t > 360) { for (const k of ['factory', 'barracks']) if (this.count(k) < 2 && g.available(p, 'structure', k)) { g.enqueue(p, 'structure', k); break; } }
-    const armed = (list) => list.filter((k) => W.spec[k] && W.spec[k].weapons.length);
-    const keep = (cat, list, max) => { if (!g.has(p, { infantry: 'barracks', vehicle: 'factory', air: 'airpad', naval: 'naval' }[cat])) return; if (p.queues[cat].length >= max || !list.length) return;
-      const k = this.pick(cat, list) || list[(this.next++) % list.length]; if (p.credits > g.costOf(cat, k) + 200) g.enqueue(p, cat, k); };
-    keep('infantry', armed(F.infantry), 2); keep('vehicle', armed(F.vehicle.filter((u) => u !== 'HV')), 2);
-    if (army > 6) keep('air', armed(F.air), 1); if (army > 10 && this.intel.units.size && [...this.intel.units.values()].some((u) => u.armour === 'ship')) keep('naval', armed(F.naval), 1);
+    const has = { infantry: g.has(p, 'barracks'), vehicle: g.has(p, 'factory'), air: g.has(p, 'airpad'), naval: g.has(p, 'naval') && this.shipsSeen() };
+    const cands = []; for (const cat of ['infantry', 'vehicle', 'air', 'naval']) if (has[cat]) for (const k of F[cat]) if (k !== 'HV' && W.spec[k] && W.spec[k].weapons.length && g.available(p, cat, k)) cands.push({ cat, k });
+    if (!cands.length) return;
+    const want = this.composition(cands), have = {}; let tot = 0;
+    for (const u of army) { have[u.uid] = (have[u.uid] || 0) + u.sp.cost; tot += u.sp.cost; }
+    for (const cat of ['infantry', 'vehicle', 'air', 'naval']) for (const it of p.queues[cat]) if (it.key !== 'HV') { have[it.key] = (have[it.key] || 0) + it.cost; tot += it.cost; }
+    const deficit = (k) => (want[k] || 0) - (have[k] || 0) / (tot + W.spec[k].cost);
+    const ranked = cands.filter((c) => (want[c.k] || 0) > 0.03).sort((a, b) => deficit(b.k) - deficit(a.k)); if (!ranked.length) return;
+    const top = ranked[0];
+    // the most-needed unit always has its queue running; other queues only when there is money to spare (production pays
+    // as it goes, so two starving queues would each build at half speed)
+    for (const cat of ['infantry', 'vehicle', 'air', 'naval']) {
+      const Q = p.queues[cat], armedQ = Q.filter((i) => i.key !== 'HV').length; if (!has[cat] || armedQ >= (p.credits > 3000 ? 2 : 1)) continue;
+      const c = cat === top.cat ? top : ranked.find((x) => x.cat === cat); if (!c) continue;
+      if (cat === top.cat ? p.credits > 50 : p.credits > g.costOf(cat, c.k) + 500) g.enqueue(p, cat, c.k);
+    }
   }
 
   // ── scouting: the first rifleman tours the enemy start and the expansions ──
@@ -110,103 +191,168 @@ export class HardAI extends AI {
       if (!u.path) W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] }); return; }
     if (this.scouted || g.t < 15) return;
     const u = g.unitsOf(p).filter((q) => q.kind === 'foot' && q.sys.length && !q.rollOut).sort((a, b) => b.sp.speed_mps - a.sp.speed_mps)[0]; if (!u) return;
-    const es = this.enemyStart, ex = g.deposits.filter((d) => d.kind !== 'home').map((d) => d.pos).sort((a, b) => D(a, es) - D(b, es)).slice(0, 2);
-    this.scout = u.id; this.scoutPlan = [...ex, [es[0] + (this.p.start.x - es[0]) * 0.2, es[1] + (this.p.start.y - es[1]) * 0.2], es]; W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] });
+    this.scoutPlan = [];   // per opponent (nearest first): the expansions by its start, a point on its doorstep, its start
+    for (const es of this.enemyStarts || [this.enemyStart]) { const ex = g.deposits.filter((d) => d.kind !== 'home').map((d) => d.pos).sort((a, b) => D(a, es) - D(b, es)).slice(0, 2);
+      this.scoutPlan.push(...ex, [es[0] + (this.p.start.x - es[0]) * 0.2, es[1] + (this.p.start.y - es[1]) * 0.2], es); }
+    this.scout = u.id; W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] });
   }
 
   // ── pull back: badly damaged units go home before they die ──
   retreat() {
-    const W = this.W, home = [this.p.start.x, this.p.start.y];
+    const W = this.W, home = this.home;
     for (const id of this.retreating) { const u = W.byId.get(id); if (!u || !u.alive) this.retreating.delete(id); }
     for (const u of this.g.unitsOf(this.p)) {
       if (u.uid === 'HV' || u.m.engineer || u.dom === 'ship' || u.kind === 'jet' || u.id === this.scout) continue;
       const f = u.hp / u.maxHp, near = D([u.x, u.y], home) < 140;
-      if (!this.retreating.has(u.id) && f < 0.35 && !near && u.lastHitT != null) { this.retreating.add(u.id); this.wave.delete(u.id); this.raid.delete(u.id); W.order(u, { type: 'move', x: home[0] + (Math.random() - 0.5) * 50, y: home[1] + (Math.random() - 0.5) * 50 }); }
-      else if (this.retreating.has(u.id) && (near || !u.alive)) { this.retreating.delete(u.id); if (u.alive) W.order(u, { type: 'guard', x: u.x, y: u.y }); }
+      if (!this.retreating.has(u.id) && f < 0.3 && !near && u.lastHitT != null && this.g.t - u.lastHitT < 3) { this.retreating.add(u.id); this.wave.delete(u.id); this.raid.delete(u.id); this.focusPrev.delete(u.id); W.order(u, { type: 'move', x: home[0] + (Math.random() - 0.5) * 50, y: home[1] + (Math.random() - 0.5) * 50 }); }
+      else if (this.retreating.has(u.id) && near) { this.retreating.delete(u.id); W.order(u, { type: 'guard', x: u.x, y: u.y }); }
     }
   }
 
   // ── harvester raids: a few fast units at a field where enemy harvesters were seen ──
   raidThink() {
     const g = this.g, W = this.W; this.raid = new Set([...this.raid].filter((id) => { const u = W.byId.get(id); return u && u.alive; }));
-    if (this.raid.size) { const us = [...this.raid].map((id) => W.byId.get(id)); const hv = W.units.filter((h) => h.alive && h.uid === 'HV' && this.enemyOf(h) && W.visible(this.p.team, h));
+    if (this.raid.size) { const us = [...this.raid].map((id) => W.byId.get(id)); const hv = (this.visEnemies || []).filter((h) => h.alive && h.uid === 'HV');
       const c = this.centroid(us); const tgt = hv.sort((a, b) => D([a.x, a.y], c) - D([b.x, b.y], c))[0];
-      const danger = W.units.filter((e) => e.alive && this.enemyOf(e) && e.uid !== 'HV' && e.sys.length && W.visible(this.p.team, e) && D([e.x, e.y], c) < 70).reduce((a, e) => a + e.sp.cost, 0);
-      if (danger > us.reduce((a, u) => a + u.sp.cost, 0) * 1.4) { for (const u of us) { this.raid.delete(u.id); W.order(u, { type: 'move', x: this.stage[0], y: this.stage[1] }); } return; }   // outgunned: break off
+      const danger = (this.visEnemies || []).filter((e) => this.armed(e) && D([e.x, e.y], c) < 70).reduce((a, e) => a + e.sp.cost, 0);
+      if (danger > us.reduce((a, u) => a + u.sp.cost, 0) * 1.2) { for (const u of us) { this.raid.delete(u.id); W.order(u, { type: 'move', x: this.stage[0], y: this.stage[1] }); } return; }   // outgunned: break off
       if (tgt) for (const u of us) if (u.target !== tgt.id) W.order(u, { type: 'attack', target: tgt.id });
-      if (!tgt && us.every((u) => !u.path && u.target == null)) { const s = [...this.intel.harv.values()].sort((a, b) => b.t - a.t)[1]; if (s) W.orderGroup(us, { type: 'attackMove', x: s.x, y: s.y }); else for (const u of us) this.raid.delete(u.id); }
+      if (!tgt && us.every((u) => !u.path && u.target == null)) { const s = [...this.intel.harv.values()].sort((a, b) => b.t - a.t)[1]; if (s && g.t - s.t < 120) W.orderGroup(us, { type: 'attackMove', x: s.x, y: s.y }); else for (const u of us) { this.raid.delete(u.id); W.order(u, { type: 'move', x: this.stage[0], y: this.stage[1] }); } }
       return; }
-    if (g.t < 300 || g.t - this.lastRaid < 150 || !this.intel.harv.size) return;
-    const fast = g.unitsOf(this.p).filter((u) => u.uid !== 'HV' && !u.m.engineer && (u.dom === 'veh' || u.dom === 'hover') && !this.wave.has(u.id) && !this.retreating.has(u.id) && u.hp > 0.7 * u.maxHp && !u.rollOut)
-      .sort((a, b) => b.sp.speed_mps - a.sp.speed_mps).slice(0, 4);
-    if (fast.length < 3) return; const s = [...this.intel.harv.values()].sort((a, b) => b.t - a.t)[0];
+    if (g.t < 330 || g.t - this.lastRaid < 150 || !this.intel.harv.size || this.homeThreat) return;
+    const fast = g.unitsOf(this.p).filter((u) => u.uid !== 'HV' && !u.m.engineer && (u.dom === 'veh' || u.dom === 'hover') && !this.wave.has(u.id) && !this.retreating.has(u.id) && u.hp > 0.7 * u.maxHp && !u.rollOut && u.sp.speed_mps >= 9.5)
+      .sort((a, b) => b.sp.speed_mps - a.sp.speed_mps).slice(0, 3);
+    if (fast.length < 2) return; const s = [...this.intel.harv.values()].sort((a, b) => b.t - a.t)[0]; if (g.t - s.t > 200) return;
     this.lastRaid = g.t; for (const u of fast) this.raid.add(u.id); W.orderGroup(fast, { type: 'attackMove', x: s.x, y: s.y }); g.emit('ai_raid', { player: this.p.id, n: fast.length });
   }
 
-  // ── main army: defend, gather, then attack in two prongs that converge on the target ──
+  // ── main army ──
+  sendGroup(us, x, y) {   // attack-move a group, leaving alone units already headed there and set-up gunners busy shooting
+    const go = us.filter((u) => !(u.deploy === 'deployed' && u.target != null) && !(u.order.type === 'attackMove' && Math.hypot(u.order.x - x, u.order.y - y) < 25) && !(u.order.type === 'attack' && this.focusPrev.has(u.id)));
+    if (go.length) this.W.orderGroup(go, { type: 'attackMove', x, y });
+  }
   army() {
     const g = this.g, W = this.W, p = this.p;
-    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer && !u.rollOut && !this.raid.has(u.id) && !this.retreating.has(u.id) && u.id !== this.scout);
-    const threat = g.events.filter((e) => e.type === 'under_attack' && e.player === p.id && g.t - e.t < 3 && this.nearMe([e.x, e.y], 450)).pop();
-    if (threat && g.t - this.defending > 6) {
-      this.defending = g.t; let home = units.filter((u) => !this.wave.has(u.id) && u.dom !== 'ship');
-      const foes = W.units.filter((e) => e.alive && this.enemyOf(e) && e.sys.length && W.visible(p.team, e) && D([e.x, e.y], [threat.x, threat.y]) < 120).reduce((a, e) => a + e.sp.cost, 0);
-      if (threat.building && foes > home.reduce((a, u) => a + u.sp.cost, 0) * 0.8 && this.wave.size) {   // the base is losing: bring the attack home
-        this.prongs = null; this.wave.clear(); home = units.filter((u) => u.dom !== 'ship'); g.emit('ai_recall', { player: p.id }); }
-      if (home.length) W.orderGroup(home, { type: 'attackMove', x: threat.x, y: threat.y });
+    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer && !u.rollOut && !this.raid.has(u.id) && !this.retreating.has(u.id) && u.id !== this.scout && u.dom !== 'ship');
+    this.wave = new Set([...this.wave].filter((id) => { const u = W.byId.get(id); return u && u.alive && !this.retreating.has(id); }));
+    const home = units.filter((u) => !this.wave.has(u.id));
+    // threat: enemy fighters seen near the base, or anything hitting our structures / harvesters near the base
+    const foes = (this.visEnemies || []).filter((e) => this.armed(e) && e.dom !== 'air' && (D([e.x, e.y], this.home) < 420 || this.structs.some((b) => Math.hypot(b.x - e.x, b.y - e.y) < 110)));
+    const ev = g.events.filter((e) => e.type === 'under_attack' && e.player === p.id && g.t - e.t < 3 && this.nearMe([e.x, e.y], 450)).pop();
+    this.homeThreat = foes.length > 0 || !!ev;
+    if (this.homeThreat) {
+      const tv = foes.reduce((a, e) => a + this.val(e), 0), hv = home.reduce((a, u) => a + this.val(u), 0);
+      const pt = foes.length ? (() => { const f = foes.slice().sort((a, b) => D([a.x, a.y], this.home) - D([b.x, b.y], this.home)); const n = f.slice(0, 6); return this.centroid(n); })() : [ev.x, ev.y];
+      // the base is losing and the attack is out: bring it home (not when it is nearly there — the base trade favours us)
+      if (this.op && tv > hv * 1.1 + 400 && (ev && ev.building) && g.t - this.lastRecall > 60) {
+        const wv = [...this.wave].reduce((a, id) => a + this.val(W.byId.get(id)), 0); const c = this.centroid([...this.wave].map((id) => W.byId.get(id)));
+        if (D(c, this.home) < D(c, this.enemyStart) * 1.2 || wv < tv * 1.5) { this.op = null; this.wave.clear(); this.lastRecall = g.t; g.emit('ai_recall', { player: p.id }); return this.sendGroup(units, pt[0], pt[1]); }
+      }
+      this.lastDefend = g.t; this.sendGroup(home, pt[0], pt[1]);
+    } else if (g.t - this.lastDefend > 6) {
+      for (const u of home) if (u.order.type === 'idle' && u.target == null && !u.path && D([u.x, u.y], this.stage) > 45 && !(u.deploy === 'deployed')) W.order(u, { type: 'attackMove', x: this.stage[0] + ((u.id * 37) % 41 - 20), y: this.stage[1] + ((u.id * 53) % 41 - 20) });
     }
-    for (const u of units) if (u.order.type === 'idle' && !this.wave.has(u.id) && D([u.x, u.y], this.stage) > 40 && u.dom !== 'ship' && g.t - this.defending > 10) W.order(u, { type: 'attackMove', x: this.stage[0] + (Math.random() - 0.5) * 40, y: this.stage[1] + (Math.random() - 0.5) * 40 });
-    this.wave = new Set([...this.wave].filter((id) => { const u = W.byId.get(id); return u && u.alive; }));
-    if (this.prongs) return this.prongThink(units);
-    const size = Math.min(24, 8 + 2 * this.waves), pool = units.filter((u) => !this.wave.has(u.id) && u.dom !== 'ship' && u.hp > 0.6 * u.maxHp);
-    const me0 = [p.start.x, p.start.y], guardN = Math.max(3, Math.ceil(pool.length * 0.25)), ready = pool.slice().sort((a, b) => D([b.x, b.y], me0) - D([a.x, a.y], me0)).slice(0, Math.max(0, pool.length - guardN));
-    const mine = ready.reduce((a, u) => a + u.sp.cost * u.hp / u.maxHp, 0), theirs = [...this.intel.units.values()].filter((u) => u.uid !== 'HV').reduce((a, u) => a + (u.cost || 0), 0);
-    if (g.t > 270 && g.t - this.lastWave > 120 && ready.length >= size && (mine > theirs * 1.2 || g.t > 540)) {
-      const tgt = this.attackTarget(); if (!tgt) return; this.waves++; this.lastWave = g.t; for (const u of ready) this.wave.add(u.id);
-      // two prongs: a flank waypoint on either side of the straight line, a third of the way out from the target
-      const c = this.centroid(ready), dx = tgt[0] - c[0], dy = tgt[1] - c[1], L = Math.hypot(dx, dy) || 1, off = Math.min(220, L * 0.35);
-      const mid = [tgt[0] - dx / L * L * 0.3, tgt[1] - dy / L * L * 0.3], wp = [-1, 1].map((sg) => this.landPoint([mid[0] - dy / L * off * sg, mid[1] + dx / L * off * sg]));
-      const sorted = ready.slice().sort((a, b) => ((a.x - c[0]) * -dy + (a.y - c[1]) * dx) - ((b.x - c[0]) * -dy + (b.y - c[1]) * dx)), half = Math.ceil(sorted.length / 2);
-      this.prongs = { tgt, t0: g.t, stage: 'flank', groups: [{ ids: sorted.slice(0, half).map((u) => u.id), wp: wp[0] }, { ids: sorted.slice(half).map((u) => u.id), wp: wp[1] }] };
-      for (const G of this.prongs.groups) W.orderGroup(G.ids.map((id) => W.byId.get(id)), { type: 'move', x: G.wp[0], y: G.wp[1] });
+    if (this.op) return this.opThink(home);
+    // launch when the healthy home army clearly out-values the enemy army we know about
+    const pool = home.filter((u) => u.hp > 0.55 * u.maxHp && u.kind !== 'jet'), pv = pool.reduce((a, u) => a + this.val(u), 0), est = this.enemyArmyEstimate();
+    const maxed = units.length >= 50;
+    const met = this.killed >= 1500 || g.t > 660;   // hold until we've beaten their first push (or 11 game min): crossing armies lose the base
+    if (g.t > 300 && met && !this.homeThreat && g.t - this.lastWave > 20 && pool.length >= 8 && (pv > est * 1.35 + 1000 || (maxed && pv > est * 0.8))) this.launch(pool);
+  }
+  launch(ready) {
+    const g = this.g, W = this.W, p = this.p; const tgt = this.attackTarget(this.centroid(ready)); if (!tgt) return;
+    this.waves++; this.lastWave = g.t; for (const u of ready) this.wave.add(u.id);
+    const c = this.centroid(ready);
+    if (ready.length >= 14) {   // two prongs: flank points either side of the line, a third of the way out from the target
+      const dx = tgt[0] - c[0], dy = tgt[1] - c[1], L = Math.hypot(dx, dy) || 1, off = Math.min(170, L * 0.3);
+      const mid = [tgt[0] - dx * 0.35, tgt[1] - dy * 0.35], wp = [-1, 1].map((sg) => this.landPoint([mid[0] - dy / L * off * sg, mid[1] + dx / L * off * sg]));
+      const sorted = ready.slice().sort((a, b) => ((a.x - c[0]) * -dy + (a.y - c[1]) * dx) - ((b.x - c[0]) * -dy + (b.y - c[1]) * dx));
+      // mixed halves: split each unit type evenly so both prongs can fight anything
+      const A = [], B = []; const byType = {}; for (const u of sorted) (byType[u.uid] = byType[u.uid] || []).push(u);
+      for (const list of Object.values(byType)) list.forEach((u, i) => ((i < list.length / 2) ? A : B).push(u));
+      this.op = { tgt, t0: g.t, stage: 'flank', groups: [{ ids: A.map((u) => u.id), wp: wp[0] }, { ids: B.map((u) => u.id), wp: wp[1] }] };
+      for (const G of this.op.groups) W.orderGroup(G.ids.map((id) => W.byId.get(id)), { type: 'attackMove', x: G.wp[0], y: G.wp[1] });
       g.emit('ai_wave', { player: p.id, n: ready.length, prongs: 2 });
+    } else {
+      this.op = { tgt, t0: g.t, t1: g.t, stage: 'assault', groups: [{ ids: ready.map((u) => u.id) }] };
+      W.orderGroup(ready, { type: 'attackMove', x: tgt[0], y: tgt[1] }); g.emit('ai_wave', { player: p.id, n: ready.length });
     }
   }
-  prongThink() {
-    const g = this.g, W = this.W, P = this.prongs; const alive = (G) => G.ids.map((id) => W.byId.get(id)).filter((u) => u && u.alive && !this.retreating.has(u.id));
-    if (P.stage === 'flank') {   // wait for both prongs at their waypoints (or 60 game s), then close in together
-      const there = P.groups.map((G) => { const us = alive(G); return us.length ? us.filter((u) => D([u.x, u.y], G.wp) < 50).length / us.length : 1; });
-      const hit = P.groups.some((G) => alive(G).some((u) => u.lastHitT != null && g.t - u.lastHitT < 2));
-      if (there.every((f) => f > 0.6) || g.t - P.t0 > 60 || hit) { P.stage = 'assault'; P.t1 = g.t; for (const G of P.groups) { const us = alive(G); if (us.length) W.orderGroup(us, { type: 'attackMove', x: P.tgt[0], y: P.tgt[1] }); } }
+  opThink(home) {
+    const g = this.g, W = this.W, P = this.op, alive = (G) => G.ids.map((id) => W.byId.get(id)).filter((u) => u && u.alive && this.wave.has(u.id));
+    const left = P.groups.flatMap(alive); if (!left.length) { this.op = null; this.wave.clear(); return; }
+    const c = this.centroid(left), mv = left.reduce((a, u) => a + this.val(u), 0);
+    // outgunned: fall back to the staging point and rebuild
+    const danger = (this.visEnemies || []).filter((e) => this.armed(e) && D([e.x, e.y], c) < 160).reduce((a, e) => a + this.val(e), 0);
+    if (danger > mv * 1.6 && danger > 1500) { W.orderGroup(left, { type: 'move', x: this.stage[0], y: this.stage[1] }); this.op = null; this.wave.clear(); this.lastWave = g.t; return; }
+    if (P.stage === 'flank') {   // wait for both prongs at their flank points (or 50 game s, or the first shots), then close in together
+      const there = P.groups.map((G) => { const us = alive(G); return us.length ? us.filter((u) => D([u.x, u.y], G.wp) < 55).length / us.length : 1; });
+      const hit = left.some((u) => u.lastHitT != null && g.t - u.lastHitT < 2);
+      if (there.every((f) => f > 0.65) || g.t - P.t0 > 50 || hit) { P.stage = 'assault'; P.t1 = g.t; W.orderGroup(left, { type: 'attackMove', x: P.tgt[0], y: P.tgt[1] }); }
       return;
     }
-    const left = P.groups.flatMap(alive);
-    if (!left.length) { this.prongs = null; this.wave.clear(); return; }
-    if (left.every((u) => u.order.type === 'idle' || (!u.path && u.target == null))) { const nt = this.attackTarget(); if (nt) { P.tgt = nt; W.orderGroup(left, { type: 'attackMove', x: nt[0], y: nt[1] }); } else { this.prongs = null; this.wave.clear(); } }
-    if (g.t - P.t1 > 300) { this.prongs = null; this.wave.clear(); }   // the wave is spent; survivors rejoin the pool
+    // reinforcements: new units at home join the attack in batches when the base is quiet
+    if (!this.homeThreat) { const fresh = home.filter((u) => u.hp > 0.6 * u.maxHp && u.kind !== 'jet' && !(u.deploy === 'deployed' && u.target != null));
+      if (fresh.length >= 4 || (fresh.length >= 2 && left.length < 6)) { for (const u of fresh) { this.wave.add(u.id); P.groups[0].ids.push(u.id); } W.orderGroup(fresh, { type: 'attackMove', x: c[0], y: c[1] }); } }
+    // retarget: when the current target is gone (or every few seconds, to pick up anything nearer and more valuable)
+    if (!P.retT || g.t - P.retT > 4) { P.retT = g.t; const nt = this.attackTarget(c); if (nt) P.tgt = nt; }
+    const idle = left.filter((u) => u.target == null && !u.path && (u.order.type === 'idle' || u.order.type === 'attackMove' || u.order.type === 'guard'));
+    if (P.search != null) {   // a sweep point counts as looked at once the army is there (or has been trying to get there for a while)
+      if (P.searchFor !== P.search) { P.searchFor = P.search; P.searchT = g.t; }
+      if (left.some((u) => D([u.x, u.y], P.tgt) < 35) || D(c, P.tgt) < 80 || g.t - P.searchT > 60) { this.searched.set(P.search, g.t); P.retT = 0; }
+    }
+    this.sendGroup(idle.filter((u) => u.deploy !== 'deployed' || u.target == null), P.tgt[0], P.tgt[1]);
   }
-  attackTarget() {   // the enemy structure we know about nearest to us (production first); else the enemy start
-    const S = [...this.intel.structs.values()]; if (!S.length) return this.enemyStart;
-    const pr = (k) => ({ factory: 0, barracks: 1, refinery: 2, yard: 3 }[k] ?? 4); const me = [this.p.start.x, this.p.start.y];
-    const s = S.sort((a, b) => pr(a.kind) - pr(b.kind) || D([a.x, a.y], me) - D([b.x, b.y], me))[0]; return s.kind === "naval" ? this.landPoint([s.x, s.y]) : [s.x, s.y];
+  attackTarget(from) {   // the enemy structure we know about that is nearest and most important; else sweep the enemy's side
+    const S = [...this.intel.structs.values()];
+    if (S.length) { this.op && (this.op.search = null); const s = S.sort((a, b) => (D([a.x, a.y], from) + (PRIO[a.kind] ?? 200)) - (D([b.x, b.y], from) + (PRIO[b.kind] ?? 200)))[0]; return s.kind === 'naval' ? this.landPoint([s.x, s.y]) : [s.x, s.y]; }
+    const pts = this.searchPoints(), t = this.g.t; let best = null, bs = 1e9;
+    for (const q of pts) { const last = this.searched.get(q.key); if (last != null && t - last < 600) continue; const sc = D(q, from) + 0.5 * D(q, this.enemyStart) - (q.dock ? 250 : 0); if (sc < bs) { bs = sc; best = q; } }
+    if (best == null) { this.searched.clear(); return this.enemyStart; }
+    if (this.op) this.op.search = best.key; return best;
+  }
+  searchPoints() {   // public map info only: the enemy start, rings round it, dock sites and ore fields on its side
+    const es = this.enemyStart; if (this._pts && this._ptsFor === es) return this._pts; const pts = [es];
+    for (const r of [110, 200, 290]) for (let a = 0; a < 8; a++) pts.push(this.landPoint([es[0] + Math.cos(a / 8 * 6.283 + r) * r, es[1] + Math.sin(a / 8 * 6.283 + r) * r]));
+    for (const s of this.g.dockSites || []) if (D(s.water_center, es) < 700) { const q = [...this.landPoint(s.water_center)]; q.dock = true; pts.push(q); }
+    for (const d of this.g.deposits) if (D(d.pos, es) < D(d.pos, this.home) * 1.3) pts.push(this.landPoint(d.pos));
+    this._ptsFor = es; this._pts = pts.filter((q, i) => q && q[0] > 0 && !pts.slice(0, i).some((o) => D(o, q) < 40)).map((q) => { const o = [q[0], q[1]]; o.dock = q.dock; o.key = `${q[0] | 0},${q[1] | 0}`; return o; });
+    return this._pts;
   }
   landPoint(pt) { const q = this.W.nav.nearestOk('veh', Math.max(20, Math.min(this.g.T.W - 20, pt[0])), Math.max(20, Math.min(this.g.T.H - 20, pt[1])), 3, 200); return q || pt; }
-  centroid(us) { return us.length ? [us.reduce((a, u) => a + u.x, 0) / us.length, us.reduce((a, u) => a + u.y, 0) / us.length] : this.stage; }
+  centroid(us) { us = us.filter(Boolean); return us.length ? [us.reduce((a, u) => a + u.x, 0) / us.length, us.reduce((a, u) => a + u.y, 0) / us.length] : this.stage; }
 
-  // ── focus fire: every engaged group shoots one target at a time ──
+  // ── focus fire: every engaged group shoots one target at a time, without chasing beyond weapon range ──
   focusFire() {
-    const W = this.W, me = this.p.team; const mine = this.g.unitsOf(this.p).filter((u) => u.sys.length && u.uid !== 'HV' && !this.retreating.has(u.id) && u.id !== this.scout && u.dom !== 'ship');
+    const W = this.W;
+    for (const [id, prev] of this.focusPrev) {   // finished or the target ran: carry on with what it was doing
+      const u = W.byId.get(id); if (!u || !u.alive) { this.focusPrev.delete(id); continue; }
+      if (u.order.type !== 'attack') { this.focusPrev.delete(id); continue; }
+      const tg = W.byId.get(u.target), w = tg && tg.alive ? W._weaponFor(u, u.sys[0], tg, true) : null;
+      if (!w || D([u.x, u.y], [tg.x, tg.y]) > w.range_m * 1.25) { this.focusPrev.delete(id); u.queue = null; W.order(u, prev || { type: 'guard', x: u.x, y: u.y }); }
+    }
+    const foesAll = (this.visEnemies || []).filter((e) => e.alive && !e.hidden); if (!foesAll.length) return;
+    const mine = this.g.unitsOf(this.p).filter((u) => u.sys.length && u.uid !== 'HV' && !this.retreating.has(u.id) && u.id !== this.scout && u.dom !== 'ship' && u.kind !== 'jet' && u.deploy !== 'deploying' && u.deploy !== 'packing');
     const groups = []; for (const u of mine) { let G = groups.find((q) => D(q.c, [u.x, u.y]) < 45); if (!G) { G = { c: [u.x, u.y], us: [] }; groups.push(G); } G.us.push(u); }
     for (const G of groups) {
-      if (G.us.length < 2) continue; const c = this.centroid(G.us), reach = Math.max(...G.us.map((u) => Math.max(...u.sp.weapons.map((w) => w.range_m)))) + 10;
-      const foes = W.units.filter((e) => e.alive && !e.hidden && this.enemyOf(e) && W.visible(me, e) && D([e.x, e.y], c) < reach); if (!foes.length) continue;
+      if (G.us.length < 2) continue; const c = this.centroid(G.us), reach = Math.max(...G.us.map((u) => Math.max(...u.sp.weapons.map((w) => w.range_m)))) + 8;
+      const foes = foesAll.filter((e) => D([e.x, e.y], c) < reach); if (!foes.length) continue;
       let best = null, bs = -1;
-      for (const e of foes) { const arm = e.sp.armour_type || e.sp.armor; let dps = 0; for (const u of G.us) dps += this.dpsVs(u.sp, arm) * (W.dmgScale || 1); if (dps <= 0) continue;
+      for (const e of foes) { const arm = e.sp.armour_type || e.sp.armor; let dps = 0; for (const u of G.us) dps += this.dpsVs(u.sp, arm, u.uid) * (W.dmgScale || 1); if (dps <= 0) continue;
         const ttk = e.hp / dps, threat = e.sys.length ? e.sp.cost : e.uid === 'HV' ? e.sp.cost * 0.8 : 50; const sc = threat / (ttk + 2); if (sc > bs) { bs = sc; best = e; } }
       if (!best) continue;
-      for (const u of G.us) { const w = W._weaponFor(u, u.sys[0], best, true); if (!w || u.target === best.id || D([u.x, u.y], [best.x, best.y]) > w.range_m * 1.6) continue;
-        const prev = u.order.type === 'attackMove' || u.order.type === 'guard' ? { ...u.order } : u.order.type === 'attack' && u.queue && u.queue.length ? u.queue[0] : null;
-        W.order(u, { type: 'attack', target: best.id }); if (prev) u.queue = [prev]; }   // then carry on with what it was doing
+      for (const u of G.us) { if (u.target === best.id) continue; const w = W._weaponFor(u, u.sys[0], best, true); if (!w || D([u.x, u.y], [best.x, best.y]) > w.range_m * 1.05) continue;
+        if (u.deploy === 'deployed') { u.target = best.id; continue; }   // a set-up gun just swings round
+        const prev = this.focusPrev.has(u.id) ? this.focusPrev.get(u.id) : (u.order.type === 'attackMove' || u.order.type === 'guard' ? { ...u.order } : null);
+        W.order(u, { type: 'attack', target: best.id }); this.focusPrev.set(u.id, prev); }
     }
+  }
+  // ── deployable infantry (Helix MG teams): set up when an enemy is inside machine-gun range; the next move packs up ──
+  deployMicro() {
+    const W = this.W, P = this.op;
+    for (const u of this.g.unitsOf(this.p)) { if (!u.m.deploy || u.deploy !== 'mobile' || u.target == null || this.retreating.has(u.id) || u.id === this.scout) continue;
+      if (P && P.stage === 'flank' && this.wave.has(u.id)) continue;
+      const tg = W.byId.get(u.target); if (!tg || !tg.alive || tg.isBuilding) continue; const set = MECH[u.uid].deploy.deployed.map((i) => u.sp.weapons[i]).filter(Boolean);
+      const r = Math.max(0, ...set.filter((w) => this.wDps(w, tg.sp.armour_type || tg.sp.armor) > 0).map((w) => w.range_m)); if (r > 0 && D([u.x, u.y], [tg.x, tg.y]) < Math.min(30, r * 1.2)) { this.focusPrev.delete(u.id); W.order(u, { type: 'deploy' }); } }
   }
 }

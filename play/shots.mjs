@@ -1,6 +1,7 @@
 // Screenshot scenarios for reviews and before/after comparisons (headless Chromium, software GL: looks, not timings).
 //   node play/shots.mjs <scenario> [--qs=extra&query] [--out=dir]
-// Scenarios: scale (the same view at unit size 1.0× and 1.75×), repair (wrench badge, repair button, engineer close-up).
+// Scenarios: scale (the same view at unit size 1.0× and 1.75×), repair (wrench badge, repair button, engineer close-up),
+//   looks (graphics review: base, battle, close-up, wide, shore and cliff views; names carry --quality).
 import fs from 'fs'; import path from 'path'; import http from 'http'; import { spawn } from 'child_process'; import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url); const { chromium } = require('playwright');
@@ -67,6 +68,24 @@ if (SCEN === 'ore') {
     C.advance(150, 30, 0); C.lookAt(d.pos[0], d.pos[1], 75); C.advance(0.1, 60, 0); }, at);
   await snap('ore_mined');
   await ev(() => { const C = window.__game, p = C.p; C.lookAt(p.start.x, p.start.y, 300); C.advance(0.05, 60, 0); }); await snap('ore_overview');
+}
+if (SCEN === 'looks') {   // graphics review: fixed views, file names carry the quality preset (run with --quality=high / medium)
+  const Qn = opt('quality', 'high'), ids = await stage();
+  await ev(() => { const C = window.__game; C.setPace({ unit_scale: 1.75 }); C.advance(0.05, 60, 0); });
+  await ev(() => { const C = window.__game, y = C.world.byId.get(C.p.yard); C.lookAt(y.x + 6, y.y - 8, 70); C.advance(0.05, 60, 0); }); await snap(`looks_base_${Qn}`);
+  await ev(() => { const C = window.__game, y = C.world.byId.get(C.p.yard); C.lookAt(y.x + 40, y.y - 42, 165); C.advance(0.05, 60, 0); }); await snap(`looks_battle_${Qn}`);
+  await ev(() => { const C = window.__game, y = C.world.byId.get(C.p.yard); C.lookAt(y.x + 46, y.y - 46, 45); C.advance(0.05, 60, 0); }); await snap(`looks_closeup_${Qn}`);
+  await ev(() => { const C = window.__game; C.lookAt(C.T.W * 0.42, C.T.H * 0.55, 900); C.advance(0.05, 60, 0); }); await snap(`looks_wide_${Qn}`);
+  // shore: the sand cell nearest the blue base; cliff: the steepest rock-class cell nearest it
+  for (const [name, cls, d] of [['shore', 3, 90], ['cliff', 4, 90]]) {
+    await ev(([cls, d]) => { const C = window.__game, T = C.T, y0 = C.world.byId.get(C.p.yard); let best = null, bs = -1e9;
+      for (let y = 20; y < T.H - 20; y += 4) for (let x = 20; x < T.W - 20; x += 4) { if (T.surfaceAt(x, y) !== cls) continue;
+        const sl = Math.hypot(T.terrain(x + 4, y) - T.terrain(x - 4, y), T.terrain(x, y + 4) - T.terrain(x, y - 4)) / 8;
+        const s = (cls === 4 ? sl * 3 : 0) - Math.hypot(x - y0.x, y - y0.y) / 300; if (s > bs) { bs = s; best = [x, y]; } }
+      C.lookAt(best[0], best[1], d); C.advance(0.05, 60, 0); }, [cls, d]);
+    await snap(`looks_${name}_${Qn}`);
+  }
+  void ids;
 }
 if (logs.length) console.log('page errors:', logs.join(' | '));
 await browser.close(); srv.kill();

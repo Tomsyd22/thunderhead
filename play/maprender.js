@@ -18,6 +18,7 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { LAYER_TILE, LAYER_ORGANIC, generateTerrainDataAsync, makeTerrainTextures, neutralTerrainTextures } from './terraintex.js';
 
 export const TEAM_HEX = { 1: '#2B6FD6', 2: '#C8322B' };
 // Biome palettes (linear RGB) — the same values the Blender assembler uses (maps/blender/scene.py PAL), sun = (elevation°, azimuth°).
@@ -43,13 +44,15 @@ const wat = (T) => WATER[T.id] || WATER['01'];
  * Quality presets (lab.js QUALITY). Map-side values (terrLod, dist, lod1, tree shadows) are applied by setQuality();
  * renderer-side values are hints for the game, which owns the renderer:
  *   pixelRatio(devicePixelRatio), shadows (renderer.shadowMap.enabled), shadowMapSize (sun shadow map, see addMapLighting).
+ * texRes: terrain detail texture tile resolution (px, fixed at build time); terrainHQ: two-scale texture sampling, per-pixel
+ * relief normals and triplanar cliff rock; aniso: max anisotropic filtering of the terrain textures.
  * dist: per-category cull distance (m); lod1: distance (m) beyond which trees use their _lod1 mesh; terrLod: distances (m)
  * at which terrain chunks switch to every 2nd / 4th vertex.
  */
 export const MAP_QUALITY = {
-  low: { pixelRatio: (dpr) => Math.min(dpr, 1) * 0.75, shadows: false, shadowMapSize: 0, terrLod: [200, 600], dist: { tree: 5000, smallveg: 220, rock: 700, smallprop: 300, struct: 1e9 }, lod1: 160 },
-  medium: { pixelRatio: (dpr) => Math.min(dpr, 1.5), shadows: true, shadowMapSize: 1024, terrLod: [400, 1100], dist: { tree: 7000, smallveg: 450, rock: 1400, smallprop: 700, struct: 1e9 }, lod1: 320 },
-  high: { pixelRatio: (dpr) => Math.min(dpr, 2), shadows: true, shadowMapSize: 2048, terrLod: [900, 2400], dist: { tree: 12000, smallveg: 900, rock: 3000, smallprop: 1400, struct: 1e9 }, lod1: 600 },
+  low: { pixelRatio: (dpr) => Math.min(dpr, 1) * 0.75, shadows: false, shadowMapSize: 0, texRes: 256, terrainHQ: false, aniso: 2, terrLod: [200, 600], dist: { tree: 5000, smallveg: 220, rock: 700, smallprop: 300, struct: 1e9 }, lod1: 160 },
+  medium: { pixelRatio: (dpr) => Math.min(dpr, 1.5), shadows: true, shadowMapSize: 2048, texRes: 256, terrainHQ: true, aniso: 4, terrLod: [400, 1100], dist: { tree: 7000, smallveg: 450, rock: 1400, smallprop: 700, struct: 1e9 }, lod1: 320 },
+  high: { pixelRatio: (dpr) => Math.min(dpr, 2), shadows: true, shadowMapSize: 4096, texRes: 512, terrainHQ: true, aniso: 8, terrLod: [900, 2400], dist: { tree: 12000, smallveg: 900, rock: 3000, smallprop: 1400, struct: 1e9 }, lod1: 600 },
 };
 const qOf = (name) => MAP_QUALITY[name] || MAP_QUALITY.medium;
 
@@ -107,6 +110,37 @@ export function addMapLighting(THREE, scene, renderer, T, { quality = 'medium' }
   }
   setQuality(quality);
   const _t = new THREE.Vector3(), _p = new THREE.Vector3(), _d = new THREE.Vector3(), _plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -(T.waterLevel || 0)), _ray = new THREE.Ray();
+  // light-space basis of the shadow camera (it looks from the sun at its target with up = +Y): right, up, toward-sun
+  const _lr = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), sunDir).normalize(), _lu = new THREE.Vector3().crossVectors(sunDir, _lr).normalize();
+  const _g = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), _v = new THREE.Vector3(), _c = new THREE.Vector3(), _ndc = [[-1, -1], [1, -1], [1, 1], [-1, 1], [0, 1], [0, -1]];
+  const fit = { half: [0, 0], center: [0, 0], texel: 0 };
+  /**
+   * Fit the sun's shadow camera to the ground the camera sees (the view frustum's footprint on the plane through the
+   * focus, plus a margin for casters outside it), in light space. The box size is quantised in 6 % steps and its centre
+   * snapped to whole shadow-map texels, so panning does not make shadow edges crawl. Returns false when nothing fits.
+   */
+  function fitShadow(camera, target, dist) {
+    _g.constant = -target.y; let amin = 1e9, amax = -1e9, bmin = 1e9, bmax = -1e9;
+    const far = Math.min(Math.max(dist * 3, 300), 1600);
+    for (const [x, y] of _ndc) {
+      _v.set(x, y, 0.5).unproject(camera).sub(_p).normalize(); _ray.set(_p, _v);
+      if (!_ray.intersectPlane(_g, _c) || _c.distanceTo(_p) > far) _c.copy(_p).addScaledVector(_v, far);
+      const a = _c.dot(_lr), b = _c.dot(_lu);
+      // the same point lifted 20 m (tall structures standing at the view edge) also has to be inside
+      const a2 = a + 20 * _lr.y, b2 = b + 20 * _lu.y;
+      amin = Math.min(amin, a, a2); amax = Math.max(amax, a, a2); bmin = Math.min(bmin, b, b2); bmax = Math.max(bmax, b, b2);
+    }
+    const m = 12, size = q.shadowMapSize || 1024;
+    let ha = (amax - amin) / 2 + m, hb = (bmax - bmin) / 2 + m;
+    const qz = (h) => Math.pow(1.06, Math.ceil(Math.log(Math.min(Math.max(h, 40), 900)) / Math.log(1.06)));
+    ha = qz(ha); hb = qz(hb);
+    const ta = 2 * ha / size, tb = 2 * hb / size;
+    const ca = Math.round((amin + amax) / 2 / ta) * ta, cb = Math.round((bmin + bmax) / 2 / tb) * tb;
+    fit.half[0] = ha; fit.half[1] = hb; fit.center[0] = ca; fit.center[1] = cb; fit.texel = Math.max(ta, tb);
+    // centre: (ca, cb) in the light plane, at the focus' depth along the sun direction
+    _t.copy(_lr).multiplyScalar(ca).addScaledVector(_lu, cb).addScaledVector(sunDir, target.dot(sunDir));
+    return true;
+  }
   function update(camera, target) {
     camera.updateMatrixWorld();
     _p.setFromMatrixPosition(camera.matrixWorld);
@@ -115,14 +149,17 @@ export function addMapLighting(THREE, scene, renderer, T, { quality = 'medium' }
     const dist = _p.distanceTo(_t);
     sky.position.copy(_p);
     scene.fog.near = Math.max(1600, dist * 1.6); scene.fog.far = scene.fog.near + 9000;   // lab.js updateCamPlanes
-    sun.target.position.copy(_t); sun.target.updateMatrixWorld();                         // lab.js updateSun
-    sun.position.copy(_t).addScaledVector(sunDir, 2500);
     const want = q.shadows && dist < 1400;
     if (sun.castShadow !== want) sun.castShadow = want;
     if (want) {
-      const half = Math.min(Math.max(dist * 0.9, 60), 450), c = sun.shadow.camera;
-      if (Math.abs(c.right - half) > half * 0.1) { c.left = -half; c.right = half; c.top = half; c.bottom = -half; c.near = 100; c.far = 5200; c.updateProjectionMatrix(); }
+      fitShadow(camera, _d.copy(_t), dist);
+      const c = sun.shadow.camera, [ha, hb] = fit.half;
+      if (c.right !== ha || c.top !== hb) { c.left = -ha; c.right = ha; c.top = hb; c.bottom = -hb; c.near = 100; c.far = 5200; c.updateProjectionMatrix(); }
+      // biases follow the texel size: tight contact shadows up close, no acne when zoomed out
+      sun.shadow.normalBias = Math.min(Math.max(fit.texel * 1.2, 0.04), 0.5); sun.shadow.bias = -0.00025;
     }
+    sun.target.position.copy(_t); sun.target.updateMatrixWorld();                         // lab.js updateSun
+    sun.position.copy(_t).addScaledVector(sunDir, 2500);
   }
   function dispose() {
     scene.remove(hemi, sun, sun.target, sky);
@@ -130,7 +167,7 @@ export function addMapLighting(THREE, scene, renderer, T, { quality = 'medium' }
     if (scene.environment === envRT.texture) scene.environment = prevEnv || null;
     if (scene.fog && scene.fog.color.equals(HAZE)) scene.fog = prevFog || null;
   }
-  return { sun, hemi, sky, sunDir, update, setQuality, dispose };
+  return { sun, hemi, sky, sunDir, update, setQuality, dispose, shadowFit: fit };
 }
 
 // ───────────────────────────── shaders (lab.js 198–366) ─────────────────────────────
@@ -170,6 +207,7 @@ function makeUniforms(THREE) {
     uHR: { value: new THREE.Vector2(0, 50) }, uTime: { value: 0 }, uWL: { value: 0 },
     uShallow: { value: new THREE.Color() }, uDeep: { value: new THREE.Color() }, uSky: { value: new THREE.Color(0.45, 0.58, 0.70) },
     uSunDir: { value: new THREE.Vector3(0, 1, 0) },
+    uTexA: { value: null }, uTexD: { value: null },
   };
 }
 function hookUniforms(U, shader, extra = {}) {
@@ -177,44 +215,137 @@ function hookUniforms(U, shader, extra = {}) {
   Object.assign(shader.uniforms, extra);
 }
 
-function terrainMaterial(THREE, U) {
-  const m = new THREE.MeshLambertMaterial({ color: 0xffffff });
+// Terrain: lit, textured ground (MeshStandardMaterial). Surface classes (uSurf, 4 m cells) pick layers of the procedural
+// tiling texture arrays (terraintex.js); the four surrounding cells are height-blended per pixel (soft, texture-shaped
+// transitions), each layer tinted by the biome palette (uPal). HQ (medium / high): organic layers also sampled at a
+// rotated ×4.3 scale to hide the repeat, per-pixel relief normals from the height grid (independent of chunk LOD),
+// triplanar rock on cliffs. Detail normals, roughness and cavity come from the detail array. The Lab's overlays
+// (nav / grid / height ramp), shoreline darkening and the underwater tint are kept.
+// Ring banding fix: the old class-lookup jitter used fract(noise · 7.13) for its second axis, which wraps seven times
+// across every noise blob, so class borders were shifted in concentric bands; the jitter is now two independent noises.
+const TERRAIN_GLSL = /* glsl */`
+  const int LH_LAYER[16] = int[16](0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 3, 4, 3, 3);
+  const float LH_TILE[12] = float[12](${LAYER_TILE.map((x) => x.toFixed(1)).join(', ')});
+  const float LH_ORG[12] = float[12](${LAYER_ORGANIC.map((x) => x.toFixed(1)).join(', ')});
+  const float LH_SOFT = 0.42;   // height-blend softness (fraction of a cell's bilinear weight)
+  const mat2 LH_ROT = mat2(0.79864, 0.60181, -0.60181, 0.79864);   // 37°
+  float lh_rough = 1.0; vec3 lh_nW = vec3(0.0, 1.0, 0.0);
+  vec2 lh_dx = vec2(0.0), lh_dy = vec2(0.0);
+  int lh_id(float r) { return int(r * 255.0 + 0.5); }
+  vec3 lh_pal(int k) { return uPal[k > 15 ? 15 : k]; }
+  float lh_roughMul(int k) { return k == 12 ? 0.62 : 1.0; }   // wet sand
+  // one layer at world xy w: a = colour multiplier (×1 mean) + height; d = normal xy (−1…1), roughness, cavity
+  void lh_sample(int L, vec2 w, out vec4 a, out vec4 d) {
+    float t = LH_TILE[L]; vec3 uv = vec3(w / t, float(L));
+    a = textureGrad(uTexA, uv, lh_dx / t, lh_dy / t); d = textureGrad(uTexD, uv, lh_dx / t, lh_dy / t);
+    a.rgb *= 2.0; d.xy = d.xy * 2.0 - 1.0;
+#if LH_HQ == 1
+    if (LH_ORG[L] > 0.5) {
+      float tf = t * 4.3; vec3 uf = vec3(LH_ROT * w / tf + 0.37, float(L));
+      vec2 gx = LH_ROT * lh_dx / tf, gy = LH_ROT * lh_dy / tf;
+      vec4 a2 = textureGrad(uTexA, uf, gx, gy), d2 = textureGrad(uTexD, uf, gx, gy);
+      a.rgb *= mix(vec3(1.0), a2.rgb * 2.0, 0.55); a.a = mix(a.a, a2.a, 0.35);
+      d.xy += (transpose(LH_ROT) * (d2.xy * 2.0 - 1.0)) * 0.6; d.zw = mix(d.zw, d2.zw, 0.35);
+    }
+#endif
+  }
+  // rock (layer 4) projected along the dominant axes: a, d as lh_sample, d.xyz = world-space normal perturbation
+  void lh_rockTri(vec3 p, vec3 n, vec3 pdx, vec3 pdy, out vec4 a, out vec4 d) {
+    vec3 bw = pow(abs(n), vec3(4.0)); bw /= (bw.x + bw.y + bw.z);
+    float t = LH_TILE[4];
+    vec4 ax = textureGrad(uTexA, vec3(p.zy / t, 4.0), pdx.zy / t, pdy.zy / t), dx = textureGrad(uTexD, vec3(p.zy / t, 4.0), pdx.zy / t, pdy.zy / t);
+    vec4 ay = textureGrad(uTexA, vec3(vec2(p.x, -p.z) / t, 4.0), vec2(pdx.x, -pdx.z) / t, vec2(pdy.x, -pdy.z) / t), dy = textureGrad(uTexD, vec3(vec2(p.x, -p.z) / t, 4.0), vec2(pdx.x, -pdx.z) / t, vec2(pdy.x, -pdy.z) / t);
+    vec4 az = textureGrad(uTexA, vec3(p.xy / t, 4.0), pdx.xy / t, pdy.xy / t), dz = textureGrad(uTexD, vec3(p.xy / t, 4.0), pdx.xy / t, pdy.xy / t);
+    a = (ax * bw.x + ay * bw.y + az * bw.z); a.rgb *= 2.0;
+    vec2 nx = dx.xy * 2.0 - 1.0, ny = dy.xy * 2.0 - 1.0, nz = dz.xy * 2.0 - 1.0;
+    vec3 pert = vec3(0.0, nx.y, nx.x) * sign(n.x) * bw.x + vec3(ny.x, 0.0, -ny.y) * bw.y + vec3(nz.x, nz.y, 0.0) * bw.z;
+    d = vec4(pert, dx.z * bw.x + dy.z * bw.y + dz.z * bw.z); d.w = dx.w * bw.x + dy.w * bw.y + dz.w * bw.z;
+  }
+  vec3 lh_ramp(float t) {
+    vec3 a = vec3(0.13, 0.33, 0.27), b = vec3(0.30, 0.52, 0.30), c = vec3(0.72, 0.70, 0.42), d = vec3(0.78, 0.53, 0.32), e = vec3(0.56, 0.36, 0.28), f = vec3(0.93, 0.91, 0.88);
+    if (t < 0.2) return mix(a, b, t / 0.2); if (t < 0.45) return mix(b, c, (t - 0.2) / 0.25); if (t < 0.7) return mix(c, d, (t - 0.45) / 0.25);
+    if (t < 0.88) return mix(d, e, (t - 0.7) / 0.18); return mix(e, f, (t - 0.88) / 0.12); }
+  vec3 lh_terrain(vec2 w, float h, vec3 nGeo) {
+    lh_dx = dFdx(w); lh_dy = dFdy(w);
+    vec3 pdx = dFdx(vW), pdy = dFdy(vW);
+    vec3 nG = nGeo;
+#if LH_HQ == 1
+    { // per-pixel relief normal from the height grid (the far chunks' LOD meshes drop most of it)
+      vec2 uvh = (w / uCell + 0.5) / uN; float e = 1.0 / uN;
+      float hl = texture(uH, uvh - vec2(e, 0.0)).r, hr = texture(uH, uvh + vec2(e, 0.0)).r, hd = texture(uH, uvh - vec2(0.0, e)).r, hu = texture(uH, uvh + vec2(0.0, e)).r;
+      nG = normalize(vec3(-(hr - hl) / (2.0 * uCell), 1.0, (hu - hd) / (2.0 * uCell)));
+    }
+#endif
+    // surface classes of the four surrounding cells (jittered lookup breaks up the 4 m grid)
+    vec2 jit = (vec2(lh_noise(w * 0.09), lh_noise(w * 0.09 + vec2(31.7, 17.3))) - 0.5) * 1.3
+             + (vec2(lh_noise(w * 0.31 + 7.3), lh_noise(w * 0.31 + vec2(3.1, 41.9))) - 0.5) * 0.45;
+    vec2 p = w / uCell + jit;
+    vec2 i0 = clamp(floor(p), vec2(0.0), vec2(uN - 2.0)); vec2 f = clamp(p - i0, 0.0, 1.0);
+    ivec2 ia = ivec2(i0);
+    int K[4] = int[4](lh_id(texelFetch(uSurf, ia, 0).r), lh_id(texelFetch(uSurf, ia + ivec2(1, 0), 0).r), lh_id(texelFetch(uSurf, ia + ivec2(0, 1), 0).r), lh_id(texelFetch(uSurf, ia + ivec2(1, 1), 0).r));
+    float B[4] = float[4]((1.0 - f.x) * (1.0 - f.y), f.x * (1.0 - f.y), (1.0 - f.x) * f.y, f.x * f.y);
+    for (int i = 1; i < 4; i++) for (int j = 0; j < 3; j++) { if (j < i && B[j] > 0.0 && K[i] == K[j]) { B[j] += B[i]; B[i] = 0.0; break; } }
+    vec4 SA[4], SD[4]; float S[4]; float mx = -1.0;
+    for (int i = 0; i < 4; i++) {
+      SA[i] = vec4(1.0, 1.0, 1.0, 0.5); SD[i] = vec4(0.0, 0.0, 0.9, 1.0); S[i] = -1.0;
+      if (B[i] > 0.0) { lh_sample(LH_LAYER[min(K[i], 15)], w, SA[i], SD[i]); S[i] = B[i] + 0.3 * SA[i].a; mx = max(mx, S[i]); }
+    }
+    vec3 c = vec3(0.0); vec2 nT = vec2(0.0); float rough = 0.0, cav = 0.0, veg = 0.0, farm = 0.0, rockC = 0.0, wsum = 0.0;
+    for (int i = 0; i < 4; i++) {
+      float wt = max(S[i] - mx + LH_SOFT, 0.0);
+      if (wt <= 0.0) continue;
+      int k = K[i];
+      c += wt * lh_pal(k) * SA[i].rgb; nT += wt * SD[i].xy; rough += wt * SD[i].z * lh_roughMul(k); cav += wt * SD[i].w;
+      veg += wt * float(k == 0 || k == 1 || k == 9 || k == 11); farm += wt * float(k == 9); rockC += wt * float(k == 4 || k == 13);
+      wsum += wt;
+    }
+    float iw = 1.0 / max(wsum, 1e-4); c *= iw; nT *= iw; rough *= iw; cav *= iw; veg *= iw; farm *= iw; rockC *= iw;
+    // far away the tiles' own variation turns into a visible repeat: fade it (and the detail normals) toward the plain tint
+    float far = smoothstep(220.0, 900.0, length(vW - cameraPosition));
+    vec3 tint = vec3(0.0); for (int i = 0; i < 4; i++) { float wt = max(S[i] - mx + LH_SOFT, 0.0); tint += wt * lh_pal(K[i]); }
+    c = mix(c, tint * iw, far * 0.8); nT *= 1.0 - far * 0.7; cav = mix(cav, 1.0, far * 0.7);
+    // macro variation (broad, low frequency) and the Lab's dry patches on vegetation
+    float n1 = lh_fbm(w * 0.013), n2 = lh_noise(w * 0.35), n0 = lh_noise(w * 0.0045 + 5.0);
+    c *= (0.86 + 0.24 * n1 + 0.08 * (n2 - 0.5)) * (0.93 + 0.14 * lh_noise(w * 0.041 + 3.7)) * (0.95 + 0.10 * lh_noise(w * 0.13 + 9.1));
+    c = mix(c, uPal[14] * (0.8 + 0.4 * n2), veg * smoothstep(0.52, 0.80, n0 * 0.7 + n1 * 0.45) * 0.45);
+    c *= 1.0 - farm * 0.16 * smoothstep(0.35, 0.65, abs(fract(w.x / 3.2) - 0.5) * 2.0);
+    vec3 pert = vec3(nT.x, 0.0, -nT.y);
+    // rock on steep ground
+    float sl = 1.0 - clamp(nG.y, 0.0, 1.0);
+    float rk = max(smoothstep(0.17, 0.40, sl) * 0.85 * smoothstep(0.0, 0.8, h - uWL), rockC * smoothstep(0.06, 0.22, sl));
+    if (rk > 0.002) {
+      vec4 ra, rd;
+#if LH_HQ == 1
+      lh_rockTri(vW, nG, pdx, pdy, ra, rd);
+#else
+      lh_sample(4, w, ra, rd); rd.xyz = vec3(rd.x, 0.0, -rd.y);
+#endif
+      c = mix(c, uPal[4] * ra.rgb * (0.85 + 0.3 * n2), rk);
+      pert = mix(pert, rd.xyz * 1.4, rk); rough = mix(rough, rd.z, rk) ; cav = mix(cav, rd.w, rk);
+    }
+    c *= mix(1.0, cav, 0.7);
+    c *= 1.0 - 0.06 * smoothstep(0.05, 0.3, sl);
+    // shoreline: wet, darker, glossier band at the waterline (smooth both ways: no hard contour under the water)
+    float hw = h - uWL, wet = (1.0 - smoothstep(-0.2, 1.3, hw)) * smoothstep(-1.8, -0.4, hw);
+    c *= 1.0 - 0.30 * wet; rough = mix(rough, rough * 0.45, wet);
+    c *= mix(1.0, 0.45, smoothstep(0.0, 18.0, -hw));
+    lh_rough = clamp(rough, 0.08, 1.0);
+    lh_nW = normalize(nG + pert);
+    return c;
+  }
+`;
+function terrainMaterial(THREE, U, hq) {
+  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, metalness: 0, envMapIntensity: 0.04 });
+  m.defines = Object.assign(m.defines || {}, { LH_HQ: hq ? 1 : 0 });
   m.onBeforeCompile = (sh) => {
-    hookUniforms(U, sh, { uSurf: U.uSurf, uN: U.uN, uPal: U.uPal, uHeightOn: U.uHeightOn, uHR: U.uHR });
+    hookUniforms(U, sh, { uSurf: U.uSurf, uN: U.uN, uPal: U.uPal, uHeightOn: U.uHeightOn, uHR: U.uHR, uH: U.uH, uTexA: U.uTexA, uTexD: U.uTexD, uWL: U.uWL });
     sh.vertexShader = 'varying vec3 vW; varying vec3 vWN;\n' + sh.vertexShader.replace('#include <begin_vertex>',
       '#include <begin_vertex>\n vW = (modelMatrix * vec4(transformed, 1.0)).xyz; vWN = normalize(mat3(modelMatrix) * objectNormal);');
-    sh.fragmentShader = 'varying vec3 vW; varying vec3 vWN;\nuniform sampler2D uSurf; uniform float uN; uniform vec3 uPal[16]; uniform float uHeightOn; uniform vec2 uHR;\n' + GLSL_COMMON + /* glsl */`
-      int lh_id(float r) { return int(r * 255.0 + 0.5); }
-      vec3 lh_pal(int k) { return uPal[k > 15 ? 15 : k]; }
-      float lh_isveg(int k) { return (k == 0 || k == 1 || k == 9 || k == 11) ? 1.0 : 0.0; }
-      vec3 lh_ramp(float t) {
-        vec3 a = vec3(0.13, 0.33, 0.27), b = vec3(0.30, 0.52, 0.30), c = vec3(0.72, 0.70, 0.42), d = vec3(0.78, 0.53, 0.32), e = vec3(0.56, 0.36, 0.28), f = vec3(0.93, 0.91, 0.88);
-        if (t < 0.2) return mix(a, b, t / 0.2); if (t < 0.45) return mix(b, c, (t - 0.2) / 0.25); if (t < 0.7) return mix(c, d, (t - 0.45) / 0.25);
-        if (t < 0.88) return mix(d, e, (t - 0.7) / 0.18); return mix(e, f, (t - 0.88) / 0.12); }
-      vec3 lh_terrain(vec2 w, float h, vec3 nrm) {
-        float nj = lh_noise(w * 0.09);
-        vec2 jit = (vec2(nj, fract(nj * 7.13 + 0.37)) - 0.5) * 1.3;
-        vec2 p = w / uCell + jit;
-        vec2 i0 = clamp(floor(p), vec2(0.0), vec2(uN - 2.0)); vec2 f = clamp(p - i0, 0.0, 1.0);
-        ivec2 a = ivec2(i0);
-        int k00 = lh_id(texelFetch(uSurf, a, 0).r), k10 = lh_id(texelFetch(uSurf, a + ivec2(1, 0), 0).r);
-        int k01 = lh_id(texelFetch(uSurf, a + ivec2(0, 1), 0).r), k11 = lh_id(texelFetch(uSurf, a + ivec2(1, 1), 0).r);
-        vec3 c = mix(mix(lh_pal(k00), lh_pal(k10), f.x), mix(lh_pal(k01), lh_pal(k11), f.x), f.y);
-        float veg = mix(mix(lh_isveg(k00), lh_isveg(k10), f.x), mix(lh_isveg(k01), lh_isveg(k11), f.x), f.y);
-        float farm = mix(mix(float(k00 == 9), float(k10 == 9), f.x), mix(float(k01 == 9), float(k11 == 9), f.x), f.y);
-        float n1 = lh_fbm(w * 0.013), n2 = lh_noise(w * 0.35), n3 = lh_noise(w * 1.9), n0 = lh_noise(w * 0.0045 + 5.0);
-        c *= 0.84 + 0.26 * n1 + 0.10 * (n2 - 0.5) + 0.06 * (n3 - 0.5);
-        c = mix(c, uPal[14], veg * smoothstep(0.52, 0.80, n0 * 0.7 + n1 * 0.45) * 0.5);
-        c *= 1.0 - farm * 0.16 * smoothstep(0.35, 0.65, abs(fract(w.x / 3.2) - 0.5) * 2.0);
-        float sl = 1.0 - clamp(nrm.y, 0.0, 1.0);
-        c = mix(c, uPal[4] * (0.78 + 0.32 * n2), smoothstep(0.17, 0.40, sl) * 0.8 * step(0.4, h));
-        c *= 1.0 - 0.10 * smoothstep(0.05, 0.3, sl);
-        c *= 1.0 - 0.32 * (1.0 - smoothstep(-0.2, 1.3, h)) * step(-0.6, h);
-        c *= mix(1.0, 0.45, smoothstep(0.0, 18.0, -h));
-        return c;
-      }
-    ` + sh.fragmentShader
+    sh.fragmentShader = 'varying vec3 vW; varying vec3 vWN;\nuniform sampler2D uSurf; uniform float uN; uniform vec3 uPal[16]; uniform float uHeightOn; uniform vec2 uHR;\n' +
+      'uniform sampler2D uH; uniform sampler2DArray uTexA; uniform sampler2DArray uTexD; uniform float uWL;\n' + GLSL_COMMON + TERRAIN_GLSL + sh.fragmentShader
       .replace('vec4 diffuseColor = vec4( diffuse, opacity );', 'vec4 diffuseColor = vec4( lh_terrain(vec2(vW.x, -vW.z), vW.y, normalize(vWN)), opacity );')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n roughnessFactor = lh_rough;')
+      .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n normal = normalize((viewMatrix * vec4(lh_nW, 0.0)).xyz);')
       .replace('#include <dithering_fragment>', /* glsl */`#include <dithering_fragment>
         {
           vec2 w = vec2(vW.x, -vW.z); vec3 col = gl_FragColor.rgb;
@@ -228,7 +359,7 @@ function terrainMaterial(THREE, U) {
           gl_FragColor.rgb = lh_overlay(col, w);
         }`);
   };
-  m.customProgramCacheKey = () => 'lab-terrain-v1';
+  m.customProgramCacheKey = () => 'lab-terrain-v2';
   return m;
 }
 
@@ -484,6 +615,9 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
   let qName = MAP_QUALITY[quality] ? quality : 'medium', Q = qOf(qName);
   const { n, g, nn, S } = T, H = T.h, wl = T.waterLevel || 0;
   const U = makeUniforms(THREE);
+  // terrain detail textures: generated in a worker while the models download; neutral stand-ins until then
+  const texJob = generateTerrainDataAsync(Q.texRes || 256);
+  { const nt = neutralTerrainTextures(THREE); U.uTexA.value = nt.albedo; U.uTexD.value = nt.detail; }
   const owned = { geos: new Set(), mats: new Set(), tex: new Set() };   // everything disposed by dispose()
 
   const root = new THREE.Group(); root.name = 'map';
@@ -523,6 +657,7 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
 
   // ── terrain (lab.js buildTerrain + chunkGeo): 32-cell chunks, 3 LOD levels (every 1st / 2nd / 4th vertex) with skirts ──
   const terrainMesh = new THREE.Group(); terrainMesh.name = 'map_terrain_chunks';
+  let terrainMat = null;
   const terrainLods = [];
   {
     const CH = 32;
@@ -533,7 +668,7 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
       const l = Math.hypot(dx, 1, dy), o = (j * n + i) * 3;
       NRM[o] = -dx / l; NRM[o + 1] = 1 / l; NRM[o + 2] = dy / l;
     }
-    const mat = terrainMaterial(THREE, U); owned.mats.add(mat);
+    const mat = terrainMat = terrainMaterial(THREE, U, Q.terrainHQ); owned.mats.add(mat);
     const nc = Math.ceil((n - 1) / CH);
     for (let cj = 0; cj < nc; cj++) for (let ci = 0; ci < nc; ci++) {
       const i0 = ci * CH, i1 = Math.min(i0 + CH, n - 1), j0 = cj * CH, j1 = Math.min(j0 + CH, n - 1);
@@ -835,6 +970,13 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
     return total;
   }
 
+  // terrain textures (usually long done by now)
+  let texInfo = null;
+  { const tt0 = performance.now(), d = await texJob, waitMs = performance.now() - tt0;
+    const old = [U.uTexA.value, U.uTexD.value], aniso = Math.min(Q.aniso || 1, renderer.capabilities.getMaxAnisotropy());
+    const tx = makeTerrainTextures(THREE, d, aniso); U.uTexA.value = tx.albedo; U.uTexD.value = tx.detail; old.forEach((t) => t.dispose());
+    owned.tex.add(tx.albedo); owned.tex.add(tx.detail);
+    texInfo = { res: d.R, layers: d.L, genMs: d.ms, worker: d.worker, waitMs: Math.round(waitMs) }; }
   progress('minimap', 0.96);
   const minimapCanvas = drawMinimapBase(T, minimapSize, minimapMarks);
 
@@ -845,6 +987,7 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
   function setQuality(name) {
     qName = MAP_QUALITY[name] ? name : 'medium'; Q = qOf(qName);
     for (const lod of terrainLods) { lod.levels[1].distance = Q.terrLod[0]; lod.levels[2].distance = Q.terrLod[1]; }
+    if (terrainMat && terrainMat.defines.LH_HQ !== (Q.terrainHQ ? 1 : 0)) { terrainMat.defines.LH_HQ = Q.terrainHQ ? 1 : 0; terrainMat.needsUpdate = true; }
     for (const s of sets) setShadows(s);
     dirty = true;
   }
@@ -883,6 +1026,7 @@ export async function buildMapView({ THREE, scene, renderer, T, assetBase = 'ass
       terrain: { chunks: terrainLods.length, levels: terrainLods.map((l) => l.getCurrentLevel()).reduce((a, k) => { a[k] = (a[k] || 0) + 1; return a; }, {}) },
       assets: { glbs: glbs.size, missing, failed: { ...failed }, assetsMs: Math.round(assetsMs) },
       structures: structNotes,
+      terrainTextures: texInfo,
       buildMs: Math.round(buildMs),
     };
   }

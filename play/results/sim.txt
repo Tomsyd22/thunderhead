@@ -1,7 +1,7 @@
 ✓ kit footprints re-opened on both pads — 12 kit buildings, 644 cells
-✓ foot path base to base — 1 waypoints, 1351 m, 13.5 ms
-✓ veh path base to base — 9 waypoints, 1357 m, 10.5 ms
-✓ hover path base to base — 8 waypoints, 1361 m, 10.2 ms
+✓ foot path base to base — 1 waypoints, 1351 m, 28.4 ms
+✓ veh path base to base — 9 waypoints, 1357 m, 20.2 ms
+✓ hover path base to base — 8 waypoints, 1361 m, 6.4 ms
 ✓ dock approach B1 (420,1479) is vehicle ground
 ✓ dock approach B1 (483,1479) is vehicle ground
 ✓ dock approach R1 (1381,321) is vehicle ground
@@ -19,7 +19,7 @@
 ✓ nearest-field round trip in the 20–40 s band (player-placed refinery) — 24.4
 ✓ infantry trains and leaves through the barracks door — 3 ready, 3 at the door
 ✓ AI match runs without exceptions — 12.0 game min
-✓ average tick cost leaves room for rendering — avg 0.15 ms/tick, worst 36.1 ms (1 ticks > 20 ms: 1.0s 36ms); per-frame sim budget ≈ 16.7 ms
+✓ average tick cost leaves room for rendering — avg 0.52 ms/tick, worst 341.0 ms (90 ticks > 20 ms: 1.0s 128ms, 5.0s 28ms, 5.4s 28ms, 235.9s 46ms); per-frame sim budget ≈ 16.7 ms
 ✓ both AIs harvest — cycles 22 / 17
 ✓ AI compact builds a base — power refinery barracks factory radar airpad naval
 ✓ AI lattice builds a base — power refinery barracks factory radar airpad naval

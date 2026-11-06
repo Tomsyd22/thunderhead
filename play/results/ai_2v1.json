@@ -1,0 +1,68 @@
+{
+ "Normal vs 2 Easy": [
+  {
+   "k": 0,
+   "map": "02",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "compact",
+    "lattice+helix"
+   ],
+   "pads": [
+    "B1",
+    "R1+R2"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 42.77333333330539,
+   "val": [
+    42077,
+    14814
+   ],
+   "income": [
+    56462,
+    35500
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 65.773
+  }
+ ],
+ "Hard vs 2 Normal": [
+  {
+   "k": 0,
+   "map": "02",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "lattice+helix"
+   ],
+   "pads": [
+    "B1",
+    "R1+R2"
+   ],
+   "winner": 0,
+   "decided": false,
+   "t": 59.99999999995639,
+   "val": [
+    76442,
+    58252
+   ],
+   "income": [
+    96603,
+    108703
+   ],
+   "raids": 0,
+   "prongs": 2,
+   "honest": true,
+   "wall": 255.301
+  }
+ ]
+}
