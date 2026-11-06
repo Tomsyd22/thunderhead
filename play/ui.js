@@ -172,7 +172,7 @@ export class UI {
     $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1, unit_scale: 1.75, regrow: 1 }); $('#setUs').value = 1.75; $('#setRegrow').value = 1; gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
     for (const [id, bus] of [['setVol', 'master'], ['setVoice', 'voice']]) { const s = $('#' + id); s.oninput = () => { if (C.audio) try { C.audio.setVolume(bus, +s.value); if (bus === 'voice') C.audio.setVolume('announcer', +s.value); } catch (e) { /* optional */ } }; }
     $('#setEdge').onchange = (e) => { C.rcam.edge = e.target.checked; };
-    $('#setQuality').value = C.quality; $('#setQuality').onchange = (e) => { C.quality = e.target.value; try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, quality: C.quality })); } catch (err) { /* ignore */ } this.toast('Graphics quality applies after a reload'); };
+    $('#setQuality').value = C.quality; $('#setQuality').onchange = (e) => { C.quality = e.target.value; C.saved = Object.assign({}, C.saved || {}, { quality: C.quality }); try { localStorage.setItem('thunderhead.settings', JSON.stringify(C.saved)); } catch (err) { /* ignore */ } this.toast('Graphics quality applies after a reload'); };
     $('#setClose').onclick = () => { $('#settings').hidden = true; };
     this.paceChanged();
   }

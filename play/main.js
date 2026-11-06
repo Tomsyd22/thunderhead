@@ -14,6 +14,7 @@ import { Input } from './input.js';
 import { UI } from './ui.js';
 import { makeCameos } from './cameos.js';
 import { OreView } from './orerender.js';
+import { installBench } from './bench.js';
 import { createPost, postWanted } from './post.js';
 
 const Q = new URLSearchParams(location.search);
@@ -63,6 +64,7 @@ async function boot() {
   C.rcam = new RTSCamera(camera, T); C.rcam.viewRight = 268;
   addEventListener('resize', resize); resize();
   $('#loading').hidden = true; C.ready = true;
+  C.startMatch = (o) => { $('#start').hidden = true; start(o); }; installBench(C);
   UI.startScreen(C, start);
   if (Q.has('autostart')) start({ faction: Q.get('faction') || 'compact', ai: Q.get('ai') || 'lattice', level: Q.get('level') || 'normal', spectate: Q.has('spectate') });
   C.last = performance.now(); requestAnimationFrame(frame);
