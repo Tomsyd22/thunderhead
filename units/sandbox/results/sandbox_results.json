@@ -1,0 +1,856 @@
+{
+ "date": "2026-11-06T11:59:09.530Z",
+ "renderer": "headless Chromium, ANGLE + SwiftShader (software rasteriser, 2 vCPU) — real-GPU frame rates will differ",
+ "scenarios": {
+  "tour": {
+   "events": {
+    "attack_run": 1,
+    "bomb": 2,
+    "explosion": 2,
+    "damage": 11,
+    "arrive": 14,
+    "fire": 10,
+    "impact": 9,
+    "landing": 2,
+    "landed": 2,
+    "rearmed": 1,
+    "takeoff": 1,
+    "death": 1,
+    "proj_end": 1
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 40170,
+    "worst": 0.7302669241141101,
+    "list": []
+   },
+   "feet": {
+    "stances": 493,
+    "worstCm": 0.24,
+    "meanCm": 0.07,
+    "list": []
+   },
+   "tracks": {
+    "samples": 5750,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.7,
+    "p95": 1,
+    "max": 4.9
+   },
+   "simMs": 0.062,
+   "units": 16,
+   "alive": [
+    "H01:0:125",
+    "H02:0:110",
+    "A01:0:130",
+    "A02:0:115",
+    "T01:0:100",
+    "T02:0:100",
+    "H03:0:950",
+    "A03:0:700",
+    "T03:0:600",
+    "H05:0:1150",
+    "A05:0:1000",
+    "T05:0:700",
+    "H04:0:650",
+    "T04:0:230",
+    "A04:0:550",
+    "T04:0:230"
+   ],
+   "errors": [],
+   "simT": 40,
+   "stats": {
+    "shots": 12,
+    "hits": 11,
+    "misses": 0,
+    "kills": 1
+   }
+  },
+  "battle": {
+   "events": {
+    "fire": 444,
+    "charge": 27,
+    "aim": 121,
+    "damage": 440,
+    "impact": 440,
+    "death": 20,
+    "proj_end": 4,
+    "remove": 11,
+    "arrive": 13,
+    "promote": 8
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 55687,
+    "worst": 0.6745002274593199,
+    "list": []
+   },
+   "feet": {
+    "stances": 836,
+    "worstCm": 0.21,
+    "meanCm": 0.05,
+    "list": []
+   },
+   "tracks": {
+    "samples": 10696,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 1,
+    "p95": 3.7,
+    "max": 71.6
+   },
+   "simMs": 0.076,
+   "units": 7,
+   "alive": [
+    "H01:0:138",
+    "H01:0:138",
+    "H02:0:105",
+    "A01:0:66",
+    "T01:0:110",
+    "T01:1:100",
+    "A04:0:550"
+   ],
+   "errors": [],
+   "simT": 85,
+   "stats": {
+    "shots": 456,
+    "hits": 451,
+    "misses": 0,
+    "kills": 21
+   }
+  },
+  "sortie": {
+   "events": {
+    "attack_run": 2,
+    "bomb": 4,
+    "explosion": 4,
+    "damage": 4,
+    "landing": 1,
+    "landed": 1,
+    "rearmed": 1,
+    "takeoff": 1
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 11995,
+    "worst": 0.7302669241141163,
+    "list": []
+   },
+   "feet": {
+    "stances": 0,
+    "worstCm": 0,
+    "meanCm": 0,
+    "list": []
+   },
+   "tracks": {
+    "samples": 0,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.1,
+    "p95": 0.3,
+    "max": 16.2
+   },
+   "simMs": 0.017,
+   "units": 5,
+   "alive": [
+    "A04:0:550",
+    "H03:1:230",
+    "H03:1:950",
+    "H01:1:125",
+    "T04:0:230"
+   ],
+   "errors": [],
+   "simT": 125,
+   "stats": {
+    "shots": 460,
+    "hits": 455,
+    "misses": 0,
+    "kills": 21
+   }
+  },
+  "emp": {
+   "events": {
+    "scan_wind": 1,
+    "scan": 1,
+    "aim": 1,
+    "charge": 4,
+    "fire": 4,
+    "emp_wind": 1,
+    "damage": 4,
+    "impact": 4,
+    "emp": 1,
+    "emp_end": 1
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 3356,
+    "worst": 0.4939177876308156,
+    "list": []
+   },
+   "feet": {
+    "stances": 0,
+    "worstCm": 0,
+    "meanCm": 0,
+    "list": []
+   },
+   "tracks": {
+    "samples": 1676,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.1,
+    "p95": 0.3,
+    "max": 12.1
+   },
+   "simMs": 0.04,
+   "units": 4,
+   "alive": [
+    "T02:0:100",
+    "H03:1:750",
+    "T04:0:230",
+    "A03:1:700"
+   ],
+   "errors": [],
+   "simT": 139,
+   "stats": {
+    "shots": 464,
+    "hits": 459,
+    "misses": 0,
+    "kills": 21
+   }
+  },
+  "garrison": {
+   "events": {
+    "garrison_enter": 4,
+    "garrisoned": 4,
+    "aim": 11,
+    "fire": 27,
+    "damage": 27,
+    "impact": 27,
+    "death": 3,
+    "arrive": 2,
+    "promote": 1,
+    "remove": 3
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 3254,
+    "worst": 0.4052879529063287,
+    "list": []
+   },
+   "feet": {
+    "stances": 102,
+    "worstCm": 0.02,
+    "meanCm": 0.02,
+    "list": []
+   },
+   "tracks": {
+    "samples": 0,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.3,
+    "p95": 0.8,
+    "max": 12.6
+   },
+   "simMs": 0.083,
+   "units": 4,
+   "alive": [
+    "H01:0:125",
+    "A01:0:130",
+    "T01:0:100",
+    "H01:0:138"
+   ],
+   "errors": [],
+   "simT": 161,
+   "stats": {
+    "shots": 491,
+    "hits": 486,
+    "misses": 0,
+    "kills": 24
+   }
+  },
+  "deploy": {
+   "events": {
+    "deploy": 3,
+    "aim": 12,
+    "fire": 40,
+    "damage": 40,
+    "impact": 40,
+    "arrive": 3,
+    "death": 2
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 9242,
+    "worst": 0.6893862243205566,
+    "list": []
+   },
+   "feet": {
+    "stances": 104,
+    "worstCm": 0.02,
+    "meanCm": 0.02,
+    "list": []
+   },
+   "tracks": {
+    "samples": 2076,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.3,
+    "p95": 0.6,
+    "max": 8.3
+   },
+   "simMs": 0.083,
+   "units": 6,
+   "alive": [
+    "A01:0:118",
+    "A02:0:115",
+    "H01:1:125",
+    "H01:1:125",
+    "H03:1:918",
+    "H04:1:275"
+   ],
+   "errors": [],
+   "simT": 181,
+   "stats": {
+    "shots": 531,
+    "hits": 526,
+    "misses": 0,
+    "kills": 26
+   }
+  },
+  "naval": {
+   "events": {
+    "charge": 9,
+    "fire": 46,
+    "damage": 44,
+    "impact": 44,
+    "arrive": 7,
+    "death": 2,
+    "proj_end": 2,
+    "remove": 2
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 10559,
+    "worst": 0.6249441851327482,
+    "list": []
+   },
+   "feet": {
+    "stances": 0,
+    "worstCm": 0,
+    "meanCm": 0,
+    "list": []
+   },
+   "tracks": {
+    "samples": 0,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0.4,
+    "p95": 0.7,
+    "max": 11.1
+   },
+   "simMs": 0.029,
+   "units": 3,
+   "alive": [
+    "A05:0:1000",
+    "H05:1:750",
+    "H04:1:155"
+   ],
+   "errors": [],
+   "simT": 221,
+   "stats": {
+    "shots": 577,
+    "hits": 570,
+    "misses": 0,
+    "kills": 28
+   }
+  },
+  "economy": {
+   "events": {
+    "arrive": 2,
+    "harvest_load": 1,
+    "harvest_unload": 1,
+    "harvest_cycle": 1
+   },
+   "smooth": {
+    "jumps": 0,
+    "samples": 3599,
+    "worst": 0.5954176555847586,
+    "list": []
+   },
+   "feet": {
+    "stances": 0,
+    "worstCm": 0,
+    "meanCm": 0,
+    "list": []
+   },
+   "tracks": {
+    "samples": 0,
+    "worstM": 0
+   },
+   "lod": false,
+   "frameJsMs": {
+    "p50": 0,
+    "p95": 0.1,
+    "max": 5
+   },
+   "simMs": 0.009,
+   "units": 1,
+   "alive": [
+    "HV:0:1200"
+   ],
+   "errors": [],
+   "simT": 281,
+   "stats": {
+    "shots": 577,
+    "hits": 570,
+    "misses": 0,
+    "kills": 28
+   }
+  }
+ },
+ "console": [
+  "error: Failed to load resource: net::ERR_FAILED",
+  "error: Failed to load resource: the server responded with a status of 404 (File not found)"
+ ],
+ "loadSeconds": 4.777,
+ "bootErrors": [],
+ "cost": {
+  "units": 19,
+  "p50": 1.2,
+  "p95": 5.2,
+  "p99": 9.1,
+  "max": 21,
+  "perFrame": {
+   "sim": 0.175,
+   "views": 1.367,
+   "infantry": 1.133,
+   "fx": 0.11
+  }
+ },
+ "probes": [
+  {
+   "name": "tank climbing the 20° ramp pitches nose-up (max 21.1°)",
+   "ok": true,
+   "val": 21.060518747743956
+  },
+  {
+   "name": "H03 turret turned toward a target on its left (turret 67.6°, view yaw 67.6°)",
+   "ok": true,
+   "val": 1.179988116332673
+  },
+  {
+   "name": "H03 muzzle socket points at the target (cos 1.0000)",
+   "ok": true,
+   "val": 0.9999908408793297
+  },
+  {
+   "name": "sim muzzle ≈ model muzzle (0.12 m)",
+   "ok": true,
+   "val": 0
+  },
+  {
+   "name": "H04 at 19.0 m/s pitches nose-down (-8.4°, max 12°)",
+   "ok": true,
+   "val": -8.404277378971306
+  },
+  {
+   "name": "H04 main rotor turning",
+   "ok": true,
+   "val": 0
+  },
+  {
+   "name": "H04 banks into a left turn (right side up, max 12.2°, limit 15°)",
+   "ok": true,
+   "val": 12.16113797220133
+  },
+  {
+   "name": "H05 leans outward in a left turn (min roll -4.50°)",
+   "ok": true,
+   "val": -4.498843634325925
+  },
+  {
+   "name": "T03 banks into a left turn (5.00°) within ±5° (|max| 5.00°)",
+   "ok": true,
+   "val": 4.999944398806676
+  },
+  {
+   "name": "A04 bank ≤ 55° (max 24.6°), gear stowed in the attack run (true)",
+   "ok": true,
+   "val": 24.57417081727306
+  },
+  {
+   "name": "A05 cell lid opens upward before launch (free edge rises to 81°)",
+   "ok": true,
+   "val": 0.9864783122167557
+  },
+  {
+   "name": "H05 barrel recoils 0.180 m (spec 0.18 m)",
+   "ok": true,
+   "val": 0.1795675801749203
+  }
+ ],
+ "pace": {
+  "file": {
+   "game_speed": 2.4,
+   "harvester_speed_ratio": 1.25,
+   "harvester": {
+    "capacity_bails": 20,
+    "load_s": 10,
+    "unload_s": 1.5,
+    "accel_mps2": 3,
+    "brake_mps2": 4.8,
+    "hull_turn_dps": 45,
+    "reverse_mps": 4,
+    "dock_reverse_m": 25.2,
+    "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+   }
+  },
+  "econ": {
+   "near@1": {
+    "cycles": 2,
+    "game_s": [
+     53.9,
+     53.8667
+    ],
+    "real_s": [
+     53.9,
+     53.867
+    ],
+    "legs": {
+     "out": 17.700000000014086,
+     "load": 10.000000000007958,
+     "back": 14.966666666678577,
+     "dock": 9.70000000000772,
+     "unload": 1.5000000000011937
+    },
+    "predicted_game_s": 53.967
+   },
+   "far@1": {
+    "cycles": 2,
+    "game_s": [
+     82.2333,
+     82.2
+    ],
+    "real_s": [
+     82.233,
+     82.2
+    ],
+    "legs": {
+     "out": 30.766666666638685,
+     "load": 9.999999999990905,
+     "back": 29.366666666639958,
+     "dock": 10.566666666657056,
+     "unload": 1.4999999999986358
+    },
+    "predicted_game_s": 81.8
+   },
+   "near@2.4": {
+    "cycles": 2,
+    "game_s": [
+     53.9,
+     53.8667
+    ],
+    "real_s": [
+     22.458,
+     22.444
+    ],
+    "legs": {
+     "out": 17.699999999983902,
+     "load": 9.999999999990905,
+     "back": 14.966666666653055,
+     "dock": 9.699999999991178,
+     "unload": 1.4999999999986358
+    },
+    "predicted_game_s": 53.967
+   },
+   "far@2.4": {
+    "cycles": 2,
+    "game_s": [
+     82.2333,
+     82.2
+    ],
+    "real_s": [
+     34.264,
+     34.25
+    ],
+    "legs": {
+     "out": 30.766666666638685,
+     "load": 9.999999999990905,
+     "back": 29.366666666639958,
+     "dock": 10.566666666657056,
+     "unload": 1.4999999999986358
+    },
+    "predicted_game_s": 81.8
+   }
+  },
+  "motion": {
+   "battle": {
+    "real_s": 20,
+    "game_s": 48,
+    "jumps": 0,
+    "samples": 23635,
+    "feetWorstCm": 0.2,
+    "stances": 387,
+    "tracksWorstM": 0
+   },
+   "tour": {
+    "real_s": 20,
+    "game_s": 48,
+    "jumps": 0,
+    "samples": 19927,
+    "feetWorstCm": 0.21,
+    "stances": 508,
+    "tracksWorstM": 0
+   }
+  }
+ },
+ "lod": {
+  "report": {
+   "H01": {
+    "meshes": 3,
+    "matched": [
+     3,
+     3
+    ],
+    "tris": [
+     4410,
+     2168,
+     631
+    ]
+   },
+   "H02": {
+    "meshes": 5,
+    "matched": [
+     5,
+     5
+    ],
+    "tris": [
+     5389,
+     2566,
+     734
+    ]
+   },
+   "H03": {
+    "meshes": 29,
+    "matched": [
+     29,
+     29
+    ],
+    "tris": [
+     16966,
+     8481,
+     2036
+    ]
+   },
+   "H04": {
+    "meshes": 17,
+    "matched": [
+     17,
+     17
+    ],
+    "tris": [
+     13210,
+     7461,
+     1844
+    ]
+   },
+   "H05": {
+    "meshes": 9,
+    "matched": [
+     9,
+     9
+    ],
+    "tris": [
+     14594,
+     8432,
+     1957
+    ]
+   },
+   "A01": {
+    "meshes": 9,
+    "matched": [
+     9,
+     9
+    ],
+    "tris": [
+     5390,
+     2680,
+     785
+    ]
+   },
+   "A02": {
+    "meshes": 10,
+    "matched": [
+     10,
+     10
+    ],
+    "tris": [
+     5880,
+     2890,
+     838
+    ]
+   },
+   "A03": {
+    "meshes": 29,
+    "matched": [
+     29,
+     29
+    ],
+    "tris": [
+     14312,
+     7392,
+     1796
+    ]
+   },
+   "A04": {
+    "meshes": 19,
+    "matched": [
+     19,
+     19
+    ],
+    "tris": [
+     7922,
+     4728,
+     1903
+    ]
+   },
+   "A05": {
+    "meshes": 14,
+    "matched": [
+     14,
+     14
+    ],
+    "tris": [
+     14780,
+     8764,
+     2674
+    ]
+   },
+   "T01": {
+    "meshes": 6,
+    "matched": [
+     6,
+     6
+    ],
+    "tris": [
+     5390,
+     2566,
+     731
+    ]
+   },
+   "T02": {
+    "meshes": 7,
+    "matched": [
+     7,
+     7
+    ],
+    "tris": [
+     5880,
+     2846,
+     842
+    ]
+   },
+   "T03": {
+    "meshes": 20,
+    "matched": [
+     20,
+     20
+    ],
+    "tris": [
+     7586,
+     4489,
+     1831
+    ]
+   },
+   "T04": {
+    "meshes": 16,
+    "matched": [
+     16,
+     16
+    ],
+    "tris": [
+     7544,
+     3934,
+     866
+    ]
+   },
+   "T05": {
+    "meshes": 12,
+    "matched": [
+     12,
+     12
+    ],
+    "tris": [
+     7244,
+     4296,
+     1786
+    ]
+   }
+  },
+  "gameplay": {
+   "camera_m": 230,
+   "tris_auto": 282147,
+   "tris_lod0": 412574,
+   "saved_pct": 31.6,
+   "unit_tris_auto": 47762,
+   "unit_tris_lod0": 200482,
+   "unit_saved_pct": 76.2,
+   "levels": [
+    0,
+    3,
+    24
+   ]
+  },
+  "close": {
+   "camera_m": 70,
+   "tris_auto": 233391,
+   "tris_lod0": 263952,
+   "saved_pct": 11.6,
+   "unit_tris_auto": 95979,
+   "unit_tris_lod0": 200482,
+   "unit_saved_pct": 52.1,
+   "levels": [
+    4,
+    5,
+    18
+   ]
+  },
+  "switches_static_camera_5s": 0,
+  "dolly": {
+   "switches": 14,
+   "units": 26,
+   "levels_end": [
+    0,
+    1,
+    25
+   ]
+  }
+ },
+ "live": {
+  "avgMs": 79,
+  "p50": 33.3,
+  "p95": 250,
+  "p99": 250,
+  "max": 250,
+  "calls": 338,
+  "tris": 283883,
+  "units": 27,
+  "simMs": 0.326
+ },
+ "pageErrors": []
+}

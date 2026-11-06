@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thunderhead Map Lab</title>
+<meta name="description" content="Interactive inspection and movement-testing harness for the five metric Thunderhead RTS maps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0d10;
+  --panel: rgba(13, 17, 21, 0.93);
+  --panel-solid: #0f1418;
+  --raise: #151b21;
+  --raise-2: #1b232a;
+  --line: #222b33;
+  --line-2: #2d3842;
+  --text: #d3dae0;
+  --muted: #8794a0;
+  --dim: #5c6873;
+  --accent: #d6a24c;
+  --accent-ink: #1a1306;
+  --steel: #8db3cf;
+  --ok: #6db67a;
+  --warn: #d6a24c;
+  --fail: #e0645c;
+  --blue: #2b6fd6;
+  --red: #c8322b;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --r: 6px;
+  --gap: 8px;
+  --top: 46px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font: 12.5px/1.45 var(--sans); -webkit-font-smoothing: antialiased; }
+button, select, input { font: inherit; color: inherit; }
+canvas#view { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; outline: none; }
+canvas#view.route-tool { cursor: crosshair; }
+.mono { font-family: var(--mono); font-size: 11.5px; }
+.muted { color: var(--muted); }
+.dim { color: var(--dim); }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ── top bar ── */
+#top { position: fixed; top: 0; left: 0; right: 0; height: var(--top); display: flex; align-items: center; gap: 14px; padding: 0 12px; background: linear-gradient(#0d1115, rgba(13,17,21,0.92)); border-bottom: 1px solid var(--line); z-index: 20; }
+.brand { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+.brand b { font-weight: 600; letter-spacing: 0.14em; font-size: 12px; }
+.brand span { color: var(--muted); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+#mapTabs { display: flex; gap: 2px; background: var(--raise); border: 1px solid var(--line); border-radius: var(--r); padding: 2px; overflow-x: auto; scrollbar-width: none; }
+#mapTabs::-webkit-scrollbar { display: none; }
+#mapTabs button { border: 0; background: transparent; padding: 5px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap; color: var(--muted); }
+#mapTabs button .id { font-family: var(--mono); color: var(--dim); margin-right: 6px; }
+#mapTabs button:hover { color: var(--text); background: var(--raise-2); }
+#mapTabs button.on { background: var(--raise-2); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+#mapTabs button.on .id { color: var(--accent); }
+#mapSelect { display: none; background: var(--raise); border: 1px solid var(--line-2); border-radius: var(--r); padding: 5px 8px; }
+#mapMeta { margin-left: auto; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; }
+#mapMeta b { color: var(--text); font-weight: 500; }
+
+/* ── columns & panes ── */
+.col { position: fixed; top: calc(var(--top) + 10px); bottom: 10px; z-index: 15; display: flex; flex-direction: column; gap: var(--gap); pointer-events: none; }
+#colL { left: 10px; width: 262px; }
+#colR { right: 10px; width: 338px; }
+.col > * { pointer-events: auto; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+#colL .scroll { overflow-y: auto; display: flex; flex-direction: column; gap: var(--gap); max-height: 100%; scrollbar-width: thin; }
+.pane { padding: 10px 12px 12px; }
+.pane h3 { margin: 0 0 8px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.pane h3 .aside { margin-left: auto; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--dim); font-size: 11px; }
+.pane h4 { margin: 12px 0 6px; font-size: 10.5px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); }
+.pane p { margin: 6px 0; }
+#rightCard { display: flex; flex-direction: column; min-height: 0; flex: 0 1 auto; }
+#rTabs { display: flex; border-bottom: 1px solid var(--line); padding: 0 6px; flex: none; overflow-x: auto; scrollbar-width: none; }
+#rTabs button { background: none; border: 0; padding: 9px 9px 8px; color: var(--muted); cursor: pointer; font-size: 11.5px; border-bottom: 2px solid transparent; white-space: nowrap; }
+#rTabs button:hover { color: var(--text); }
+#rTabs button.on { color: var(--text); border-bottom-color: var(--accent); }
+#rTabs .badge { font-family: var(--mono); font-size: 10px; margin-left: 4px; padding: 0 4px; border-radius: 3px; background: var(--raise-2); color: var(--muted); }
+#rBody { overflow-y: auto; min-height: 0; scrollbar-width: thin; }
+.pane[hidden] { display: none; }
+
+/* ── controls ── */
+.btn { background: var(--raise); border: 1px solid var(--line-2); border-radius: 5px; padding: 6px 10px; cursor: pointer; color: var(--text); transition: background .12s; }
+.btn:hover { background: var(--raise-2); border-color: #3a4855; }
+.btn.on { border-color: var(--accent); color: var(--accent); background: rgba(214,162,76,0.08); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn.primary:hover { background: #e2b263; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn.sm { padding: 3px 8px; font-size: 11.5px; }
+.row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.views .btn { text-align: left; display: flex; flex-direction: column; gap: 1px; padding: 6px 9px; }
+.views .btn small { color: var(--dim); font-size: 10.5px; }
+.views .btn.on small { color: rgba(214,162,76,0.75); }
+.seg { display: flex; background: var(--raise); border: 1px solid var(--line-2); border-radius: 5px; padding: 2px; gap: 2px; }
+.seg button { flex: 1; border: 0; background: none; padding: 4px 6px; border-radius: 3px; cursor: pointer; color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+.seg button.on { background: var(--raise-2); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.toggles { display: flex; flex-direction: column; gap: 1px; }
+.tg { display: flex; align-items: center; gap: 9px; padding: 4px 4px; border-radius: 4px; cursor: pointer; user-select: none; }
+.tg:hover { background: var(--raise); }
+.tg input { position: absolute; opacity: 0; pointer-events: none; }
+.tg .box { width: 14px; height: 14px; border: 1px solid #44525e; border-radius: 3px; flex: none; display: grid; place-items: center; }
+.tg input:checked + .box { background: var(--accent); border-color: var(--accent); }
+.tg input:checked + .box::after { content: ''; width: 7px; height: 4px; border: solid var(--accent-ink); border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+.tg input:focus-visible + .box { outline: 2px solid var(--steel); outline-offset: 1px; }
+.tg .sw { width: 10px; height: 10px; border-radius: 2px; flex: none; margin-left: auto; }
+.tg .t { flex: 1; }
+.tg .t small { display: block; color: var(--dim); font-size: 10.5px; line-height: 1.3; }
+.sl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; margin: 10px 0 2px; }
+.sl > span { color: var(--text); font-weight: 500; }
+.sl output { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.sl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); height: 22px; margin: 2px 0; }
+p.sm, .sm { font-size: 11px; }
+details.adv { margin: 8px 0; border-top: 1px solid var(--line); padding-top: 6px; }
+details.adv summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+label.num { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--muted); }
+label.num input { font: 12px var(--mono); color: var(--text); background: var(--raise); border: 1px solid var(--line-2); border-radius: var(--r); padding: 5px 6px; width: 100%; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 6px 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-family: var(--mono); font-size: 11.5px; text-align: right; overflow-wrap: anywhere; }
+.note { color: var(--muted); font-size: 11.5px; border-left: 2px solid var(--line-2); padding: 2px 0 2px 8px; margin: 8px 0; }
+.note.warn { border-left-color: var(--warn); }
+.note.fail { border-left-color: var(--fail); }
+
+/* chips */
+.chip { display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em; padding: 1px 5px; border-radius: 3px; border: 1px solid currentColor; line-height: 1.4; white-space: nowrap; }
+.chip.PASS { color: var(--ok); }
+.chip.WARN { color: var(--warn); }
+.chip.FAIL { color: var(--fail); }
+.chip.NONE, .chip.INFO { color: var(--muted); }
+
+/* lists */
+.list { display: flex; flex-direction: column; }
+.li { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 8px; align-items: start; padding: 6px 4px; border-top: 1px solid var(--line); cursor: default; }
+.li:first-child { border-top: 0; }
+.li.click { cursor: pointer; }
+.li.click:hover { background: var(--raise); }
+.li .nm { min-width: 0; }
+.li .nm small { display: block; color: var(--muted); font-size: 11px; line-height: 1.35; overflow-wrap: anywhere; }
+.li .rt { text-align: right; font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.li .rt b { color: var(--text); font-weight: 500; }
+.li.sel { background: rgba(214,162,76,0.07); box-shadow: inset 2px 0 0 var(--accent); }
+.li .det { grid-column: 1 / -1; color: var(--muted); font-size: 11px; display: none; overflow-wrap: anywhere; }
+.li.open .det { display: block; }
+.summary { display: flex; gap: 10px; align-items: center; margin: 4px 0 8px; font-size: 12px; }
+.summary .big { font-family: var(--mono); font-size: 18px; font-weight: 500; }
+table.t { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+table.t th { text-align: left; color: var(--dim); font-weight: 500; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 4px; border-bottom: 1px solid var(--line); }
+table.t td { padding: 4px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.t td.r, table.t th.r { text-align: right; }
+.st-ok { color: var(--ok); } .st-miss { color: var(--fail); } .st-warn { color: var(--warn); }
+.progress { height: 3px; background: var(--raise-2); border-radius: 2px; overflow: hidden; margin: 6px 0; }
+.progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+
+/* ── HUD bits ── */
+#hud { position: fixed; left: 8px; top: calc(var(--top) + 46px); z-index: 14; padding: 7px 10px; font: 11px/1.5 var(--mono); color: var(--muted); cursor: pointer; }
+.col #hud { position: static; flex: none; }
+#hud .hh { font: 600 10.5px var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; display: flex; }
+#hud .hh span { margin-left: auto; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--dim); }
+#hud b { color: var(--text); font-weight: 500; }
+#hud .gpu { color: var(--dim); overflow-wrap: anywhere; }
+#hud .sw { color: var(--warn); }
+#hud.min .more { display: none; }
+#camchip { position: fixed; top: calc(var(--top) + 10px); left: 50%; transform: translateX(-50%); z-index: 14; padding: 5px 12px; font-size: 11px; white-space: nowrap; display: flex; gap: 10px; align-items: center; }
+#camchip .scale { font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; font-size: 10.5px; color: var(--accent); }
+#camchip .scale.gameplay { color: var(--steel); }
+#camchip .scale.close { color: #b9c7a3; }
+#camchip .tool { color: var(--accent); }
+#scalebar { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 14; padding: 6px 10px 5px; text-align: center; font: 11px var(--mono); min-width: 120px; }
+#scalebar .bar { height: 7px; margin: 0 auto 3px; border: 1.5px solid var(--text); border-top: 0; position: relative; }
+#scalebar .bar::after { content: ''; position: absolute; left: 50%; bottom: 0; height: 4px; border-left: 1px solid var(--text); }
+#scalebar .hint { color: var(--dim); font-family: var(--sans); font-size: 10.5px; }
+#scalebar .warn { color: var(--warn); font-family: var(--sans); max-width: 300px; white-space: normal; }
+#hover { position: fixed; bottom: 66px; left: 50%; transform: translateX(-50%); z-index: 13; padding: 4px 10px; font: 11px var(--mono); color: var(--muted); white-space: nowrap; display: none; }
+#hover b { color: var(--text); font-weight: 500; }
+#compass { position: fixed; top: calc(var(--top) + 10px); left: calc(100vw - 400px); z-index: 14; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; }
+#compass svg { width: 26px; height: 26px; }
+
+/* labels */
+#labels { position: fixed; inset: 0; pointer-events: none; z-index: 10; overflow: hidden; }
+.lbl { position: absolute; left: 0; top: 0; will-change: transform; white-space: nowrap; font: 500 10.5px/1.25 var(--mono); color: #e8edf1; padding: 2px 5px; border-radius: 3px; background: rgba(10, 13, 16, 0.78); border: 1px solid rgba(255,255,255,0.12); }
+.lbl small { display: block; font-weight: 400; color: var(--muted); font-size: 9.5px; }
+.lbl.dep { border-color: rgba(214,162,76,0.55); }
+.lbl.dep.home { border-color: rgba(214,162,76,0.55); }
+.lbl.B { border-color: var(--blue); box-shadow: inset 3px 0 0 var(--blue); }
+.lbl.R { border-color: var(--red); box-shadow: inset 3px 0 0 var(--red); }
+.lbl.radar { border-color: rgba(141,179,207,0.6); }
+.lbl.miss { color: #f2c48d; border-color: rgba(224,138,60,0.6); background: rgba(30, 18, 8, 0.8); }
+.lbl.route { border-color: var(--accent); color: var(--accent); }
+.lbl.res { border-color: rgba(255,255,255,0.25); color: var(--muted); }
+
+/* loading / fatal */
+#loading { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 30; padding: 14px 18px; min-width: 260px; text-align: center; }
+#loading .progress { margin-top: 10px; }
+#loading.hide { display: none; }
+#fatal { position: fixed; inset: 0; z-index: 40; display: none; place-items: center; background: rgba(5,7,9,0.9); }
+#fatal .card { max-width: 520px; padding: 18px 20px; }
+#fatal h2 { margin: 0 0 8px; font-size: 15px; color: var(--fail); }
+
+/* ── mobile drawer ── */
+#drawerBar, #drawer { display: none; }
+#minimap { position: fixed; left: 282px; bottom: 14px; z-index: 14; width: 184px; height: 184px; padding: 0; cursor: crosshair; touch-action: none; display: block; }
+@media (max-width: 699px) {
+  :root { --top: 44px; }
+  #top { gap: 8px; padding: 0 8px; }
+  .brand span { display: none; }
+  #mapTabs { display: none; }
+  #mapSelect { display: block; max-width: 170px; }
+  #mapMeta { font-size: 10.5px; }
+  .col { display: none; }
+  #hud { max-width: 62vw; font-size: 10px; padding: 5px 8px; }
+  #camchip { top: calc(var(--top) + 8px); font-size: 10px; padding: 4px 9px; max-width: calc(100vw - 16px); overflow: hidden; }
+  #compass { left: auto !important; right: 8px; top: calc(var(--top) + 46px); }
+  #scalebar { bottom: calc(52px + env(safe-area-inset-bottom)); }
+  #minimap { left: auto; right: 8px; bottom: calc(52px + env(safe-area-inset-bottom)); width: 112px; height: 112px; }
+  #hover { bottom: calc(100px + env(safe-area-inset-bottom)); font-size: 10px; max-width: calc(100vw - 16px); overflow: hidden; text-overflow: ellipsis; }
+  #drawerBar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 22; background: var(--panel-solid); border-top: 1px solid var(--line); padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  #drawerBar button { flex: 1 0 auto; background: none; border: 0; color: var(--muted); padding: 8px 9px; border-radius: 5px; font-size: 12px; min-height: 36px; }
+  #drawerBar button.on { color: var(--text); background: var(--raise-2); box-shadow: inset 0 2px 0 var(--accent); }
+  #drawer { position: fixed; left: 0; right: 0; bottom: calc(45px + env(safe-area-inset-bottom)); z-index: 21; max-height: 56vh; overflow-y: auto; background: var(--panel-solid); border-top: 1px solid var(--line-2); border-radius: 10px 10px 0 0; }
+  #drawer.open { display: block; }
+  .tg { padding: 7px 4px; }
+  .btn { padding: 8px 12px; }
+  .seg button { padding: 7px 6px; }
+}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="view" tabindex="0" aria-label="3D map view"></canvas>
+<div id="labels"></div>
+
+<header id="top">
+  <div class="brand"><b>THUNDERHEAD</b><span>Map Lab</span></div>
+  <nav id="mapTabs" aria-label="Maps"></nav>
+  <select id="mapSelect" aria-label="Map"></select>
+  <div id="mapMeta"></div>
+</header>
+
+<aside id="colL" class="col">
+  <div class="scroll">
+    <section class="card pane" data-pane="views" data-title="Views">
+      <h3>Camera views <span class="aside">metres, true scale</span></h3>
+      <div class="views grid2" id="presetBtns"></div>
+      <p class="muted" style="font-size:11px;margin-top:8px">Drag or WASD to pan · right-drag or Q/E to orbit · wheel or pinch to zoom · click to select.</p>
+      <h4>Display</h4>
+      <div class="seg" id="qualitySeg" role="group" aria-label="Quality">
+        <button data-q="low">Low</button><button data-q="medium">Medium</button><button data-q="high">High</button>
+      </div>
+      <p class="muted" id="qualityNote" style="font-size:11px"></p>
+      <div class="toggles">
+        <label class="tg"><input type="checkbox" id="optMissing" checked><span class="box"></span><span class="t">Missing-asset boxes<small>dimensioned stand-ins for GLBs not yet exported</small></span></label>
+        <label class="tg"><input type="checkbox" id="optDots" checked><span class="box"></span><span class="t">Unit dots at strategic scale<small>team dots instead of enlarged units</small></span></label>
+      </div>
+    </section>
+    <section class="card pane" data-pane="layers" data-title="Layers">
+      <h3>Overlays</h3>
+      <div class="toggles" id="overlayList"></div>
+    </section>
+  </div>
+</aside>
+
+<aside id="colR" class="col">
+  <div class="card" id="rightCard">
+    <nav id="rTabs"></nav>
+    <div id="rBody">
+      <section class="pane" data-pane="move" data-title="Move">
+        <h3>Movement test <span class="aside">A* on nav.u8</span></h3>
+        <div class="seg" id="classSeg" role="group" aria-label="Movement class"></div>
+        <dl class="kv" id="classInfo"></dl>
+        <div class="row">
+          <button class="btn" id="routeTool">Pick start &amp; end</button>
+          <button class="btn sm" id="routeClear">Clear</button>
+          <label class="tg" style="margin-left:auto"><input type="checkbox" id="navFollow"><span class="box"></span><span class="t">Nav overlay</span></label>
+        </div>
+        <div id="routeOut"></div>
+      </section>
+      <section class="pane" data-pane="tests" data-title="Tests" hidden>
+        <h3>Route tests <span class="aside" id="testsAside"></span></h3>
+        <div class="row">
+          <button class="btn primary" id="runTests">Run route tests</button>
+          <label class="tg"><input type="checkbox" id="showTestPaths" checked><span class="box"></span><span class="t">Show paths</span></label>
+        </div>
+        <div class="progress" id="testProg" hidden><i></i></div>
+        <div id="testsOut"><p class="muted">Runs this map's standard tests on the baked nav grid: factory rally points between bases (tank), bases to their home deposits (harvester), dock berths to the map edge (ship) and landing beaches 120 m offshore to 120 m inland (amphibious).</p></div>
+      </section>
+      <section class="pane" data-pane="pace" data-title="Pace" hidden>
+        <h3>Game pace <span class="aside">data/pace.json</span></h3>
+        <div id="paceCtl"></div>
+        <div class="row" style="margin-top:8px"><button class="btn primary" id="paceRun">Measure this map</button></div>
+        <div class="progress" id="paceProg" hidden><i></i></div>
+        <div id="paceOut"></div>
+      </section>
+      <section class="pane" data-pane="inspect" data-title="Inspect" hidden>
+        <h3>Inspect</h3>
+        <div id="inspectOut"><p class="muted">Click an object in the view to inspect it. Unit dots can be clicked at strategic scale.</p></div>
+      </section>
+      <section class="pane" data-pane="checks" data-title="Checks" hidden>
+        <h3>Validation <span class="aside">from map.json</span></h3>
+        <div id="checksOut"></div>
+      </section>
+      <section class="pane" data-pane="assets" data-title="Assets" hidden>
+        <h3>Assets &amp; data</h3>
+        <div id="assetsOut"></div>
+      </section>
+    </div>
+  </div>
+</aside>
+
+<div id="hud" class="card" title="Click to expand or collapse"></div>
+<div id="camchip" class="card"></div>
+<div id="hover" class="card"></div>
+<div id="scalebar" class="card"></div>
+<canvas id="minimap" class="card" aria-label="Minimap: click or drag to move the camera"></canvas>
+<div id="compass" class="card" title="North"><svg viewBox="-13 -13 26 26" aria-hidden="true"><g id="needle"><path d="M0 -11 L4 2 L0 0 L-4 2 Z" fill="#d6a24c"/><path d="M0 11 L4 2 L0 0 L-4 2 Z" fill="#5c6873" transform="rotate(180) scale(1,-1) rotate(180)"/><text x="0" y="-3.5" text-anchor="middle" font-size="5" font-family="IBM Plex Mono, monospace" fill="#0a0d10" font-weight="600">N</text></g></svg></div>
+<div id="loading" class="card"><div id="loadingText">Loading Map Lab…</div><div class="progress"><i id="loadingBar"></i></div></div>
+<div id="fatal"><div class="card"><h2>Map Lab could not start</h2><div id="fatalText"></div></div></div>
+
+<nav id="drawerBar" aria-label="Panels"></nav>
+<div id="drawer"></div>
+
+<script type="module" src="lab.js"></script>
+</body>
+</html>

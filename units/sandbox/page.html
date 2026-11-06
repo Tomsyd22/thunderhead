@@ -1,0 +1,98 @@
+<title>Thunderhead Unit Sandbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1216; --panel: rgba(18, 22, 28, 0.88); --line: rgba(255, 255, 255, 0.09); --text: #e7ebef; --muted: #98a2ad; --accent: #59a8ff; --btn: rgba(127, 127, 127, 0.14); --btnh: rgba(127, 127, 127, 0.24);
+  --h: #c4574d; --a: #4d86c6; --t: #2fb3a8; --ok: #62d48a; --bad: #ff6b5e; --radius: 10px; color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg: #e9edf1; --panel: rgba(250, 251, 252, 0.92); --line: rgba(0, 0, 0, 0.1); --text: #182029; --muted: #5b6672; --accent: #2f7fd8; --btn: rgba(80, 90, 100, 0.1); --btnh: rgba(80, 90, 100, 0.18); color-scheme: light; } }
+:root[data-theme="light"] { --bg: #e9edf1; --panel: rgba(250, 251, 252, 0.92); --line: rgba(0, 0, 0, 0.1); --text: #182029; --muted: #5b6672; --accent: #2f7fd8; --btn: rgba(80, 90, 100, 0.1); --btnh: rgba(80, 90, 100, 0.18); color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 13px/1.35 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; overflow: hidden; }
+#view { position: fixed; inset: 0; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+.panel { position: fixed; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+#side { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); width: 268px; max-height: calc(100% - 24px); overflow: auto; padding: 12px; }
+#side h1 { font-size: 15px; margin: 0 0 2px; letter-spacing: 0.01em; }
+#side.min > :not(h1) { display: none; }
+#side .sub { color: var(--muted); font-size: 11.5px; margin-bottom: 10px; }
+.sect { margin: 12px 0 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; }
+button { font: inherit; color: var(--text); background: var(--btn); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; cursor: pointer; min-height: 32px; }
+button:hover { background: var(--btnh); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button.on { background: var(--accent); border-color: transparent; color: #fff; }
+.units { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.unit { text-align: left; padding: 6px 8px; display: flex; flex-direction: column; gap: 1px; }
+.unit b { font-weight: 600; font-size: 12px; } .unit span { font-size: 10.5px; color: var(--muted); }
+.unit.H { border-left: 3px solid var(--h); } .unit.A { border-left: 3px solid var(--a); } .unit.T { border-left: 3px solid var(--t); }
+.tabs button { flex: 1; }
+#stats { top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); padding: 8px 10px; font: 11.5px/1.45 "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; min-width: 210px; }
+#stats .k { color: var(--muted); }
+#sel { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); left: 292px; padding: 10px 12px; min-width: 260px; max-width: 420px; display: none; }
+#sel .name { font-weight: 600; } #sel .m { font: 11.5px/1.5 "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; color: var(--muted); }
+#orders { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); padding: 8px; display: flex; gap: 6px; flex-wrap: wrap; max-width: 520px; justify-content: flex-end; }
+#toast { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); padding: 7px 12px; display: none; font-size: 12.5px; }
+#help { color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+.sl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 8px; margin: 6px 0 0; }
+.sl > span { font-weight: 500; } .sl output { font: 600 12px "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; color: var(--accent); }
+.sl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); height: 24px; margin: 0; }
+.hint, .em { color: var(--muted); font-size: 11px; line-height: 1.45; margin-top: 4px; }
+.et { width: 100%; border-collapse: collapse; font: 11.5px/1.5 "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; }
+.et th { color: var(--muted); font-weight: 400; text-align: right; } .et th:first-child, .et td:first-child { text-align: left; font-family: "IBM Plex Sans", system-ui, sans-serif; }
+.et td { text-align: right; padding: 1px 0; border-top: 1px solid var(--line); } .et tr.on td { color: var(--accent); }
+#loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); z-index: 10; font-size: 14px; color: var(--muted); }
+#menuBtn { display: none; position: fixed; top: 12px; left: 12px; z-index: 3; }
+@media (max-width: 720px) {
+  #side { width: calc(100% - 24px); max-height: 52%; display: none; z-index: 2; }
+  #side.open { display: block; }
+  #menuBtn { display: block; }
+  #stats { font-size: 10px; min-width: 0; top: 56px; }
+  #sel { left: 12px; right: 12px; bottom: 64px; max-width: none; }
+  #orders { left: 12px; right: 12px; max-width: none; justify-content: center; }
+}
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<canvas id="view"></canvas>
+<canvas id="hud"></canvas>
+<div id="loading">Loading units…</div>
+<button id="menuBtn" class="panel">☰ Units</button>
+<div id="side" class="panel">
+  <h1 id="title" style="cursor:pointer" title="Collapse / expand">Unit Sandbox <span style="float:right;color:var(--muted);font-weight:400">▾</span></h1>
+  <div class="sub">15 units, metric scale, 30 Hz simulation</div>
+  <div class="sect">Spawn for</div>
+  <div class="row tabs" id="teams"><button data-team="0" class="on">Blue team</button><button data-team="1">Red team</button></div>
+  <div class="row tabs" id="factions" style="margin-top:6px"><button data-f="H" class="on">Iron Legion</button><button data-f="A">Vanguard</button><button data-f="T">Nova</button></div>
+  <div class="units" id="palette" style="margin-top:8px"></div>
+  <div class="sect">Scenarios</div>
+  <div class="row" id="scen"></div>
+  <div class="sect">Pace</div>
+  <label class="sl"><span>Game speed</span><output id="gsv"></output><input type="range" id="gs" step="0.05" aria-label="Game speed"></label>
+  <label class="sl"><span>Harvester speed</span><output id="hrv"></output><input type="range" id="hr" step="0.01" aria-label="Harvester speed relative to the tank"></label>
+  <div class="hint" id="paceNote"></div>
+  <div class="row" style="margin-top:6px"><button id="paceReset">Reset to pace.json</button></div>
+  <div class="sect">Harvester round trip</div>
+  <div id="econOut"></div>
+  <div class="row" id="econBtns" style="margin-top:6px"><button data-d="near">Work near field</button><button data-d="far">Work far field</button></div>
+  <div class="sect">Playback</div>
+  <div class="row" id="speed"><button data-s="0">Pause</button><button data-s="0.25">¼×</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button></div>
+  <div class="sect">Show</div>
+  <div class="row" id="toggles"><button data-t="ranges">Ranges</button><button data-t="shapes">Collision</button><button data-t="paths">Paths</button><button data-t="bars" class="on">Health</button><button data-t="lod">LOD tags</button></div>
+  <div class="sect">Model detail</div>
+  <div class="row tabs" id="lodSeg"><button data-l="auto" class="on">Auto</button><button data-l="0">LOD0</button><button data-l="1">LOD1</button><button data-l="2">LOD2</button></div>
+  <div class="sect">Camera</div>
+  <div class="row" id="cams"><button data-c="free" class="on">Free</button><button data-c="follow">Follow</button><button data-c="close">Close-up</button></div>
+  <div class="sect">Controls</div>
+  <div id="help">Left-click selects. Shift-drag box-selects. Right-click moves, or attacks an enemy. Drag pans. Right-drag or Q/E rotates. Wheel zooms. Keys: <b>A</b> attack-move · <b>S</b> stop · <b>D</b> deploy/pack · <b>F</b> ability (EMP/scan) · <b>G</b> garrison the bunker · <b>Esc</b> clear.</div>
+</div>
+<div id="stats" class="panel"></div>
+<div id="sel" class="panel"></div>
+<div id="orders" class="panel">
+  <button data-o="select" class="on">Select</button><button data-o="move">Move</button><button data-o="attackMove">Attack-move</button><button data-o="attack">Attack</button>
+  <button data-o="deploy">Deploy</button><button data-o="ability">Ability</button><button data-o="garrison">Garrison</button><button data-o="stop">Stop</button>
+</div>
+<div id="toast" class="panel"></div>
+<script type="module" src="app.js"></script>

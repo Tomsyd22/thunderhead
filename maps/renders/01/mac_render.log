@@ -1,0 +1,10 @@
+00:00.038  color_management | Using OCIO=/Users/tomsyd/Desktop/Blender.app/Contents/Resources/5.2/datafiles/colormanagement/config.ocio
+00:00.800  blend            | Read blend: "/Users/tomsyd/Thunderhead/maps/scenes/01_emerald_strait.blend"
+03:30.690  render           | Saved: '/Users/tomsyd/Thunderhead/maps/renders/01/preset_1_overview.png'
+04:00.863  render           | Saved: '/Users/tomsyd/Thunderhead/maps/renders/01/preset_2_gameplay.png'
+  GPU warm-up 157.5s (GPU · METAL · Apple M1 (GPU - 7 cores))
+  rendered preset_1_overview.png in 52s
+  rendered preset_2_gameplay.png in 30s
+Blender 5.2.3 LTS (hash e13b728c6880 built 2026-10-22 01:31:22)
+
+Blender quit

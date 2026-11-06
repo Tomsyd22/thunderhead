@@ -1,0 +1,185 @@
+<title>Thunderhead Emerald Strait</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: full-bleed 3D battlefield; command rail on the right (credits, power, minimap, build tabs, selection) like a
+   field console; thin status strip top-left. One dark look: a gunmetal console with the player's faction colour as accent. */
+:root {
+  --bg: #0d1013; --panel: #161b20; --panel2: #1d242a; --line: #2c353d; --line2: #3a4650; --fg: #dde3e8; --muted: #8b97a3; --dim: #5d6873;
+  --fac: #c4574d; --ok: #62d48a; --warn: #f2c14e; --bad: #ff6b5e; --cyan: #6fe6d4;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif; --body: "Barlow", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font-family: var(--body); }
+body { margin: 0; user-select: none; -webkit-user-select: none; }
+#view { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; outline: none; }
+#hud { position: fixed; inset: 0; pointer-events: none; }
+kbd { font-family: var(--mono); font-size: 10px; color: var(--muted); border: 1px solid var(--line2); border-radius: 3px; padding: 0 4px; background: rgba(0,0,0,0.25); }
+button { font-family: var(--display); color: var(--fg); cursor: pointer; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--fac); outline-offset: 1px; }
+
+/* loading */
+#loading { position: fixed; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 40%, #1a2128, var(--bg) 70%); z-index: 50; }
+#loading .in { width: min(420px, 80vw); display: grid; gap: 10px; }
+#loading h1 { font-family: var(--display); font-weight: 800; font-size: 44px; letter-spacing: 0.14em; margin: 0; }
+#loading .bar { height: 3px; background: var(--line); } #loadBar { height: 100%; width: 0; background: var(--fg); transition: width 0.2s; }
+#loadText { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+/* command rail */
+#side { position: fixed; top: 0; right: 0; bottom: 0; width: 268px; background: linear-gradient(180deg, var(--panel), #12171b); border-left: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 8px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) 10px; box-sizing: border-box; z-index: 10; }
+#side::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--fac); opacity: 0.85; }
+.money { display: flex; align-items: baseline; justify-content: space-between; padding: 2px 2px 0; }
+#credits { font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; color: #f3e6b0; }
+#credits.up { animation: up 0.6s ease-out; } @keyframes up { from { color: var(--ok); } to { color: #f3e6b0; } }
+#powerTxt { font-family: var(--mono); font-size: 11px; color: var(--muted); } #powerTxt.low { color: var(--bad); }
+#powerTxt::before { content: "PWR "; color: var(--dim); }
+#mmWrap { position: relative; border: 1px solid var(--line2); background: #000; aspect-ratio: 1; }
+#minimap { width: 100%; height: 100%; display: block; cursor: crosshair; image-rendering: auto; }
+#tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.tab { position: relative; background: var(--panel2); border: 1px solid var(--line); padding: 5px 0 3px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: grid; justify-items: center; gap: 1px; }
+.tab kbd { font-size: 9px; border: none; background: none; padding: 0; } .tab.on { background: color-mix(in srgb, var(--fac) 28%, var(--panel2)); border-color: var(--fac); }
+.tab.off { opacity: 0.38; } .tab .dot { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: transparent; }
+.tab.work .dot { background: var(--warn); } .tab.rdy .dot { background: var(--ok); } .tab.flash { animation: tabf 0.5s 4 alternate; } @keyframes tabf { to { background: color-mix(in srgb, var(--ok) 35%, var(--panel2)); } }
+.buildrow { display: flex; gap: 6px; flex: 1; min-height: 0; }
+#power { position: relative; width: 10px; background: #0b0e10; border: 1px solid var(--line); }
+#powerMade { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, #2f8a53, var(--ok)); transition: height 0.4s; }
+#powerUsed { position: absolute; left: -3px; right: -3px; height: 2px; background: #fff; box-shadow: 0 0 4px #fff; transition: bottom 0.4s; }
+#power.low #powerMade { background: linear-gradient(0deg, #8a2f2a, var(--bad)); animation: blink 0.8s infinite alternate; } @keyframes blink { to { opacity: 0.45; } }
+#grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 92px; gap: 5px; align-content: start; overflow-y: auto; min-width: 0; }
+.item { position: relative; padding: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #2a333b, #161b20 75%); border: 1px solid var(--line); text-align: left; }
+.item img { position: absolute; inset: 0 0 16px; width: 100%; height: calc(100% - 16px); object-fit: contain; pointer-events: none; }
+.item .nm { position: absolute; left: 4px; right: 4px; bottom: 1px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item .cost { position: absolute; left: 4px; top: 2px; font-family: var(--mono); font-size: 10px; color: #f3e6b0; text-shadow: 0 1px 2px #000; }
+.item kbd { position: absolute; right: 3px; top: 3px; }
+.item .cnt { position: absolute; right: 4px; bottom: 16px; font-family: var(--mono); font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px #000; }
+.item .clock { position: absolute; inset: 0; pointer-events: none; background: conic-gradient(transparent calc(var(--p, 0) * 360deg), rgba(6, 9, 12, 0.62) 0); opacity: 0; }
+.item.busy .clock { opacity: 1; } .item .st { position: absolute; left: 0; right: 0; top: 36%; text-align: center; font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: 0.08em; text-shadow: 0 1px 3px #000; }
+.item:hover { border-color: var(--line2); } .item.locked { filter: grayscale(1) brightness(0.45); }
+.item.ready { border-color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); } .item.ready .st { color: var(--ok); animation: blink 0.6s infinite alternate; }
+.item.hold .st { color: var(--warn); } .item.stalled .clock { background: conic-gradient(transparent calc(var(--p, 0) * 360deg), rgba(40, 8, 6, 0.65) 0); }
+#selInfo { min-height: 66px; background: var(--panel2); border: 1px solid var(--line); padding: 6px; font-size: 12px; }
+#selInfo .hint { color: var(--muted); line-height: 1.7; font-size: 11.5px; }
+#selInfo .one { display: flex; gap: 8px; align-items: center; } #selInfo .one img { width: 64px; height: 48px; object-fit: contain; background: #0e1215; border: 1px solid var(--line); }
+#selInfo .one > div { display: grid; gap: 3px; min-width: 0; flex: 1; } #selInfo b { font-family: var(--display); font-size: 15px; font-weight: 700; letter-spacing: 0.03em; }
+#selInfo small { color: var(--muted); font-size: 11px; line-height: 1.35; }
+.hp { height: 5px; background: #0b0e10; border: 1px solid var(--line); } .hp i { display: block; height: 100%; background: var(--ok); }
+#selInfo .many { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.mini { position: relative; width: 46px; height: 36px; padding: 0; background: #0e1215; border: 1px solid var(--line); } .mini img { width: 100%; height: 100%; object-fit: contain; }
+.mini span { position: absolute; right: 2px; bottom: 0; font-family: var(--mono); font-size: 11px; font-weight: 700; text-shadow: 0 1px 2px #000; }
+.idle { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.idle button { background: var(--panel2); border: 1px solid var(--line); font-size: 12px; font-weight: 600; letter-spacing: 0.03em; padding: 5px 6px; display: flex; justify-content: space-between; align-items: center; }
+.idle button b { font-family: var(--mono); } .idle button.alert { border-color: var(--warn); color: var(--warn); } .idle button.dim { opacity: 0.55; }
+
+/* status strip */
+#topbar { position: fixed; top: calc(10px + env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); display: flex; gap: 6px; align-items: center; z-index: 10; }
+#topbar .chip { background: rgba(13, 16, 19, 0.82); border: 1px solid var(--line); padding: 4px 9px; font-family: var(--mono); font-size: 12px; backdrop-filter: blur(3px); }
+#topbar button { background: rgba(13, 16, 19, 0.82); border: 1px solid var(--line); padding: 4px 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; }
+#mode { position: fixed; top: 52px; left: 50%; transform: translateX(calc(-50% - 134px)); background: rgba(13, 16, 19, 0.85); border: 1px solid var(--fac); padding: 5px 12px; font-family: var(--display); font-size: 14px; letter-spacing: 0.04em; z-index: 10; pointer-events: none; }
+#paused { position: fixed; top: 40%; left: calc(50% - 134px); transform: translate(-50%, -50%); font-family: var(--display); font-weight: 800; font-size: 54px; letter-spacing: 0.3em; color: rgba(255,255,255,0.85); text-shadow: 0 2px 20px #000; pointer-events: none; z-index: 9; }
+#toast { position: fixed; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); left: calc(50% - 134px); transform: translateX(-50%); background: rgba(13, 16, 19, 0.88); border: 1px solid var(--line2); padding: 6px 14px; font-size: 13px; z-index: 12; pointer-events: none; }
+#subtitle { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); left: calc(50% - 134px); transform: translateX(-50%); font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: 0.06em; color: #e9f4ff; text-shadow: 0 2px 6px #000, 0 0 2px #000; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 12; white-space: nowrap; }
+#subtitle.show { opacity: 1; }
+#tip { position: fixed; width: 250px; background: rgba(15, 19, 23, 0.97); border: 1px solid var(--line2); padding: 9px 11px; z-index: 30; font-size: 12px; line-height: 1.45; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+#tip b { font-family: var(--display); font-size: 17px; font-weight: 700; letter-spacing: 0.03em; } #tip .r { display: flex; gap: 10px; font-family: var(--mono); font-size: 11px; color: #f3e6b0; margin: 3px 0; flex-wrap: wrap; }
+#tip p { margin: 4px 0 0; color: var(--muted); } #tip p.g { color: var(--ok); } #tip p.w { color: #ffa59c; } #tip p.k { color: var(--dim); font-size: 11px; }
+
+/* panels */
+.panel { position: fixed; z-index: 40; background: rgba(15, 19, 23, 0.97); border: 1px solid var(--line2); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+#settings { top: 54px; left: max(12px, env(safe-area-inset-left, 0px)); width: min(340px, calc(100vw - 300px)); padding: 14px 16px; display: grid; gap: 12px; }
+#settings h3, #end h2 { font-family: var(--display); margin: 0; letter-spacing: 0.08em; text-transform: uppercase; }
+#settings label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); } #settings label span { display: flex; justify-content: space-between; color: var(--fg); font-weight: 500; }
+#settings input[type=range] { width: 100%; accent-color: var(--fac); } #settings .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+#settings select, #settings button { background: var(--panel2); border: 1px solid var(--line2); color: var(--fg); padding: 4px 10px; font-size: 13px; }
+#setBench { color: var(--muted); font-size: 12px; } #setBench:hover { color: var(--fg); }
+#setNote { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 0; }
+
+/* start */
+#start { position: fixed; inset: 0; z-index: 45; display: grid; place-items: center; background: linear-gradient(180deg, rgba(8,10,12,0.55), rgba(8,10,12,0.92)); overflow-y: auto; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); }
+#start .in { width: min(940px, 100%); display: grid; gap: 18px; }
+#start h1 { font-family: var(--display); font-weight: 800; font-size: clamp(42px, 7vw, 76px); letter-spacing: 0.16em; margin: 0; line-height: 0.95; }
+#start .sub { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.06em; }
+#facCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.fac { text-align: left; background: var(--panel); border: 1px solid var(--line); padding: 10px 12px 12px; display: grid; gap: 3px; position: relative; overflow: hidden; }
+.fac img { width: 100%; height: 110px; object-fit: contain; background: radial-gradient(ellipse at 50% 60%, #26303a, transparent 70%); }
+.fac b { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; } .fac em { font-style: normal; color: var(--c); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.fac small { font-family: var(--body); color: var(--muted); font-size: 12px; line-height: 1.4; } .fac::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--c); opacity: 0.35; }
+.fac.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 12%, var(--panel)); } .fac.on::after { opacity: 1; }
+#start .opts { display: flex; gap: 18px; flex-wrap: wrap; align-items: end; }
+#start .opts label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); } #start select { background: var(--panel2); border: 1px solid var(--line2); color: var(--fg); padding: 6px 10px; font-family: var(--body); font-size: 14px; }
+#start input[type=range] { width: 200px; accent-color: var(--fg); }
+#btnStart { background: var(--fg); color: #0d1013; border: none; padding: 10px 34px; font-size: 20px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; margin-left: auto; }
+#start .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 4px 18px; font-size: 12px; color: var(--muted); }
+#start .keys div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding: 3px 0; } #start .keys span { color: var(--fg); }
+
+/* end */
+#end { inset: 0; display: grid; place-items: center; background: rgba(6, 8, 10, 0.6); border: none; box-shadow: none; }
+#end .in { background: rgba(15, 19, 23, 0.97); border: 1px solid var(--line2); padding: 22px 26px; width: min(380px, 90vw); display: grid; gap: 14px; }
+#end h2 { font-size: 46px; color: var(--bad); } #end.win h2 { color: var(--ok); }
+#end .stats { display: grid; gap: 4px; } #end .stats div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 4px 0; font-size: 13px; } #end .stats b { font-family: var(--mono); }
+#end .row { display: flex; gap: 8px; } #end button { flex: 1; background: var(--panel2); border: 1px solid var(--line2); padding: 8px; font-size: 16px; font-weight: 700; letter-spacing: 0.06em; }
+@media (max-width: 760px) { #facCards { grid-template-columns: 1fr; } .fac img { height: 70px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<canvas id="view" tabindex="0"></canvas>
+<canvas id="hud"></canvas>
+
+<div id="loading"><div class="in"><h1>THUNDERHEAD</h1><div class="bar"><div id="loadBar"></div></div><div id="loadText">Starting</div></div></div>
+
+<div id="start" hidden>
+  <div class="in">
+    <div><h1>THUNDERHEAD</h1><div class="sub">EMERALD STRAIT · 1800 × 1800 M · 1 V 1 AGAINST THE AI</div></div>
+    <div id="facCards"></div>
+    <div class="opts">
+      <label for="aiFac">Opponent<select id="aiFac"></select></label>
+      <label for="startGs">Game speed <span id="startGsV">2.4×</span><input id="startGs" type="range" min="1" max="4" step="0.1" value="2.4"></label>
+      <button id="btnStart">Deploy</button>
+    </div>
+    <div class="keys">
+      <div>Select · box select<span>Left-click · drag</span></div><div>Same type on screen<span>Double-click</span></div>
+      <div>Move · attack · harvest<span>Right-click</span></div><div>Queue waypoints<span>Shift + right-click</span></div>
+      <div>Attack-move · stop · guard<span><kbd>A</kbd> <kbd>S</kbd> <kbd>G</kbd></span></div><div>Deploy · ability<span><kbd>D</kbd> <kbd>F</kbd></span></div>
+      <div>Control groups<span><kbd>Ctrl</kbd>+<kbd>1</kbd>–<kbd>9</kbd>, tap twice to centre</span></div><div>Build tabs · items<span><kbd>Q</kbd>–<kbd>T</kbd> · <kbd>Z</kbd>–<kbd>M</kbd></span></div>
+      <div>Last alert · home base<span><kbd>Space</kbd> · <kbd>H</kbd></span></div><div>Idle harvester · idle unit<span><kbd>I</kbd> · <kbd>O</kbd></span></div>
+      <div>Camera<span>Edges, arrows, middle-drag, wheel</span></div><div>Game speed · pause<span><kbd>+</kbd> <kbd>−</kbd> · <kbd>P</kbd></span></div>
+    </div>
+  </div>
+</div>
+
+<aside id="side" hidden>
+  <div class="money"><div id="credits">$10,000</div><div id="powerTxt">0 / 0</div></div>
+  <div id="mmWrap"><canvas id="minimap" width="496" height="496"></canvas></div>
+  <div id="tabs"></div>
+  <div class="buildrow"><div id="power" title="Power: the white line is demand, the bar is supply"><div id="powerMade"></div><div id="powerUsed"></div></div><div id="grid"></div></div>
+  <div id="selInfo"></div>
+  <div class="idle"><button id="idleHarv" title="Idle harvesters (I)">Idle harvesters <b>0</b></button><button id="idleUnits" title="Idle units (O)">Idle units <b>0</b></button></div>
+</aside>
+
+<div id="topbar" hidden><span class="chip" id="clock">0:00</span><span class="chip" id="spd">2.4×</span><button id="btnSettings">Settings</button><button id="btnPause">Pause</button></div>
+<div id="mode" hidden></div>
+<div id="paused" hidden>PAUSED</div>
+<div id="toast" hidden></div>
+<div id="subtitle"></div>
+<div id="tip" hidden></div>
+
+<div id="settings" class="panel" hidden>
+  <h3>Settings</h3>
+  <label for="setGs"><span>Game speed <b id="setGsV">2.4×</b></span><input id="setGs" type="range"></label>
+  <label for="setHr"><span>Harvester speed <b id="setHrV">1.25×</b></span><input id="setHr" type="range"></label>
+  <p id="setNote"></p>
+  <label for="setVol"><span>Volume</span><input id="setVol" type="range" min="0" max="1" step="0.05" value="0.8"></label>
+  <label for="setVoice"><span>Voices and announcer</span><input id="setVoice" type="range" min="0" max="1" step="0.05" value="0.9"></label>
+  <div class="row"><label for="setEdge" style="display:flex;gap:6px;align-items:center"><input id="setEdge" type="checkbox" checked> Edge scrolling</label>
+    <label for="setQuality" style="display:flex;gap:6px;align-items:center">Graphics <select id="setQuality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label></div>
+  <div class="row"><a id="setBench" href="audio_test.html" target="_blank" rel="noopener">Sound bench</a><button id="setReset">Reset speeds</button><button id="setClose">Close</button></div>
+</div>
+
+<div id="end" class="panel" hidden><div class="in"><h2>Victory</h2><div class="stats"></div><div class="row"><button id="endWatch">Keep watching</button><button id="endAgain">Play again</button></div></div></div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+<script type="module" src="main.js"></script>

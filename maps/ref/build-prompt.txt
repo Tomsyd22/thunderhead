@@ -1,0 +1,248 @@
+You are the senior environment artist, terrain engineer and level designer for my original modern military RTS. Build five large, detailed, playable 3D map environments using the exact specifications below. The gameplay reference is the land/sea/amphibious base-building structure of Red Alert 3, with original modern assets and visual identity.
+
+I am providing concept images. Use them for the intended scenery, materials, mood and overall composition. The numerical specification and layout data in this prompt are authoritative. The images contain approximate perspective and scale; never infer dimensions from their pixels or copy contradictory scale bars.
+
+DELIVERABLE AND WORKING METHOD
+
+Work in the existing project and its engine if one exists. First inspect its terrain, navigation, asset, camera and rendering systems. If this is an empty project, use Unity with URP and C#, a metre-based world and data-driven map generators. State the chosen engine and assumptions, then begin implementation. Produce actual editable scene content and working generation code, not only another plan, an image, or a static website.
+
+Scope: five environment scenes plus a map inspection and movement-testing harness. Provide terrain, water, roads, bridges, resources, base pads, original modular buildings, representative units, collisions, movement classes, minimap, lighting, environmental detail, camera presets, and validation reports. Integrate with existing RTS systems where available. Deliver each map separately and a menu for switching among them.
+
+Build in stages so the result remains inspectable:
+1. Implement the common metre scale, coordinate conversion, schema loader and deterministic terrain masks.
+2. Build and validate Emerald Strait as a complete representative map, including close-range visual quality.
+3. Construct the other four maps from their individual layouts using the same shared systems.
+4. Add environmental art, transitions, props and optimization.
+5. Run the acceptance checks and export the deliverables.
+
+Continue through all five maps. If the session context becomes limited, save a precise checkpoint with completed files, unfinished work and the next executable step. Never describe unfinished maps as complete. Identify missing external assets honestly, use appropriately dimensioned original procedural substitutes, and keep their replacement points editable.
+
+1. WORLD SCALE AND COORDINATES
+
+Use metres consistently. In Unity, 1 world unit = 1 metre. Store physical dimensions in metres. Keep every asset at its designed world size across camera zoom levels and all five maps.
+
+The embedded layout uses horizontal design coordinates q in the range 0–1000. These are NOT metres. Origin is the southwest map corner. Positive x is east; positive y is north. Convert each axis using:
+east_m = q_x × map_size_m / 1000
+north_m = q_y × map_size_m / 1000
+Unity world position = (east_m, terrain_height_m, north_m)
+
+All ground heights, object dimensions, clear widths, bridge heights, landmark size_m values and pad_size_m values are already in metres. Do not scale those a second time. Polygon vertices, ellipse centers/radii, forest-patch coordinates, quarry entries, road points, dock centers, landing-beach centers and resource positions are q coordinates.
+
+All maps are square and include playable water:
+- Emerald Strait: 1800 × 1800 m; 1v1; seed 4101.
+- Delta Grid: 2400 × 2400 m; 2v2; seed 4102.
+- Granite Fjord: 2000 × 2000 m; 1v1; seed 4103.
+- Sunbreak Atoll: 2600 × 2600 m; 2v2 naval; seed 4104.
+- Copperhead Bay: 2400 × 2400 m; 2v2; seed 4105.
+
+Store map data as editable assets/JSON. Generated object IDs must be stable. The same map seed and settings must reproduce the same placement. Keep geometry inside the playable bounds; distant scenery may exist in a separate nonplayable skirt.
+
+2. EXACT SHARED UNIT AND BUILDING DIMENSIONS
+
+These are original game design dimensions, not claims about a particular real-world military model. Dimensions below are length east-west × width north-south × height unless orientation is explicitly rotated. Use actual mesh bounds, not only labels.
+
+UNIT / BUILDING                DIMENSIONS
+Standing infantry              1.80 m standing height
+Infantry navigation capsule    0.35 m radius, 1.80 m height
+Main battle tank hull          7.50 × 3.60 m; turret roof 2.50 m above ground
+Tank gun-forward total length  9.50 m; barrel overhang is not hull length
+APC                            7.00 × 3.00 × 2.80 m, antennas excluded
+Ore harvester                  10.00 × 4.00 × 4.00 m
+Barracks                       24.00 × 12.00 × 6.00 m
+Vehicle factory                40.00 × 30.00 × 12.00 m
+Headquarters                   30.00 × 24.00 × 10.00 m, antennas excluded
+Ore refinery                   36.00 × 28.00 × 16.00 m, optional stacks above
+Power substation               20.00 × 16.00 × 6.00 m
+Radar control building         16.00 × 12.00 × 6.00 m; total antenna height 18 m
+Resource extraction rig        16.00 × 12.00 × 12.00 m
+Resource service reservation   50.00 × 50.00 m, including unloading/access
+Patrol boat                    32.00 m overall length, 7.00 m beam
+Patrol boat vertical envelope  9.00 m above water, 2.00 m draft
+Naval dock reserved area       80.00 × 40.00 m, including berth and service apron
+Personnel door                 0.90 m clear width × 2.10 m clear height
+Factory vehicle door           6.00 m clear width × 5.00 m clear height
+20-foot-style container        6.06 × 2.44 × 2.59 m
+40-foot-style container        12.19 × 2.44 × 2.59 m
+Mature trees                   10–18 m high; biome-specific silhouettes
+Grass                          0.08–0.45 m high
+Low shrubs                     0.40–1.50 m high
+
+Include a measurement scene with a 1 m grid, a 1.8 m mannequin, every unit and building, dimension gizmos and actual measured mesh bounds. Show a soldier beside a tank, beside a personnel door, and beside a barracks; show a tank passing through the factory door; show a patrol boat beside the dock. Selection icons may scale for readability, but the world models must retain their dimensions.
+
+3. STARTING BASE KIT
+
+Every base has a 220 × 220 m flat construction pad centered at its specified base position and ground_height_m. Pad corners must remain on land. Construction surface slope must be at most 1 degree. Blend the pad perimeter through an additional 30 m grading band. Keep the full pad buildable except occupied footprints and internal roads.
+
+Use this identical demonstration base layout at each start. Local offsets are metres from pad center, with local x east and local y north; rotation is 0 degrees. Keep these as placed demonstration objects in a separate layer so an empty multiplayer start can be exported.
+- HQ center: (-45, +35).
+- Barracks center: (-45, -5).
+- Vehicle factory center: (+30, +30), main door facing south.
+- Refinery A center: (-38, -55).
+- Refinery B center: (+25, -55).
+- Power substation center: (+65, -15).
+- Main internal east-west service aisle: y=-26, x=-90 to +90, 12 m clear.
+- Factory rally/exit point: (+30, -10), kept clear.
+- Six infantry in a loose group near (-75, 0), avoiding the service aisle itself.
+- Two tanks on a clear external rally apron and two harvesters on separate mine/refinery test routes; place after collision validation, not through fixed buildings.
+
+Base structures are blue-accented for B players and red-accented for R players. Do not turn terrain or entire buildings into saturated team-color blocks. Put home resource rigs at the specified resource coordinates outside the pad, with one accessible harvester service point per deposit.
+
+4. TERRAIN CONSTRUCTION AND PRECEDENCE
+
+Mean sea level is height 0 m. Deep ocean floor defaults to -20 m; use specified channel/fjord bed heights where supplied. Build a shoreline transition with shallow sand/rock shelf before deep water. On ordinary coasts, blend from shore to the base land height over 35–70 m; use explicit cliff stretches where needed and leave designated landing beaches gentle. Water appearance must reflect actual movement/depth classes.
+
+Geometry precedence, applied deterministically:
+1. Construct the land mask: polygon, full-square, or union of ellipses.
+2. Subtract water_cuts, then restore land_additions such as the fjord island.
+3. Set base_ground_m on land; apply shoreline blending inward.
+4. Add hills and quarry depressions.
+5. Flatten base pads and landmark pads; grade their perimeter.
+6. Grade roads/ramps and bridge approaches. Water cuts remain water; only explicit bridges may cross deep channels.
+7. Reserve resource service areas, dock access and landing beaches.
+8. Add minor terrain noise and environmental assets only outside protected masks.
+
+Ellipse land islands must receive an organic coastline treatment constrained within a 6 m displacement of the mathematical boundary. Keep logical navigation and rendered shoreline consistent. Do not displace narrow channels into closure. The exact mask is the source layout; irregular edges are surface detail.
+
+For a hill, compute d²=((x-cx)/rx)²+((y-cy)/ry)² in q coordinates. Within d<1, use weight=(1-d²)². Raise toward peak_height_m using that weight, rather than adding the full peak to the existing height. Use the maximum overlapping hill contribution. Peaks are absolute elevations above water, not extra heights.
+
+Roads follow the specified centerline polylines. Use rounded joins/fillets of at least 20 m radius where space permits; preserve each supplied waypoint within 8 m. Grade their surface to a maximum longitudinal slope of 6 percent and cross slope of 2 percent. A 24 m rise requires at least 400 m of ramp at 6 percent. If a fixed land connection cannot satisfy the slope limit, lower the nearby ridge or spread the grading corridor; do not silently insert an impassable ramp. Report any unavoidable layout conflict before relocating authoritative points.
+
+Use fine terrain variation of no more than ±0.35 m outside protected areas. Construction pads, doorways, road surfaces and resource unloading areas require flat/graded surfaces without random noise. Cliff meshes and collision must match; visually clear slopes above the vehicle traversal threshold are impassable.
+
+Quarries use the specified floor_height_m and two entry points. Give each entrance a 16 m clear ramp with maximum 6 percent slope. Do not create a resource pit with only one exit.
+
+5. MOVEMENT, WATER AND BRIDGES
+
+- Main roads/corridors: 24 m clear movement width, excluding props and shoulders.
+- Secondary routes: 16 m clear. Internal base service aisle: 12 m clear.
+- Minimum ordinary building separation: 8 m, measured between footprints.
+- Minimum vehicle-factory exit apron: 12 m beyond the door; retain a clear route to the rally point.
+- Main patrol-boat channels: at least 40 m clear, with 80 m turning-basin diameter near docks and major intersections.
+- Nav obstacles use actual unit radius/footprint clearance, not point-only connectivity. Test tanks and harvesters, not only infantry.
+- Grass and low vegetation are nonblocking. Small isolated trees may be crushable. Dense forest interiors and large rocks are clearly marked blocked areas.
+- Separate traversal layers: infantry, wheeled/tracked vehicles, amphibious vehicles, ships. A water surface must not accidentally become a land shortcut.
+- Ordinary ships need at least 3 m navigable depth, allowing 1 m under-keel clearance for the representative patrol boat.
+- Amphibious beaches: continuous 60–75 m wide landing approach, shallow-to-land gradient at most 8 percent, clear unloading apron at least 30 m deep. Blend the beach around the specified centers. Keep coral and boulders out of that route.
+
+Delta Grid bridges are permanent and 24 m clear across. Deck top is 14 m above water; deck underside at least 12 m. The patrol boat's 9 m above-water envelope must pass beneath with 3 m vertical clearance. Bridge supports must leave the principal ship channel clear. Bridge approaches need at least 100 m graded run on each bank to connect 8 m terrain to the 14 m deck. Model the bridge as a separate navigable land surface over navigable water, not as a filled dam. Reserve cable/support clearances around the land deck too.
+
+Sunbreak Atoll's causeways connect teammates only. Their deck tops are 10 m above water. Ships use the lagoon channels to either side; no east-west road or concealed land crossing is allowed. Implement these as explicit bridge/road structures rather than broadly filling the sea mask.
+
+Dock water_center locates the reserved berth zone in water; land_access is the target connection on the adjacent shore. Extend an editable pier/service apron between them as needed. Do not flatten the whole gap into land. Dock footings and reserved water must not obstruct the remaining naval channel. Add one representative patrol boat per dock, with a collision-safe mooring position.
+
+6. RESOURCE ECONOMY AND OBJECTIVES
+
+Deposits are industrial ore sites with extractor, service surface, gravel piles, safety barriers, decals and a clear harvester approach. Use 100,000 ore units per deposit and 100 ore units per successful full load for the movement demo; every deposit has the same capacity. Do not claim the economy is balanced from equal quantities alone.
+
+Each player has exactly two home deposits. Emerald Strait and Granite Fjord each have 8 total deposits: four home, two expansions, two contested. Delta Grid and Copperhead Bay each have 14: eight home, four expansions, two contested. Sunbreak Atoll has 12: eight home, four contested expansions on two neutral islands.
+
+`initial_nearest_player` identifies intended proximity, not ownership lock. Every deposit can be contested during play. The `E` and `C` labels are IDs, not different extraction multipliers.
+
+Capture structures are radar points only. Reserve a clear 24 × 24 m compound. Radar reveal radius is 220 m, with no income bonus. Keep its reveal from reaching starting base centers. All other wind turbines, waterworks, solar panels, tanks and cranes are environmental assets unless existing game rules explicitly support them.
+
+7. MAP-SPECIFIC ART AND PLAY LAYOUT
+
+EMERALD STRAIT: Blue northwest, red southeast. Keep three distinct approaches: central logistics valley, west coastal highway and east hill pass. Place the central-west port and eastern radar ridge from the coordinates. Sea connects both coasts around the southern headland. Use lush meadow grass, oak/pine clusters, pale limestone, service roads, culverts, substations and container cranes. Coastal rocks are wet and dark below the spray line. Keep the central road readable through the small logistics town. If adding streams, they are decorative shallow water/culverts and must not replace the specified land routes with deep obstacles.
+
+DELTA GRID: Blue northwest/southwest, red northeast/southeast. Two principal deep north-south channels frame the central waterworks strip. Four permanent bridges connect the banks at the specified positions. The north ring is a completely dry alternative land route above the channel ends. All four players receive river dock access. Use muddy banks, reeds, mangroves, palms, farm plots, concrete levees, drainage pumps, circular treatment tanks and pipe gantries. Any extra decorative tributaries must be shallow or culverted across mandatory land paths. Keep central resource pads separate from the waterworks footprint and road spine.
+
+GRANITE FJORD: Blue northwest and red northeast on 32 m terraces. Preserve the rear plateau road, central saddle route and lower crossing north of the fjord head. Both outer quarries have access loops. Dock access descends toward the water; use long graded ramps, never a sheer cliff shortcut. Central island radar is accessed by transport/amphibious landing. Use summer grass, tall pines, granite slabs, scree, service fences and distant wind turbines. Do not copy the implausibly large elevation labels from the original illustration. Decorative tunnel portals remain sealed unless the project already implements functional tunnels.
+
+SUNBREAK ATOLL: Four large home islands, two neutral expansion islands and one central radar island. Blue owns west starts and red east starts. Only teammates have causeways. Preserve two north-south lagoon sailing passages around the neutral islands; keep both open to the sea north and south. The two neutral expansion islands each have two mines and west/east landing beaches. Provide early transport/amphibious access in the demo harness. Use white sand, grass, palms, dense jungle pockets, basalt, coral visible under shallow water, research buildings, abandoned resort shells and solar arrays. Coral is decorative outside designated shipping/landing corridors. Never create an east-west dry route.
+
+COPPERHEAD BAY: Blue northwest/southwest, red northeast/southeast. Preserve the north grassy ridge corridor, central industrial boulevard and lower coastal route above the bay head. Put the freight terminal between the middle and lower corridors. Maintain broad streets around warehouse blocks. Rails sit flush with roads at crossings. Two contested quarry depressions have two ramps each. Southern teammates have the docks; northern teammates reach them by rear roads. Use copper-colored quarry cuts, reclaimed grass berms, poplar windbreaks, pine belts, containers, gantries, warehouses, stationary rail wagons, pipes, stormwater details and industrial lights. Naval fire may threaten the southern road, but the bay does not cut the northern land connections.
+
+8. ENVIRONMENTAL DETAIL AND MATERIALS
+
+Implement actual 3D scene detail suitable for both RTS and close-up inspection:
+- Grass with patch variation, meadow flowers in small clusters, bare tracks at heavily used areas.
+- Biome-specific trees with varied rotation, height, age and edge density. Avoid an evenly spaced orchard appearance outside farmland.
+- Layered cliff rock, small scree at cliff toes, ground-cover transitions and rock-to-grass blending.
+- Shoreline foam, wetness band, shallow-water color, deeper channel color and restrained reflections.
+- Asphalt with road paint, cracks, shoulders, drainage grates, curb cuts and believable connections at bridges.
+- Concrete service aprons with expansion joints, stains and faded markings.
+- Modular industrial details: doors, vents, pipework, ladders, rooftop equipment, railings and service boxes.
+- Ports: cranes, containers, bollards, fenders, utility cabinets, life rings and navigation markers.
+- Resource sites: drill/extractor, conveyors, screened gravel piles, safety stripes and service access.
+
+Use physically plausible material responses. Keep military unit silhouettes readable against grass, asphalt and water. Avoid oversized random decals, uniformly shiny terrain or pure flat-color surfaces.
+
+Forest patches in the layout are [center_x, center_y, radius_x, radius_y] in q coordinates. They describe elliptical distribution masks, not solid rectangular walls. Seed broadleaf trees at about one tree per 120 m² of eligible patch area, conifers one per 90 m², palms one per 160 m². Use minimum trunk spacing of 5 m and species-specific canopy variation. Respect exclusions before placement, accepting lower counts rather than forcing collisions.
+
+Reserve road clear width plus a 6 m roadside safety band. Exclude solid trees/rocks from base pads, resource service reservations, factory aprons, bridge approaches, dock access and landing beaches. Place nonblocking grass sparsely on undeveloped pads; use compacted soil/concrete under structures.
+
+Landmark size_m defines the entire reserved compound footprint, not one giant building. Subdivide the waterworks/freight terminal into believable small buildings, open courts, process equipment and access lanes. Decorative compounds must have at least two vehicle approaches and cannot silently obstruct an authoritative road.
+
+Use a shared modular asset library with biome-specific variants. No placeholder cube forests or giant flat pictures as final terrain detail. Procedural low-detail stand-ins may be used during blockout, then replace them with dimensioned meshes and materials before final visual review.
+
+9. CAMERA, PRESENTATION AND SCALE PROOF
+
+Provide camera controls for pan, orbit, zoom and selecting a unit. Start with a readable elevated RTS camera. Create these camera presets for every map:
+1. Entire-map overview with boundaries, player markers, resources and route overlays.
+2. Standard gameplay view including infantry, a tank and several buildings at unchanged world scale.
+3. Base close-up showing a soldier beside a tank and barracks, with factory behind.
+4. Harbor close-up with a patrol boat, dock and personnel.
+5. Terrain/asset detail close-up specific to that map's biome.
+
+Use team dots/icons at strategic scale instead of enlarging soldiers. A 7.5 m hull across a 1800 m map shown at 900 px wide occupies about 3.75 px before perspective; the camera cannot show detailed infantry at that whole-map scale. Make zoom and close-ups solve readability.
+
+Add toggleable accurate metric grid, unit bounds, base reservations, collision shapes, terrain height, water depth, resource IDs and navigation overlays. Scale bars must be computed from the current camera and appropriate ground-plane projection. Do not paste a decorative scale bar onto a perspective render and claim survey accuracy. Label overview and close-ups as different camera scales.
+
+10. PERFORMANCE AND EDITABILITY
+
+These are large maps, but not all detail needs to render simultaneously. Use terrain/vegetation chunks around 128 m where appropriate, GPU instancing, distance-based foliage, mesh LODs, culling and simplified far-water effects. Keep a high-detail near-camera region; reduce grass and small props at distance. Do not instantiate every grass blade as a separate object.
+
+Keep terrain geometry, logical terrain/navigation data and cosmetic detail separate. Collision cannot disappear merely because visual LOD changes. Prefer coarse collision where accurate movement does not require fine geometry. Bake or cache expensive generation steps; expose a deliberate regenerate control.
+
+Target smooth 1080p gameplay, aiming for 60 fps on the tested desktop, with adjustable quality. Measure and report the hardware, camera scene, visible instances, draw calls, memory and frame time. State actual measurements and bottlenecks; do not invent performance results.
+
+Preserve map-specific seeds, layout data, biome configuration, building dimensions, traversal rules and camera presets as editable data. Provide a regeneration workflow that replaces generated content cleanly without duplicating every object.
+
+11. ACCEPTANCE TESTS
+
+Run and report these checks separately for every map:
+- Terrain width and length equal the specified metre dimensions.
+- Base count, team assignment and base positions match the layout.
+- All pad corners are on land; pads satisfy buildable slope limits.
+- Resource count and coordinates match; rigs and harvester service points are accessible.
+- Actual model bounds match the shared dimensions within 1 percent, excluding identified antennas, stacks and animation poses.
+- Ordinary land maps retain their required land connections. Sunbreak Atoll has no dry east-west route.
+- Delta Grid retains all four bridge crossings and navigable water under them.
+- Ships reach assigned docks and clear channel intersections without clipping.
+- Amphibious units can land at designated beaches; conventional tanks cannot drive through deep water.
+- Tanks and harvesters clear ramps, factory doors, road corners and service routes.
+- Base structures, deposits and collision props do not overlap or obstruct specified corridors.
+- Opposing players' comparable home-resource distances and mirrored route travel times are measured. Target differences of at most 5 percent; report exceptions honestly. Preserve coordinates unless I approve balance changes; suggest a separate revised layout when needed.
+- Capture radar does not reveal initial base centers.
+- No floating trees, buildings below ground, holes, shoreline gaps, bridge discontinuities or z-fighting at main routes.
+- Screenshots exist for all five camera presets on every map.
+
+Pure coordinate and bounds checks can be automated. Gameplay balance and art quality still require review; do not equate passing coordinate checks with proven balance.
+
+12. HANDOFF
+
+Deliver:
+- Five individually named editable map scenes and their source data.
+- Shared generation code, modular assets, materials and units.
+- Five screenshots per map, plus an overview contact sheet.
+- A map selector and movement-testing scene.
+- A scale-reference scene with measured dimensions.
+- A concise README explaining opening, regeneration, camera controls and exports.
+- A validation report listing passed checks, measured performance, known limitations and any missing production assets.
+
+Begin by inspecting the project, loading the exact layout below and implementing the common map/scale foundation. Then finish Emerald Strait and proceed through the remaining maps. Keep actual files and scenes as the source of progress.
+
+AUTHORITATIVE LAYOUT DATA FOLLOWS
+
+Read the schema carefully. `base_ground_m` is the map's baseline land elevation, not the base-pad override. Bridge/road points are q coordinates. `forest_patches` is the four-value ellipse format specified above. If a serialized asset importer prefers a different representation, convert without changing positions or units.
+
+
+Schema metadata:
+{"schema_version": 1, "coordinate_system": {"horizontal": "layout coordinates q; 0..1000 per axis", "origin": "southwest", "x": "east", "y": "north", "height": "metres above mean sea level", "conversion": "metres = q * size_m / 1000", "engine_mapping": "Unity: (east_m, height_m, north_m)"}}
+
+Each following JSON line is one complete map object; load all five into the maps array:
+{"id":"01","name":"Emerald Strait","size_m":1800,"mode":"1v1","seed":4101,"base_ground_m":10,"land":{"type":"polygon","vertices":[[150,100],[820,100],[900,250],[880,850],[750,920],[220,920],[100,780],[100,300]]},"bases":[{"id":"B1","position":[250,780],"ground_height_m":14,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R1","position":[750,220],"ground_height_m":14,"pad_size_m":[220,220],"layout_rotation_deg":0}],"deposits":[{"id":"B1-H1","kind":"home","position":[205,855],"initial_nearest_player":"B1"},{"id":"B1-H2","kind":"home","position":[295,855],"initial_nearest_player":"B1"},{"id":"R1-H1","kind":"home","position":[705,145],"initial_nearest_player":"R1"},{"id":"R1-H2","kind":"home","position":[795,145],"initial_nearest_player":"R1"},{"id":"E1","kind":"expansion","position":[250,220]},{"id":"E2","kind":"expansion","position":[750,780]},{"id":"C1","kind":"contested","position":[410,560]},{"id":"C2","kind":"contested","position":[590,440]}],"roads":[{"id":"central","points":[[250,780],[360,680],[450,570],[500,500],[550,430],[640,320],[750,220]],"clear_width_m":24},{"id":"west-flank","points":[[250,780],[180,650],[180,430],[180,250],[250,170],[480,170],[750,220]],"clear_width_m":24},{"id":"east-flank","points":[[250,780],[500,830],[750,850],[820,780],[820,600],[820,390],[750,220]],"clear_width_m":24},{"id":"cross-link","points":[[180,430],[350,430],[500,500],[660,580],[820,600]],"clear_width_m":16}],"hills":[{"id":"west-ridge","center":[300,520],"radii":[75,160],"peak_height_m":30},{"id":"east-radar-ridge","center":[685,590],"radii":[90,150],"peak_height_m":36},{"id":"north-ridge","center":[530,740],"radii":[100,55],"peak_height_m":28},{"id":"south-ridge","center":[470,260],"radii":[100,55],"peak_height_m":28}],"docks":[{"player":"B1","water_center":[80,755],"land_access":[150,755],"orientation":"berth-long-axis-north-south"},{"player":"R1","water_center":[915,245],"land_access":[850,245],"orientation":"berth-long-axis-north-south"}],"landmarks":[{"id":"container-port","center":[155,520],"size_m":[150,100],"role":"decorative"},{"id":"radar","center":[700,650],"size_m":[24,24],"role":"capturable"}],"forest_patches":[[280,600,45,70],[370,770,45,40],[700,430,45,70],[630,230,45,40],[570,660,50,45],[430,340,50,45]],"biome":"temperate oak and pine, meadow grass, limestone, teal coast"}
+{"id":"02","name":"Delta Grid","size_m":2400,"mode":"2v2","seed":4102,"base_ground_m":8,"land":{"type":"polygon","vertices":[[0,180],[1000,180],[1000,1000],[0,1000]]},"water_cuts":[{"type":"rectangle","bounds":[290,180,410,840],"bed_height_m":-9},{"type":"rectangle","bounds":[590,180,710,840],"bed_height_m":-9}],"bases":[{"id":"B1","position":[160,760],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"B2","position":[160,300],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R1","position":[840,760],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R2","position":[840,300],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0}],"deposits":[{"id":"B1-H1","kind":"home","position":[115,825],"initial_nearest_player":"B1"},{"id":"B1-H2","kind":"home","position":[205,825],"initial_nearest_player":"B1"},{"id":"B2-H1","kind":"home","position":[115,235],"initial_nearest_player":"B2"},{"id":"B2-H2","kind":"home","position":[205,235],"initial_nearest_player":"B2"},{"id":"R1-H1","kind":"home","position":[795,825],"initial_nearest_player":"R1"},{"id":"R1-H2","kind":"home","position":[885,825],"initial_nearest_player":"R1"},{"id":"R2-H1","kind":"home","position":[795,235],"initial_nearest_player":"R2"},{"id":"R2-H2","kind":"home","position":[885,235],"initial_nearest_player":"R2"},{"id":"E1","kind":"expansion","position":[210,610]},{"id":"E2","kind":"expansion","position":[210,450]},{"id":"E3","kind":"expansion","position":[790,610]},{"id":"E4","kind":"expansion","position":[790,450]},{"id":"C1","kind":"contested","position":[465,710]},{"id":"C2","kind":"contested","position":[535,350]}],"roads":[{"id":"west-rear","points":[[160,300],[110,500],[160,760],[160,920]],"clear_width_m":24},{"id":"east-rear","points":[[840,300],[890,500],[840,760],[840,920]],"clear_width_m":24},{"id":"north-ring","points":[[160,920],[500,920],[840,920]],"clear_width_m":24},{"id":"upper-crossing","points":[[160,760],[245,680],[430,680],[500,640],[570,680],[755,680],[840,760]],"clear_width_m":24},{"id":"lower-crossing","points":[[160,300],[245,400],[430,400],[500,440],[570,400],[755,400],[840,300]],"clear_width_m":24},{"id":"central-spine","points":[[500,350],[500,440],[500,640],[500,710],[500,920]],"clear_width_m":16}],"bridges":[{"id":"NW","start":[290,680],"end":[410,680],"deck_height_m":14},{"id":"NE","start":[590,680],"end":[710,680],"deck_height_m":14},{"id":"SW","start":[290,400],"end":[410,400],"deck_height_m":14},{"id":"SE","start":[590,400],"end":[710,400],"deck_height_m":14}],"hills":[{"id":"NW-berm","center":[235,885],"radii":[60,35],"peak_height_m":16},{"id":"NE-berm","center":[765,885],"radii":[60,35],"peak_height_m":16}],"docks":[{"player":"B1","water_center":[325,760],"land_access":[270,760]},{"player":"B2","water_center":[325,280],"land_access":[270,280]},{"player":"R1","water_center":[675,760],"land_access":[730,760]},{"player":"R2","water_center":[675,280],"land_access":[730,280]}],"landmarks":[{"id":"waterworks","center":[500,540],"size_m":[140,160],"role":"decorative-compound"},{"id":"radar","center":[500,790],"size_m":[24,24],"role":"capturable"}],"forest_patches":[[70,620,35,60],[930,620,35,60],[450,250,30,30],[550,250,30,30],[440,820,20,35],[560,820,20,35]],"biome":"humid delta, reeds, mangroves at banks, palms, broadleaf trees, farms and levees"}
+{"id":"03","name":"Granite Fjord","size_m":2000,"mode":"1v1","seed":4103,"base_ground_m":28,"land":{"type":"full-square"},"water_cuts":[{"type":"polygon","vertices":[[300,0],[700,0],[700,300],[650,500],[600,650],[400,650],[350,500],[300,300]],"bed_height_m":-22}],"land_additions":[{"type":"ellipse","center":[500,290],"radii":[70,85],"ground_height_m":8}],"bases":[{"id":"B1","position":[235,790],"ground_height_m":32,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R1","position":[765,790],"ground_height_m":32,"pad_size_m":[220,220],"layout_rotation_deg":0}],"deposits":[{"id":"B1-H1","kind":"home","position":[190,860],"initial_nearest_player":"B1"},{"id":"B1-H2","kind":"home","position":[280,860],"initial_nearest_player":"B1"},{"id":"R1-H1","kind":"home","position":[720,860],"initial_nearest_player":"R1"},{"id":"R1-H2","kind":"home","position":[810,860],"initial_nearest_player":"R1"},{"id":"E1","kind":"expansion","position":[210,420]},{"id":"E2","kind":"expansion","position":[790,420]},{"id":"C1","kind":"contested","position":[455,790]},{"id":"C2","kind":"contested","position":[545,790]}],"roads":[{"id":"rear-plateau","points":[[235,790],[235,920],[500,920],[765,920],[765,790]],"clear_width_m":24},{"id":"central-saddle","points":[[235,790],[350,760],[455,730],[545,730],[650,760],[765,790]],"clear_width_m":24},{"id":"lower-crossing","points":[[235,790],[310,680],[440,700],[560,700],[690,680],[765,790]],"clear_width_m":24},{"id":"west-coastal","points":[[235,790],[190,650],[160,420],[300,500],[330,570],[310,680]],"clear_width_m":24},{"id":"east-coastal","points":[[765,790],[810,650],[840,420],[700,500],[670,570],[690,680]],"clear_width_m":24}],"hills":[{"id":"west-massif","center":[110,650],"radii":[65,125],"peak_height_m":54},{"id":"east-massif","center":[890,650],"radii":[65,125],"peak_height_m":54},{"id":"north-center","center":[500,870],"radii":[100,35],"peak_height_m":48}],"docks":[{"player":"B1","water_center":[400,500],"land_access":[330,500]},{"player":"R1","water_center":[600,500],"land_access":[670,500]}],"landmarks":[{"id":"island-radar","center":[500,290],"size_m":[24,24],"role":"capturable"},{"id":"west-wind-farm","center":[130,940],"size_m":[100,70],"role":"decorative"},{"id":"east-wind-farm","center":[870,940],"size_m":[100,70],"role":"decorative"}],"landing_beaches":[{"center":[440,290],"width_m":60},{"center":[560,290],"width_m":60}],"forest_patches":[[100,500,50,65],[900,500,50,65],[335,850,35,30],[665,850,35,30],[230,590,40,40],[770,590,40,40]],"biome":"snow-free northern summer, Scots pine, ferns, granite slabs, scree, deep blue fjord"}
+{"id":"04","name":"Sunbreak Atoll","size_m":2600,"mode":"2v2-naval","seed":4104,"base_ground_m":6,"land":{"type":"ellipse-union","ellipses":[{"center":[210,780],"radii":[150,180]},{"center":[210,220],"radii":[150,180]},{"center":[790,780],"radii":[150,180]},{"center":[790,220],"radii":[150,180]},{"center":[500,730],"radii":[100,110]},{"center":[500,270],"radii":[100,110]},{"center":[500,500],"radii":[45,45]}]},"bases":[{"id":"B1","position":[210,750],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"B2","position":[210,250],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R1","position":[790,750],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R2","position":[790,250],"ground_height_m":8,"pad_size_m":[220,220],"layout_rotation_deg":0}],"deposits":[{"id":"B1-H1","kind":"home","position":[165,825],"initial_nearest_player":"B1"},{"id":"B1-H2","kind":"home","position":[255,825],"initial_nearest_player":"B1"},{"id":"B2-H1","kind":"home","position":[165,175],"initial_nearest_player":"B2"},{"id":"B2-H2","kind":"home","position":[255,175],"initial_nearest_player":"B2"},{"id":"R1-H1","kind":"home","position":[745,825],"initial_nearest_player":"R1"},{"id":"R1-H2","kind":"home","position":[835,825],"initial_nearest_player":"R1"},{"id":"R2-H1","kind":"home","position":[745,175],"initial_nearest_player":"R2"},{"id":"R2-H2","kind":"home","position":[835,175],"initial_nearest_player":"R2"},{"id":"E1","kind":"contested-expansion","position":[465,760]},{"id":"E2","kind":"contested-expansion","position":[535,760]},{"id":"E3","kind":"contested-expansion","position":[465,240]},{"id":"E4","kind":"contested-expansion","position":[535,240]}],"roads":[{"id":"west-team-link","points":[[210,750],[210,600],[210,400],[210,250]],"clear_width_m":24},{"id":"east-team-link","points":[[790,750],[790,600],[790,400],[790,250]],"clear_width_m":24},{"id":"north-neutral-road","points":[[415,730],[465,730],[535,730],[585,730]],"clear_width_m":16},{"id":"south-neutral-road","points":[[415,270],[465,270],[535,270],[585,270]],"clear_width_m":16}],"bridges":[{"id":"west-causeway","start":[210,400],"end":[210,600],"deck_height_m":10},{"id":"east-causeway","start":[790,400],"end":[790,600],"deck_height_m":10}],"hills":[{"id":"NW-volcanic","center":[190,915],"radii":[65,35],"peak_height_m":36},{"id":"NE-volcanic","center":[810,915],"radii":[65,35],"peak_height_m":36},{"id":"SW-volcanic","center":[190,85],"radii":[65,35],"peak_height_m":36},{"id":"SE-volcanic","center":[810,85],"radii":[65,35],"peak_height_m":36}],"docks":[{"player":"B1","water_center":[350,700],"land_access":[320,740]},{"player":"B2","water_center":[350,300],"land_access":[320,260]},{"player":"R1","water_center":[650,700],"land_access":[680,740]},{"player":"R2","water_center":[650,300],"land_access":[680,260]}],"landmarks":[{"id":"radar","center":[500,500],"size_m":[24,24],"role":"capturable"},{"id":"north-research","center":[500,780],"size_m":[70,50],"role":"decorative"},{"id":"south-solar","center":[500,220],"size_m":[70,50],"role":"decorative"}],"landing_beaches":[{"center":[410,730],"width_m":75},{"center":[590,730],"width_m":75},{"center":[410,270],"width_m":75},{"center":[590,270],"width_m":75},{"center":[460,500],"width_m":50},{"center":[540,500],"width_m":50}],"forest_patches":[[120,740,35,55],[880,740,35,55],[120,260,35,55],[880,260,35,55],[500,830,30,15],[500,170,30,15]],"biome":"tropical palms, jungle clusters, grass, basalt, white sand, coral shallows and deep turquoise channels"}
+{"id":"05","name":"Copperhead Bay","size_m":2400,"mode":"2v2","seed":4105,"base_ground_m":12,"land":{"type":"full-square"},"water_cuts":[{"type":"polygon","vertices":[[280,0],[720,0],[720,260],[650,380],[550,430],[450,430],[350,380],[280,260]],"bed_height_m":-16}],"bases":[{"id":"B1","position":[150,800],"ground_height_m":12,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"B2","position":[150,250],"ground_height_m":12,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R1","position":[850,800],"ground_height_m":12,"pad_size_m":[220,220],"layout_rotation_deg":0},{"id":"R2","position":[850,250],"ground_height_m":12,"pad_size_m":[220,220],"layout_rotation_deg":0}],"deposits":[{"id":"B1-H1","kind":"home","position":[105,865],"initial_nearest_player":"B1"},{"id":"B1-H2","kind":"home","position":[195,865],"initial_nearest_player":"B1"},{"id":"B2-H1","kind":"home","position":[105,185],"initial_nearest_player":"B2"},{"id":"B2-H2","kind":"home","position":[195,185],"initial_nearest_player":"B2"},{"id":"R1-H1","kind":"home","position":[805,865],"initial_nearest_player":"R1"},{"id":"R1-H2","kind":"home","position":[895,865],"initial_nearest_player":"R1"},{"id":"R2-H1","kind":"home","position":[805,185],"initial_nearest_player":"R2"},{"id":"R2-H2","kind":"home","position":[895,185],"initial_nearest_player":"R2"},{"id":"E1","kind":"expansion","position":[230,700]},{"id":"E2","kind":"expansion","position":[230,450]},{"id":"E3","kind":"expansion","position":[770,700]},{"id":"E4","kind":"expansion","position":[770,450]},{"id":"C1","kind":"contested","position":[405,680]},{"id":"C2","kind":"contested","position":[595,680]}],"roads":[{"id":"north-ridge","points":[[150,800],[280,850],[500,850],[720,850],[850,800]],"clear_width_m":24},{"id":"industrial-boulevard","points":[[150,800],[240,620],[400,620],[600,620],[760,620],[850,800]],"clear_width_m":24},{"id":"coastal-road","points":[[150,250],[240,470],[450,470],[550,470],[760,470],[850,250]],"clear_width_m":24},{"id":"west-rear","points":[[150,250],[100,500],[150,800]],"clear_width_m":24},{"id":"east-rear","points":[[850,250],[900,500],[850,800]],"clear_width_m":24},{"id":"west-crosslink","points":[[240,470],[240,620],[280,850]],"clear_width_m":16},{"id":"east-crosslink","points":[[760,470],[760,620],[720,850]],"clear_width_m":16}],"hills":[{"id":"north-west-ridge","center":[350,900],"radii":[100,45],"peak_height_m":32},{"id":"north-east-ridge","center":[650,900],"radii":[100,45],"peak_height_m":32}],"quarries":[{"center":[405,680],"radii":[55,40],"floor_height_m":5,"entries":[[350,680],[460,680]]},{"center":[595,680],"radii":[55,40],"floor_height_m":5,"entries":[[540,680],[650,680]]}],"docks":[{"player":"B2","water_center":[340,240],"land_access":[260,240]},{"player":"R2","water_center":[660,240],"land_access":[740,240]}],"landmarks":[{"id":"freight-terminal","center":[500,550],"size_m":[260,140],"role":"decorative-compound"},{"id":"rail-siding","center":[500,585],"size_m":[260,16],"role":"decorative"},{"id":"radar","center":[500,940],"size_m":[24,24],"role":"capturable"}],"forest_patches":[[65,620,25,70],[935,620,25,70],[300,760,40,25],[700,760,40,25],[310,450,30,12],[690,450,30,12]],"biome":"reclaimed grass, poplar windbreaks, pine belts, copper earth, concrete, asphalt and blue sea"}

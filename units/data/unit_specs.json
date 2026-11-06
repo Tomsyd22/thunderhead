@@ -1,0 +1,1773 @@
+{
+  "version": "0.2",
+  "factions": {
+    "H": {
+      "name": "IRON LEGION",
+      "concept": "Heavy armour / inexpensive manpower / sustained assault",
+      "color": "#B7473F",
+      "secondary": "#D6AE68",
+      "material": "Oxide-red painted steel, charcoal running gear, warm ivory markings",
+      "wear": "Edge chips and exposed dark steel; dust below the waist or hull; restrained soot near exhausts. No random rust on every panel."
+    },
+    "A": {
+      "name": "VANGUARD ALLIANCE",
+      "concept": "Deployment / combined arms / precise responses",
+      "color": "#3275B5",
+      "secondary": "#E4E8E6",
+      "material": "Desaturated navy-blue armour, cool light-grey panels, amber optics",
+      "wear": "Fine edge abrasion, clean team markings, road dust on lower surfaces; equipment remains maintained."
+    },
+    "T": {
+      "name": "NOVA DIRECTIVE",
+      "concept": "Mobility / reconnaissance / fragile advanced technology",
+      "color": "#137F80",
+      "secondary": "#6FE6D4",
+      "material": "Graphite ceramic shells, pale silver panels, cyan emissive optics",
+      "wear": "Fine ceramic scratches and dust around joints; limited exposed metal; emissive strips stay thin and readable."
+    }
+  },
+  "global_rules": {
+    "status": "Original prototype design v0.1; not shipped assets, not extracted RA2 statistics, and not playtested balance.",
+    "axes": "Source convention: 1 Blender unit = 1 metre; Z up; +Y forward; +X unit right. Generated reference-panel page orientation varies; use their FRONT/BACK/RIGHT SIDE/TOP labels and align finished meshes to source axes.",
+    "dimensions": "Length = Y envelope; width = X envelope; height = Z envelope. Typeset dimensions describe the combat-ready/standing envelope including weapons, rotors and gear where specified. A02 artwork shows stowed equipment and must not be used to measure its combat-ready envelope. Collision shapes are simplified gameplay proxies.",
+    "scale": "Use physical metre scale in source assets. Start with uniform 1.0 gameplay scale; if readability requires exaggeration, apply one documented category-level visual multiplier and keep collision/ranges unchanged. No per-unit silent rescaling.",
+    "time": "All durations are real seconds at 1x simulation speed. Use a fixed simulation tick (suggested 30 Hz); render interpolated. Rate of fire is independent of FPS.",
+    "damage": "Damage per projectile x burst count x target-class multiplier x outgoing veterancy multiplier. No additional hidden armour subtraction. Missing target class = cannot target. HP cannot fall below 0. No random accuracy, critical hit, dodge, directional armour or friendly fire in v0.1.",
+    "dps": "Base sustained DPS = damage x burst / cycle. Cycle is first-shot to next first-shot and includes within-burst gaps; do not add burst time again. Listed DPS assumes uninterrupted firing and hits. For Kestrel, 14 s is a reference whole-sortie cycle, not a weapon reload; actual sortie DPS depends on flight distance and landing queues.",
+    "splash": "For splash weapons, radius r measured from impact point to target collision surface; multiplier falls linearly from 1 at centre to the listed edge value at r, then 0 outside. One hit per victim per projectile. No friendly splash in v0.1. Cover and garrison occupants are protected until their building is destroyed.",
+    "range": "Range uses horizontal distance between attacker and target collision surfaces; sight uses centre-to-centre horizontal distance. Ground weapons require vision and clear muzzle-to-target line of sight. Air interception ignores terrain occlusion after lock. Kestrel bombs target visible ground points and never track after release.",
+    "targeting": "Manual orders override automatic target priority. Auto-acquire nearest valid threatening unit within range; do not chase beyond 1.25x weapon range unless attack-moving. Reacquire only if target dies, leaves leash or becomes invalid. Guided projectiles self-destruct harmlessly if target dies; do not auto-retarget.",
+    "cooldowns": "A shared firing lock prevents multi-mode weapons bypassing reload. Each non-frigate unit has one weapon lock. Sentinel has independent anti-ship and AA systems. Interrupted pre-fire wind-up deals no damage and consumes no ammo; a released projectile consumes its full cycle. Lost vision does not delete a released guided projectile.",
+    "movement": "Infantry stop to fire unless a sheet says otherwise; tanks/ships fire while moving within aim limits. Separate collision, navigation and visual hull motion. No unit crushing in v0.1. Vehicles cannot push infantry through walls. Formation spacing is at least 2x collision radius + 0.25 m.",
+    "air_sea": "Air units pass above ground collision and have no damaging crash. Ships cannot leave authored water navigation. Wisp alone uses land plus shallow-water mask. No transport cargo, submarine layer or aircraft fuel mechanic in v0.1.",
+    "garrison": "Only Conscript, Ranger and Pulse Trooper can garrison. Friendly/neutral compatible buildings need a free slot; 2 m interaction range between collision surfaces and 1 s entry (Pulse uses 0.9 s). The same unit HP/XP persists. Occupants use mobile weapon, no automatic range bonus, and one available firing port each. Building destruction kills occupants in v0.1; UI warns this risk. No deploy inside buildings.",
+    "production": "Costs are in match credits. Pay upfront; queued cancellation refunds 100%, active production refunds cost x remaining progress. Build times assume one producing facility, no speed modifiers. Tier 1 = relevant production building; tier 2 = that building plus radar tech. Resource economy remains the user's existing open-resource design.",
+    "veterancy": "Three states: Regular (damage x1, HP x1), Veteran (damage x1.12, max HP x1.10), Elite (damage x1.25, max HP x1.20). No range/reload bonus. Earn XP on enemy destruction, split by share of damage in preceding 20 s; unit kill grants its credit cost in XP, buildings grant 25% of cost. Veteran at lifetime XP >=1.5x own cost, Elite at >=4x own cost. No XP for friendly damage or structures under construction.",
+    "temporary_promotion": "15 s field grants +1 effective rank, capped at Elite, to valid friendly combat units at activation. Proposed radius 14 m, maximum 12 units; prioritise player-selected units then nearest. It is a snapshot, not a moving aura. Does not stack or refresh itself. Earned XP continues normally. On every max-HP change preserve current HP percentage, so cast/expiry cannot heal for free or kill a living unit. Existing Elite receives no extra rank; exclude it from affected count.",
+    "support_powers": "All three powers cost 1 token; passive income remains 1/minute/player. Proposed shared cast cooldown 10 s and bank limit 3. Reinforcement uses final faction-native counts in reinforcement_final. Drone strike is separate from the Mote weapon: visible ground point, 1.8 s warning, radius 6 m, 160 centre damage, edge x0.25; multipliers infantry 1 / light .65 / heavy .35 / building .35 / naval .35; cannot hit air. These are starting proposals, not edits to the current build.",
+    "reinforcement_final": "Implementation default: faction-native reinforcement counts H=6 Conscripts (600 credits), A=3 Rangers (600 credits), T=2 Pulse Troopers (500 credits). Accept the tech squad's 100-credit gap provisionally and test it; do not add a new unit solely to equalise price. Arrival at visible, navigable friendly rally point; 2 s warning, no enemy-base drops; no attack during arrival.",
+    "emp": "Disruptor EMP changes movement speed x0.70 and weapon cycle x1.25 for 3 s; it does not mean -25% DPS (that interval yields -20% sustained DPS). No stacking, no duration refresh. Immunity lasts through effect plus 6 s afterwards. Does not stop jet flight/landing or rotor animations. Buildings and infantry are invalid EMP targets.",
+    "art": "All 15 realistic sheets were created with image generation. They include hero views, front/back/side/top reference panels, close-ups and motion or mechanism studies. They are concept-art references, not measured engineering drawings. Typeset dimensions, collision values and gameplay specs are authoritative. Reconcile small view-to-view geometry or marking differences in Blender. A02 is shown in transport configuration; combat deployment is described on its technical page.",
+    "asset_delivery": "Export production models as GLB with named nodes, applied scale, packed textures and consistent axes. Keep source .blend separately when models are built. This pack supplies specifications and drawings; it does not include finished .blend models or tested engine integrations.",
+    "budgets": "Triangle budgets are per visible unit at LOD0/LOD1/LOD2, excluding cheap projectile effects. Texture size is the longest side per unit atlas. Share faction materials and humanoid skeletons. Avoid one realtime light per projectile or glowing panel. These are targets, not measured 16GB-Mac performance guarantees.",
+    "collision": "Infantry: upright capsule at the ground root, radius from sheet, height 1.65 m. Tanks: horizontal capsule over chassis (exclude barrel), total length 65% of envelope L, radius from sheet. Ships: horizontal capsule total length 85% of L, radius from sheet. Keep the capsule collision width <= actual hull beam. Air: targeting sphere using sheet radius, no ground-blocking collider. Navigation avoidance may use a simpler circle; it must not replace the actual hit/collision shape. All ranges use these collision surfaces."
+  },
+  "units": [
+    {
+      "id": "H01",
+      "name": "Conscript",
+      "faction": "H",
+      "category": "Infantry",
+      "role": "Cheap objective holder and anti-infantry support",
+      "dimensions_m": {
+        "length": 1.0,
+        "width": 0.72,
+        "height": 1.82
+      },
+      "health": 125,
+      "armor": "infantry",
+      "cost": 100,
+      "build_seconds": 5,
+      "speed_mps": 4.4,
+      "sight_m": 32,
+      "collision_radius_m": 0.32,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Service rifle",
+          "kind": "hitscan",
+          "damage": 12,
+          "cycle_s": 0.8,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building"
+          ],
+          "multipliers": {
+            "infantry": 1,
+            "light": 0.25,
+            "heavy": 0.08,
+            "building": 0.2
+          },
+          "projectile_speed_mps": 0,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 18
+        }
+      ],
+      "silhouette": "Low rounded helmet, broad canvas shoulder straps, box magazine and square backpack. Plain silhouette with no powered armour.",
+      "views": [
+        "Front: open shoulder straps, narrow chest plate, two magazine pouches; face under helmet brim.",
+        "Back: rectangular canvas pack, canteen on left hip, rolled blanket below pack.",
+        "Side: rifle extends forward; elbows clear torso; straight barrel and short stock.",
+        "Top: oval helmet, symmetrical shoulders, rifle offset to right; no antenna."
+      ],
+      "wear": "Faded cloth at knees and elbows; dusty boots; chips on helmet rim and rifle corners. Keep cloth matte.",
+      "weapon_visual": "Compact 0.72 m service rifle; 0.025 m muzzle aperture; brown stock and dark receiver. Grip and trigger hand remain fixed to weapon.",
+      "projectile_visual": "Instant gameplay hit. Draw a thin 0.07 s warm tracer on every third shot; 0.04 s muzzle flash; small dust or spark impact. Tracer is cosmetic.",
+      "ability": "Garrison: enters a friendly or neutral compatible building with a free slot within 2 m; 1.0 s entry. Uses the same rifle and range, fires only from available firing ports. No extra damage bonus.",
+      "movement": "Stops to fire; 0.12 s aim wind-up. Cannot fire during sprint or garrison entry. No reload magazine mechanic in v0.1.",
+      "rig": "Humanoid 24 deform bones; pelvis root, spine x3, head, clavicles, upper/lower arms, hands, thighs, shins, feet. Separate rifle object with two grip sockets.",
+      "animations": [
+        "Idle 2.4 s: breathing chest and small head scan; feet planted.",
+        "Run 0.8 s loop: pelvis bob 0.04 m, opposing limbs; rifle kept stable.",
+        "Aim/fire 0.8 s: shoulder recoil 0.015 m, rifle kick 3 degrees, recovery before next shot.",
+        "Garrison 1.0 s: weapon lowered and entry step; exit reverses 0.8 s.",
+        "Death 0.8 s: directional fall; disable weapon; fade body after 6 s."
+      ],
+      "geometry": "Helmet shell, face block, jacket torso, canvas pack, trousers, boots and rifle. Prioritise helmet and rifle silhouette above tiny buckles.",
+      "pivots": "Origin at ground between feet; +Y forward; muzzle at barrel tip; chest hit socket at z=1.15 m; overhead badge at z=2.05 m.",
+      "budget": [
+        4500,
+        2200,
+        650,
+        2,
+        1024
+      ],
+      "counter": "Strong in numbers against unsupported infantry; weak to machine guns, splash, vehicles and aircraft.",
+      "production": "Barracks; no additional tech. Reinforcement power may use this exact unit definition.",
+      "sfx": "Dry single rifle crack; cloth footsteps; short neutral acknowledgement; no faction-identical voice lines.",
+      "faction_name": "IRON LEGION",
+      "unit_file": "H01_Conscript",
+      "weapons_dps": [
+        {
+          "weapon": "Service rifle",
+          "base_dps": 15.0,
+          "effective_dps": {
+            "infantry": 15.0,
+            "light": 3.75,
+            "heavy": 1.2,
+            "building": 3.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.32,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/H01_Conscript.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "H02",
+      "name": "Rocket Trooper",
+      "faction": "H",
+      "category": "Infantry",
+      "role": "Slow-firing armour and aircraft deterrent",
+      "dimensions_m": {
+        "length": 1.32,
+        "width": 0.82,
+        "height": 1.9
+      },
+      "health": 110,
+      "armor": "infantry",
+      "cost": 300,
+      "build_seconds": 10,
+      "speed_mps": 3.8,
+      "sight_m": 36,
+      "collision_radius_m": 0.35,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Anti-armour rocket",
+          "kind": "guided",
+          "damage": 90,
+          "cycle_s": 3,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "light": 1,
+            "heavy": 1,
+            "building": 0.65,
+            "naval": 0.8
+          },
+          "projectile_speed_mps": 45,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 36,
+          "turn_deg_s": 150,
+          "life_s": 2.5
+        },
+        {
+          "name": "Air-defence rocket",
+          "kind": "guided",
+          "damage": 70,
+          "cycle_s": 2.5,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "air"
+          ],
+          "multipliers": {
+            "air": 1
+          },
+          "projectile_speed_mps": 55,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 45,
+          "turn_deg_s": 180,
+          "life_s": 2.5
+        }
+      ],
+      "silhouette": "Tall shoulder launcher, low helmet, large two-canister backpack. Launcher on right shoulder is the recognition feature.",
+      "views": [
+        "Front: launcher opening above right shoulder; small chest plate and exposed left arm.",
+        "Back: two capped spare canisters, central harness and small red ID plate.",
+        "Side: 1.05 m launcher aligned forward above shoulder; rear vent behind head.",
+        "Top: long tube offset right; left hand supports tube; spare tubes stay behind body."
+      ],
+      "wear": "Soot at launcher rear vent; scraped tube rims; dusty knees and boots. Avoid glowing launcher body.",
+      "weapon_visual": "Single 1.05 m shoulder tube with replaceable visual canister and tracking sight. Separate front lens, vent and missile mesh.",
+      "projectile_visual": "0.28 m red-tipped missile, thin smoke trail for 0.6 s; guided turn limit as specified. Direct-hit spark and compact flash; no area damage.",
+      "ability": "No manual active ability. Automatically selects ground or air ammunition. Both modes share one firing lock; after firing, wait the fired weapon cycle before any next launch.",
+      "movement": "Stops to aim; 0.35 s lock-on with continuous line of sight. Movement cancels lock. Air targets preferred when threatening nearby friendly units.",
+      "rig": "Humanoid base rig; shoulder launcher socket and sight bone; left hand IK. Backpack canisters are rigid attachments.",
+      "animations": [
+        "Idle 2.6 s: launcher balanced on shoulder, small breathing motion.",
+        "Run 1.0 s loop: heavy steps, launcher roll under 4 degrees.",
+        "Lock 0.35 s: torso and head rotate toward target.",
+        "Launch/reload 2.5-3.0 s: small shoulder kick, reach toward pack, reset tube; visual reload cannot reset cooldown.",
+        "Death 0.9 s: launcher drops as separate disabled prop; no damaging explosion."
+      ],
+      "geometry": "Launcher must read from RTS camera height; use chunky tube and broad backpack. Do not model each backpack strap as separate geometry.",
+      "pivots": "Ground root; launcher yaw follows chest; muzzle at forward tube cap; rear exhaust socket behind shoulder.",
+      "budget": [
+        5500,
+        2600,
+        750,
+        2,
+        1024
+      ],
+      "counter": "Threatens armour and helicopters in groups; easily pressured by rifle infantry and splash.",
+      "production": "Barracks; no additional tech. Cannot launch while inside a garrison in v0.1.",
+      "sfx": "Distinct lock chirp, one rocket whoosh, backpack reload clack.",
+      "faction_name": "IRON LEGION",
+      "unit_file": "H02_Rocket_Trooper",
+      "weapons_dps": [
+        {
+          "weapon": "Anti-armour rocket",
+          "base_dps": 30.0,
+          "effective_dps": {
+            "light": 30.0,
+            "heavy": 30.0,
+            "building": 19.5,
+            "naval": 24.0
+          }
+        },
+        {
+          "weapon": "Air-defence rocket",
+          "base_dps": 28.0,
+          "effective_dps": {
+            "air": 28.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.35,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/H02_Rocket_Trooper.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "H03",
+      "name": "Bastion Heavy Tank",
+      "faction": "H",
+      "category": "Tank",
+      "role": "Durable frontline anti-armour attacker",
+      "dimensions_m": {
+        "length": 9.6,
+        "width": 3.8,
+        "height": 3.0
+      },
+      "health": 950,
+      "armor": "heavy",
+      "cost": 900,
+      "build_seconds": 22,
+      "speed_mps": 7.8,
+      "sight_m": 44,
+      "collision_radius_m": 1.65,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Heavy cannon",
+          "kind": "ballistic",
+          "damage": 100,
+          "cycle_s": 2.5,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "infantry": 0.25,
+            "light": 1.15,
+            "heavy": 1,
+            "building": 0.85,
+            "naval": 0.75
+          },
+          "projectile_speed_mps": 110,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 42
+        }
+      ],
+      "silhouette": "Wide rectangular tracks, squat wedge turret, long thick barrel and rear exhaust boxes. Dense horizontal silhouette.",
+      "views": [
+        "Front: broad track guards, wedge turret cheeks, central cannon and small left optic.",
+        "Back: twin exhaust boxes, tow hooks and cooling grille; no exposed fuel barrels.",
+        "Side: seven road-wheel positions beneath continuous tracks; turret centred slightly aft.",
+        "Top: rectangular hull, wedge turret, rear engine grilles and two hatches."
+      ],
+      "wear": "Bright edge chips around hatches and track guards; mud on lower tracks; dark soot around rear exhausts. Barrel mouth lightly blackened.",
+      "weapon_visual": "Single 2.7 m exposed cannon barrel; 0.16 m muzzle diameter. Turret is a separate yaw object; barrel is a separate pitch/recoil object.",
+      "projectile_visual": "0.18 m shell, straight gameplay trajectory at 110 m/s; 0.05 s muzzle flash and 0.35 s dust. Compact direct-hit burst; no gameplay splash.",
+      "ability": "Passive heavy armour is represented by health and the heavy target class. No directional armour, crushing or manual special ability in v0.1.",
+      "movement": "Acceleration 3 m/s2, hull turn 55 deg/s; turret yaw 85 deg/s, gun pitch -7 to +20 degrees. Fires while moving; must aim within 5 degrees.",
+      "rig": "Rigid root; separate hull, left/right tracks, turret_yaw, gun_pitch and gun_recoil. Track belt texture scrolls with actual ground speed.",
+      "animations": [
+        "Idle: gentle engine vibration; exhaust at rear, no rocking while parked.",
+        "Drive: track UV scroll, road wheels rotate; hull pitch limited to 3 degrees.",
+        "Fire: barrel retracts 0.22 m in 0.08 s and returns over 0.32 s; turret remains aimed.",
+        "Turret: independent yaw and pitch; no whole-hull snap toward target.",
+        "Death 1.4 s: flash, smoke and settled wreck; wreck has no collision after 2 s and fades at 12 s."
+      ],
+      "geometry": "Bake suspension detail into normal maps. Seven visible wheel positions per side, thick tracks and large turret cheeks are priority shapes.",
+      "pivots": "Root at ground under hull centre; turret pivot at ring centre; recoil local -Y; muzzle child of recoil bone; exhaust sockets at rear.",
+      "budget": [
+        18000,
+        8500,
+        2200,
+        3,
+        2048
+      ],
+      "counter": "Wins direct fights against lighter tanks per unit; weak to concentrated AT infantry, air attacks and flanking raids elsewhere.",
+      "production": "War factory; no additional tech. Price premium buys durability, not universal effectiveness.",
+      "sfx": "Low diesel loop tied to throttle; heavy cannon report; track clatter at speed.",
+      "faction_name": "IRON LEGION",
+      "unit_file": "H03_Bastion_Heavy_Tank",
+      "weapons_dps": [
+        {
+          "weapon": "Heavy cannon",
+          "base_dps": 40.0,
+          "effective_dps": {
+            "infantry": 10.0,
+            "light": 46.0,
+            "heavy": 40.0,
+            "building": 34.0,
+            "naval": 30.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 1.65,
+        "total_length_m": 6.24,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/H03_Bastion_Heavy_Tank.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "H04",
+      "name": "Hammer Assault Helicopter",
+      "faction": "H",
+      "category": "Air",
+      "role": "Sustained anti-vehicle air support",
+      "dimensions_m": {
+        "length": 15.5,
+        "width": 13.2,
+        "height": 4.2
+      },
+      "health": 650,
+      "armor": "air",
+      "cost": 1200,
+      "build_seconds": 28,
+      "speed_mps": 19,
+      "sight_m": 52,
+      "collision_radius_m": 2.0,
+      "tier": 2,
+      "weapons": [
+        {
+          "name": "Twin attack rockets",
+          "kind": "guided",
+          "damage": 42,
+          "cycle_s": 2.8,
+          "burst": 2,
+          "burst_gap_s": 0.15,
+          "targets": [
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "light": 1,
+            "heavy": 1,
+            "building": 0.7,
+            "naval": 0.85
+          },
+          "projectile_speed_mps": 65,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 45,
+          "turn_deg_s": 120,
+          "life_s": 2
+        }
+      ],
+      "silhouette": "Tandem narrow cockpit, broad rotor disc, stub wings with paired rocket pods, tail boom and skid gear.",
+      "views": [
+        "Front: narrow cockpit under rotor mast; symmetrical pods and landing skids.",
+        "Back: tail rotor offset to right; two exhausts above fuselage rear.",
+        "Side: two-seat canopy, mast behind cockpit, long tail and underslung weapon pods.",
+        "Top: four-blade rotor disc; stub wings; narrowing tail boom."
+      ],
+      "wear": "Leading-edge paint erosion, restrained exhaust streaks, dusty skids; canopy stays clean and readable.",
+      "weapon_visual": "Two matching rocket pods on stub wings; alternate left and right muzzles inside each two-shot volley.",
+      "projectile_visual": "0.40 m rockets; bright launch puff and smoke trails capped at 0.8 s. Direct hit only; no hidden explosive splash.",
+      "ability": "No manual ability. Hover-and-fire behaviour; no ammunition magazine or return-to-base requirement in v0.1.",
+      "movement": "Cruise altitude 12 m; acceleration 7 m/s2, yaw 95 deg/s. Can fire below 50% cruise speed; holds target distance near 36 m.",
+      "rig": "Rigid fuselage root, main_rotor, tail_rotor, four blade meshes, optional pod yaw \u00b110 degrees; both muzzle sockets attached to pods.",
+      "animations": [
+        "Hover: z bob \u00b10.15 m over 2.4 s; main rotor loops continuously.",
+        "Flight: pitch forward up to 12 degrees and bank up to 15 degrees during turns.",
+        "Attack: alternating pod flash at t=0 and 0.15 s; no cannon recoil.",
+        "Rotor: switch to translucent disc above threshold; tail rotor has separate disc.",
+        "Death 1.8 s: controlled visual fall; no crash damage; disable hitbox immediately on destruction."
+      ],
+      "geometry": "Rotor diameter 13.2 m; fuselage length below full envelope. Keep cockpit, weapon pods and tail as separate readable masses.",
+      "pivots": "Air root at fuselage underside, altitude applied above terrain; rotor pivot at mast, tail-rotor axis sideways; targeting socket at fuselage centre.",
+      "budget": [
+        16000,
+        7500,
+        2000,
+        3,
+        2048
+      ],
+      "counter": "Punishes unsupported tank armies; cannot attack infantry or aircraft; loses to concentrated AA.",
+      "production": "Airfield + radar tech; spawns airborne above a free launch socket.",
+      "sfx": "Layered rotor loop; paired rocket reports; lower engine whine while hovering.",
+      "faction_name": "IRON LEGION",
+      "unit_file": "H04_Hammer_Assault_Helicopter",
+      "weapons_dps": [
+        {
+          "weapon": "Twin attack rockets",
+          "base_dps": 30.0,
+          "effective_dps": {
+            "light": 30.0,
+            "heavy": 30.0,
+            "building": 21.0,
+            "naval": 25.5
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "target_sphere",
+        "radius_m": 2.0,
+        "total_length_m": null,
+        "height_m": null,
+        "ground_blocking": false
+      },
+      "visual_reference": "Realistic_Unit_Art/H04_Hammer_Assault_Helicopter.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "H05",
+      "name": "Bulwark Armoured Gunboat",
+      "faction": "H",
+      "category": "Sea",
+      "role": "Durable close-range naval and shoreline pressure",
+      "dimensions_m": {
+        "length": 22,
+        "width": 6.4,
+        "height": 7.0
+      },
+      "health": 1150,
+      "armor": "naval",
+      "cost": 950,
+      "build_seconds": 25,
+      "speed_mps": 10,
+      "sight_m": 58,
+      "collision_radius_m": 2.6,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Naval assault gun",
+          "kind": "ballistic",
+          "damage": 110,
+          "cycle_s": 2.5,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "infantry": 0.25,
+            "light": 1,
+            "heavy": 0.85,
+            "building": 0.9,
+            "naval": 1
+          },
+          "projectile_speed_mps": 100,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 50
+        }
+      ],
+      "silhouette": "Broad angular hull, low forward gun turret, rear armoured cabin and two short exhausts. Compact and heavy.",
+      "views": [
+        "Front: wide bow, forward turret and raised cabin behind gun.",
+        "Back: square transom, two propeller guards and exhaust outlets.",
+        "Side: short foredeck, mid-forward turret, rear cabin; hull below marked waterline.",
+        "Top: blunt bow, wide hull, forward turret and rear engine deck."
+      ],
+      "wear": "Salt streaks below vents; restrained rust at anchor fittings; dark antifouling band below waterline; scuffed gun shields.",
+      "weapon_visual": "One naval cannon with 1.8 m exposed barrel. Turret rotates independently; hard stops prevent firing through cabin.",
+      "projectile_visual": "0.20 m shell at 100 m/s. Water misses produce a small plume; direct impact creates sparks, not area damage.",
+      "ability": "No active ability. Water-only movement; can bombard coastal targets within range and line of sight. Cannot beach or transport troops.",
+      "movement": "Waterline z=1.4 m from keel; speed 10 m/s, acceleration 2 m/s2, hull yaw 28 deg/s; gun yaw 70 deg/s. Fires while moving.",
+      "rig": "Root at waterline for engine export; mesh local keel offset -1.4 m. Hull, turret, gun pitch/recoil, propellers and wake sockets separated.",
+      "animations": [
+        "Float: roll \u00b11.5 degrees, pitch \u00b10.8 degrees; visual motion never moves gameplay collision.",
+        "Sail: propellers rotate and wake scales with speed.",
+        "Fire: recoil 0.18 m, 0.09 s rearward / 0.35 s return.",
+        "Turn: mild bank to outside of turn; wake curves naturally.",
+        "Death 3.0 s: list and sink; collision disabled on death; foam fades over 4 s."
+      ],
+      "geometry": "Hull designed for a visible waterline; no interior rooms. Gun and cabin must remain distinct from top-down view.",
+      "pivots": "Export root at waterline; turret pivot on foredeck; gun muzzle socket; port/starboard wake points and stern wake.",
+      "budget": [
+        18000,
+        8500,
+        2300,
+        3,
+        2048
+      ],
+      "counter": "Strong in short-range naval fights; vulnerable to aircraft and longer-range missile ships.",
+      "production": "Naval yard with navigable deep-water exit. No land spawn fallback.",
+      "sfx": "Low marine diesel; cannon report; water movement and sinking bubbles.",
+      "faction_name": "IRON LEGION",
+      "unit_file": "H05_Bulwark_Armoured_Gunboat",
+      "weapons_dps": [
+        {
+          "weapon": "Naval assault gun",
+          "base_dps": 44.0,
+          "effective_dps": {
+            "infantry": 11.0,
+            "light": 44.0,
+            "heavy": 37.4,
+            "building": 39.6,
+            "naval": 44.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 2.6,
+        "total_length_m": 18.7,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/H05_Bulwark_Armoured_Gunboat.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "A01",
+      "name": "Ranger",
+      "faction": "A",
+      "category": "Infantry",
+      "role": "Flexible rifleman with a strong stationary deployment",
+      "dimensions_m": {
+        "length": 1.1,
+        "width": 0.78,
+        "height": 1.84
+      },
+      "health": 130,
+      "armor": "infantry",
+      "cost": 200,
+      "build_seconds": 7,
+      "speed_mps": 4.6,
+      "sight_m": 34,
+      "collision_radius_m": 0.33,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Carbine - mobile",
+          "kind": "hitscan",
+          "damage": 10,
+          "cycle_s": 0.8,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building"
+          ],
+          "multipliers": {
+            "infantry": 1,
+            "light": 0.25,
+            "heavy": 0.08,
+            "building": 0.18
+          },
+          "projectile_speed_mps": 0,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 18
+        },
+        {
+          "name": "Machine gun - deployed",
+          "kind": "hitscan",
+          "damage": 15,
+          "cycle_s": 0.45,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building"
+          ],
+          "multipliers": {
+            "infantry": 1,
+            "light": 0.3,
+            "heavy": 0.12,
+            "building": 0.25
+          },
+          "projectile_speed_mps": 0,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 25
+        }
+      ],
+      "silhouette": "Angular helmet, compact chest armour, folded bipod and narrow rectangular backpack. Blue shoulder panels identify team.",
+      "views": [
+        "Front: squared helmet visor and paired chest pouches; compact carbine held right.",
+        "Back: slim hard-shell backpack, shovel on right, deployment kit across lower back.",
+        "Side: carbine and folded bipod; kneepads distinguish Ranger from Conscript.",
+        "Top: angular helmet and short backpack; clear shoulder markings."
+      ],
+      "wear": "Clean armour plates with fine edge scratches; fabric wear on elbows; dust on kneepads and boots.",
+      "weapon_visual": "0.78 m carbine/automatic rifle with folding bipod. A separate low folding shield appears only during deployment.",
+      "projectile_visual": "Mobile shots: every third shot has a 0.06 s amber tracer. Deployed shots: short alternating flash and spent-case visual; both modes are hitscan.",
+      "ability": "Deploy toggle: 0.8 s setup, 0.6 s pack-up; no firing during transition. Immobile while deployed, +7 m weapon range and deployed weapon profile. No health or armour bonus.",
+      "movement": "Mobile mode stops to fire after 0.12 s aim. Move order while deployed requests pack-up then executes move. Cannot deploy inside a garrison.",
+      "rig": "Humanoid base + bipod fold bones and shield hinges. Deployed pose crouches behind weapon; muzzle follows weapon, not standing head height.",
+      "animations": [
+        "Idle/run: 2.4 s breathing / 0.8 s locomotion loops.",
+        "Deploy 0.8 s: kneel, unfold shield, plant bipod; weapon activates only at end.",
+        "Deployed fire 0.45 s: shoulder recoil and cartridge ejection; no foot sliding.",
+        "Pack-up 0.6 s: fold shield/bipod and rise; retain queued move.",
+        "Death 0.8 s: separate standing and deployed falls; disable shield collision."
+      ],
+      "geometry": "Standing envelope shown in views. Deployed envelope 1.20 L x 0.95 W x 1.12 H m; shield is thin geometry, not a separate blocking building.",
+      "pivots": "Ground root and weapon muzzle; deployed chest hit socket z=0.72 m; shield hinge at ground-front; standing badge z=2.05 m.",
+      "budget": [
+        5500,
+        2700,
+        800,
+        2,
+        1024
+      ],
+      "counter": "Strong deployed anti-infantry position; vulnerable to artillery, flanks, vehicles and interruption during setup.",
+      "production": "Barracks; no additional tech. Can garrison like Conscript using mobile weapon only.",
+      "sfx": "Crisp carbine; faster deployed gun report; audible deployment latch.",
+      "faction_name": "VANGUARD ALLIANCE",
+      "unit_file": "A01_Ranger",
+      "weapons_dps": [
+        {
+          "weapon": "Carbine - mobile",
+          "base_dps": 12.5,
+          "effective_dps": {
+            "infantry": 12.5,
+            "light": 3.12,
+            "heavy": 1.0,
+            "building": 2.25
+          }
+        },
+        {
+          "weapon": "Machine gun - deployed",
+          "base_dps": 33.33,
+          "effective_dps": {
+            "infantry": 33.33,
+            "light": 10.0,
+            "heavy": 4.0,
+            "building": 8.33
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.33,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/A01_Ranger.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "A02",
+      "name": "Missile Specialist",
+      "faction": "A",
+      "category": "Infantry",
+      "role": "Mobile AA with a stationary anti-tank option",
+      "dimensions_m": {
+        "length": 1.24,
+        "width": 0.82,
+        "height": 1.88
+      },
+      "health": 115,
+      "armor": "infantry",
+      "cost": 350,
+      "build_seconds": 11,
+      "speed_mps": 4.2,
+      "sight_m": 38,
+      "collision_radius_m": 0.35,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Air-intercept missile",
+          "kind": "guided",
+          "damage": 75,
+          "cycle_s": 2.5,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "air"
+          ],
+          "multipliers": {
+            "air": 1
+          },
+          "projectile_speed_mps": 65,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 48,
+          "turn_deg_s": 210,
+          "life_s": 2.5
+        },
+        {
+          "name": "Deployed anti-tank missile",
+          "kind": "guided",
+          "damage": 110,
+          "cycle_s": 3,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "light": 1,
+            "heavy": 1,
+            "building": 0.6,
+            "naval": 0.75
+          },
+          "projectile_speed_mps": 50,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 40,
+          "turn_deg_s": 135,
+          "life_s": 2.5
+        }
+      ],
+      "silhouette": "Twin-square launcher above right shoulder, angular helmet, compact folded tripod. Taller launcher than Ranger.",
+      "views": [
+        "Front: two square missile cells, left-side tracking lens and compact chest plate.",
+        "Back: spare cell box and folded tripod down centreline.",
+        "Side: long rectangular launcher over shoulder; folded tripod close to pack.",
+        "Top: twin launcher channels and right-offset sight; uncluttered helmet."
+      ],
+      "wear": "Fine scrapes on launcher corners; dusty tripod feet; clean blue identification strips and tracking lens.",
+      "weapon_visual": "0.95 m twin-cell launcher with folding tripod. AA uses upper cell; deployed AT uses lower cell; these share a firing lock.",
+      "projectile_visual": "AA missile: white body, amber exhaust, tight trail. AT missile: dark blue fins and slower smoke trail. Both direct-hit only.",
+      "ability": "Deploy toggle: 1.0 s setup / 0.7 s pack-up. Adds AT weapon while retaining AA. One launch at a time; switching mode never resets the cooldown. No armour bonus.",
+      "movement": "Mobile mode attacks aircraft only; stops for 0.30 s lock. Deployed mode cannot move; target priority air first unless manually ordered.",
+      "rig": "Humanoid base, launcher pitch/yaw bone, tripod hinges and left-hand IK. Separate deployed hit socket for crouched stance.",
+      "animations": [
+        "Run 0.9 s: compact launcher held steady; folded tripod rigid.",
+        "Deploy 1.0 s: unfold tripod, kneel and seat launcher.",
+        "Track 0.30 s: lens and barrel align before lock completion.",
+        "Launch: 0.05 s exhaust pulse, then 2.5/3.0 s reload gesture.",
+        "Pack 0.7 s / death 0.9 s: disassemble stance or collapse; no persistent obstruction."
+      ],
+      "geometry": "Deployed envelope 1.35 L x 1.10 W x 1.18 H m. Square launcher cells are the primary recognition cue.",
+      "pivots": "Ground root; tripod centre in deployed state; launcher yaw pivot over tripod; separate AA/AT muzzle sockets.",
+      "budget": [
+        6000,
+        2900,
+        850,
+        2,
+        1024
+      ],
+      "counter": "Useful AA in motion between positions and AT when deployed; vulnerable to infantry and artillery.",
+      "production": "Barracks; no additional tech. Cannot fire from buildings in v0.1.",
+      "sfx": "Clean lock tone, missile ignition, tripod latch and reload click.",
+      "faction_name": "VANGUARD ALLIANCE",
+      "unit_file": "A02_Missile_Specialist",
+      "weapons_dps": [
+        {
+          "weapon": "Air-intercept missile",
+          "base_dps": 30.0,
+          "effective_dps": {
+            "air": 30.0
+          }
+        },
+        {
+          "weapon": "Deployed anti-tank missile",
+          "base_dps": 36.67,
+          "effective_dps": {
+            "light": 36.67,
+            "heavy": 36.67,
+            "building": 22.0,
+            "naval": 27.5
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.35,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/A02_Missile_Specialist.png",
+      "visual_state": "Transport / equipment stowed"
+    },
+    {
+      "id": "A03",
+      "name": "Lancer Medium Tank",
+      "faction": "A",
+      "category": "Tank",
+      "role": "Mobile and economical armoured response",
+      "dimensions_m": {
+        "length": 8.3,
+        "width": 3.4,
+        "height": 2.6
+      },
+      "health": 700,
+      "armor": "heavy",
+      "cost": 700,
+      "build_seconds": 18,
+      "speed_mps": 10,
+      "sight_m": 44,
+      "collision_radius_m": 1.45,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Precision cannon",
+          "kind": "ballistic",
+          "damage": 80,
+          "cycle_s": 2.2,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "infantry": 0.25,
+            "light": 1.15,
+            "heavy": 1,
+            "building": 0.75,
+            "naval": 0.65
+          },
+          "projectile_speed_mps": 125,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 40
+        }
+      ],
+      "silhouette": "Low sloped hull, compact angular turret, narrow tracks and long thin barrel; one short antenna.",
+      "views": [
+        "Front: sloped glacis, angular turret cheeks, narrow track guards.",
+        "Back: wide horizontal cooling grille, two small exhausts, central tow hook.",
+        "Side: six road-wheel positions, long forward barrel and low roofline.",
+        "Top: tapered hull shoulders, compact hexagonal turret and rear engine grille."
+      ],
+      "wear": "Maintained paint, small edge chips, dusty track runs and light exhaust staining; no heavy rust.",
+      "weapon_visual": "Single 2.3 m exposed cannon barrel; 0.12 m muzzle diameter; separate turret, pitch and recoil objects.",
+      "projectile_visual": "0.14 m shell at 125 m/s; narrow amber muzzle flash and crisp direct-hit spark. No splash or homing.",
+      "ability": "No manual active ability. Mobility and lower cost are the distinguishing benefits; no special dodge or hidden evasion chance.",
+      "movement": "Acceleration 4.5 m/s2; hull turn 75 deg/s; turret 110 deg/s, pitch -8 to +22 degrees. Fires while moving, aim tolerance 4 degrees.",
+      "rig": "Rigid hull root, tracks, turret_yaw, gun_pitch, gun_recoil, antenna. Antenna can sway cosmetically without changing sight.",
+      "animations": [
+        "Drive: six wheel positions rotate, track UV scroll and small hull suspension motion.",
+        "Turn: independent tracks counter-rotate during pivot.",
+        "Fire: 0.16 m recoil in 0.06 s, return in 0.25 s.",
+        "Idle: subtle engine shake; turret scan only while not holding an explicit aim.",
+        "Death 1.2 s: short flash and low wreck; no damaging secondary explosion."
+      ],
+      "geometry": "Thinner track guards and turret distinguish it from Bastion at equal screen size. Avoid small mesh fasteners.",
+      "pivots": "Ground hull root; turret ring at hull midline; muzzle at barrel tip; rear engine smoke socket.",
+      "budget": [
+        16000,
+        7500,
+        1900,
+        3,
+        2048
+      ],
+      "counter": "Responds quickly and can win through numbers or positioning; loses an equal-count frontal duel to heavy tanks.",
+      "production": "War factory; no additional tech.",
+      "sfx": "Higher-pitched turbine/diesel blend; lighter cannon crack; track rattle.",
+      "faction_name": "VANGUARD ALLIANCE",
+      "unit_file": "A03_Lancer_Medium_Tank",
+      "weapons_dps": [
+        {
+          "weapon": "Precision cannon",
+          "base_dps": 36.36,
+          "effective_dps": {
+            "infantry": 9.09,
+            "light": 41.82,
+            "heavy": 36.36,
+            "building": 27.27,
+            "naval": 23.64
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 1.45,
+        "total_length_m": 5.4,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/A03_Lancer_Medium_Tank.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "A04",
+      "name": "Kestrel Strike Jet",
+      "faction": "A",
+      "category": "Air",
+      "role": "Burst strike followed by a vulnerable reload cycle",
+      "dimensions_m": {
+        "length": 15.2,
+        "width": 10.5,
+        "height": 4.6
+      },
+      "health": 550,
+      "armor": "air",
+      "cost": 1400,
+      "build_seconds": 30,
+      "speed_mps": 35,
+      "sight_m": 58,
+      "collision_radius_m": 2.0,
+      "tier": 2,
+      "weapons": [
+        {
+          "name": "Precision bomb pair",
+          "kind": "bomb",
+          "damage": 180,
+          "cycle_s": 14,
+          "burst": 2,
+          "burst_gap_s": 0.25,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "infantry": 0.45,
+            "light": 1,
+            "heavy": 1,
+            "building": 1,
+            "naval": 0.8
+          },
+          "projectile_speed_mps": 35,
+          "splash_radius_m": 5,
+          "splash_edge_multiplier": 0.25,
+          "minimum_range_m": 0,
+          "range_m": 35,
+          "reference_sortie": true
+        }
+      ],
+      "silhouette": "Swept wings, narrow pointed nose, single engine, twin canted tail fins and two visible underwing bombs.",
+      "views": [
+        "Front: narrow nose, shallow wing dihedral, twin underwing bombs.",
+        "Back: central engine nozzle and two canted fins; no rear weapon.",
+        "Side: long canopy, low swept wing and raised tail fins.",
+        "Top: arrowhead planform, symmetrical pylons and twin tail fins."
+      ],
+      "wear": "Fine leading-edge wear, clean canopy, subtle nozzle heat tint; no muddy landing gear in flight.",
+      "weapon_visual": "Two 1.2 m guided-looking bombs, one under each wing. Gameplay uses ground-point ballistic release, not homing after drop.",
+      "projectile_visual": "Bombs inherit horizontal speed; fall from release altitude to fixed aim point over 0.8 s. Show warning circle at release; explosion uses 5 m linear-falloff splash.",
+      "ability": "Sortie order: attack a visible target or visible ground point, release two bombs 0.25 s apart, return to assigned airfield. One payload only; reload 6 s after landing. No air-to-air attack.",
+      "movement": "Cruise 20 m altitude, speed 35 m/s, minimum turn radius 12 m. Must align within 10 degrees for release. Cannot hover or reverse instantly.",
+      "rig": "Fuselage root, ailerons, elevator, rudders, retractable gear and two bomb sockets. Bomb objects detach on release and reappear only after reload.",
+      "animations": [
+        "Cruise: engine exhaust; gentle bank on turns, no wing flapping.",
+        "Attack: bank into line, release left bomb t=0 and right t=0.25 s.",
+        "Land 1.2 s / reload 6 s: gear lowers, aircraft seats on pad, weapons refill at completion.",
+        "Take-off 1.0 s: gear retracts after clearance.",
+        "Death 1.5 s: visual breakup/fall; no crash damage."
+      ],
+      "geometry": "Airframe height includes deployed landing gear and tail. Top-down wing shape and bomb count must be recognisable.",
+      "pivots": "Root at fuselage underside; pitch/roll about centre of lift; bomb sockets under wings; landing-gear roots at hinge points.",
+      "budget": [
+        18000,
+        8500,
+        2200,
+        3,
+        2048
+      ],
+      "counter": "Strong against visible concentrated armour or structures; loses output during travel/reload and is vulnerable to AA.",
+      "production": "Airfield + radar tech; requires one free aircraft pad. If pad is destroyed, divert to another free friendly pad or remain unarmed until one exists.",
+      "sfx": "Jet pass-by, two release clicks, two separated explosions, landing gear motor.",
+      "faction_name": "VANGUARD ALLIANCE",
+      "unit_file": "A04_Kestrel_Strike_Jet",
+      "weapons_dps": [
+        {
+          "weapon": "Precision bomb pair",
+          "base_dps": 25.71,
+          "effective_dps": {
+            "infantry": 11.57,
+            "light": 25.71,
+            "heavy": 25.71,
+            "building": 25.71,
+            "naval": 20.57
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "target_sphere",
+        "radius_m": 2.0,
+        "total_length_m": null,
+        "height_m": null,
+        "ground_blocking": false
+      },
+      "visual_reference": "Realistic_Unit_Art/A04_Kestrel_Strike_Jet.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "A05",
+      "name": "Sentinel Missile Frigate",
+      "faction": "A",
+      "category": "Sea",
+      "role": "Longer-range naval attacks with local air defence",
+      "dimensions_m": {
+        "length": 40,
+        "width": 9,
+        "height": 12
+      },
+      "health": 1000,
+      "armor": "naval",
+      "cost": 1300,
+      "build_seconds": 30,
+      "speed_mps": 9,
+      "sight_m": 86,
+      "collision_radius_m": 3.7,
+      "tier": 2,
+      "weapons": [
+        {
+          "name": "Anti-ship missile salvo",
+          "kind": "guided",
+          "damage": 90,
+          "cycle_s": 5,
+          "burst": 2,
+          "burst_gap_s": 0.2,
+          "targets": [
+            "naval"
+          ],
+          "multipliers": {
+            "naval": 1
+          },
+          "projectile_speed_mps": 60,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 8,
+          "range_m": 80,
+          "turn_deg_s": 100,
+          "life_s": 3
+        },
+        {
+          "name": "Defensive AA missile",
+          "kind": "guided",
+          "damage": 55,
+          "cycle_s": 1.8,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "air"
+          ],
+          "multipliers": {
+            "air": 1
+          },
+          "projectile_speed_mps": 70,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 50,
+          "turn_deg_s": 210,
+          "life_s": 2
+        }
+      ],
+      "silhouette": "Long narrow hull, forward missile cells, central bridge and tall rectangular radar mast. Clearly longer than the gunboat.",
+      "views": [
+        "Front: fine bow, forward launcher block and tall central radar.",
+        "Back: low stern deck, two propeller shafts and aft AA launcher.",
+        "Side: long waterline, raised bridge and tall mast; open aft deck.",
+        "Top: tapered bow, paired missile banks, bridge block and rear AA station."
+      ],
+      "wear": "Fine salt runs and panel-edge wear; dark waterline stripe; clean radar faces and blue deck stripes.",
+      "weapon_visual": "Two forward anti-ship cells plus one separate aft AA launcher. Both systems have separate muzzle sockets and independent cooldowns.",
+      "projectile_visual": "Anti-ship missiles: low flight arc visually then home at 60 m/s; no splash. AA missiles: thin bright trail; no retarget after target dies.",
+      "ability": "Passive local AA operates independently of anti-ship salvos. Cannot attack land targets in v0.1; this preserves the shoreline role of other ships.",
+      "movement": "Waterline 2.2 m from keel; acceleration 1.5 m/s2; hull yaw 18 deg/s. Can fire while moving; no fire inside 8 m anti-ship minimum range.",
+      "rig": "Hull root at waterline; independent AA yaw/pitch, launcher lids, radar yaw and two propeller bones. Radar rotation does not alter sight mechanics.",
+      "animations": [
+        "Sail: long wake and propeller rotation; roll limited to 1 degree.",
+        "Main launch: cell lid opens 0.2 s before each missile, closes 0.3 s after.",
+        "AA launch: launcher tracks target independently; flash at release.",
+        "Radar: 12 s cosmetic rotation loop.",
+        "Death 4 s: progressive list and sink; no collision or area damage after destruction."
+      ],
+      "geometry": "Mast height defines silhouette; avoid antennas thinner than 0.08 m. No modelled interior bridge.",
+      "pivots": "Waterline root; bridge/radar mast centres; fore missile and aft AA sockets; stern wake centre.",
+      "budget": [
+        24000,
+        11000,
+        3000,
+        3,
+        2048
+      ],
+      "counter": "Controls open-water lanes and protects nearby ships from air; weak at close range and cannot bombard bases.",
+      "production": "Naval yard + radar tech; navigable exit must support 40 m hull length.",
+      "sfx": "Marine turbine, low missile launch, radar hum kept quiet, water wake.",
+      "faction_name": "VANGUARD ALLIANCE",
+      "unit_file": "A05_Sentinel_Missile_Frigate",
+      "weapons_dps": [
+        {
+          "weapon": "Anti-ship missile salvo",
+          "base_dps": 36.0,
+          "effective_dps": {
+            "naval": 36.0
+          }
+        },
+        {
+          "weapon": "Defensive AA missile",
+          "base_dps": 30.56,
+          "effective_dps": {
+            "air": 30.56
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 3.7,
+        "total_length_m": 34.0,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/A05_Sentinel_Missile_Frigate.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "T01",
+      "name": "Pulse Trooper",
+      "faction": "T",
+      "category": "Infantry",
+      "role": "Mobile precision infantry with fragile armour",
+      "dimensions_m": {
+        "length": 1.06,
+        "width": 0.76,
+        "height": 1.86
+      },
+      "health": 100,
+      "armor": "infantry",
+      "cost": 250,
+      "build_seconds": 8,
+      "speed_mps": 5.4,
+      "sight_m": 38,
+      "collision_radius_m": 0.32,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Pulse carbine",
+          "kind": "hitscan",
+          "damage": 16,
+          "cycle_s": 0.8,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building"
+          ],
+          "multipliers": {
+            "infantry": 1,
+            "light": 0.3,
+            "heavy": 0.1,
+            "building": 0.2
+          },
+          "projectile_speed_mps": 0,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 23
+        }
+      ],
+      "silhouette": "Smooth split visor, compact asymmetric shoulder plate and thin luminous rifle spine. No bulky backpack.",
+      "views": [
+        "Front: narrow cyan visor, pale chest plate, dark flexible joints.",
+        "Back: flat spine battery and two small cooling slots; no fabric bedroll.",
+        "Side: short energy rifle, slim waist and segmented shin plates.",
+        "Top: smooth helmet and single right-shoulder plate; restrained cyan accents."
+      ],
+      "wear": "Fine scratches on pale ceramic edges; dark flexible undersuit; dust on feet. Cyan strips do not illuminate whole armour.",
+      "weapon_visual": "0.74 m pulse carbine with short emitter and rear battery. No brass cartridges; emitter aperture remains visibly forward.",
+      "projectile_visual": "Instant gameplay hit with 0.08 s cyan pulse segment and tiny circular impact. Pulse has no travel-time dodge or area effect.",
+      "ability": "Passive mobility and accurate fire. No shield, stealth or teleport in v0.1. Can garrison compatible buildings, retaining the same weapon profile.",
+      "movement": "Stops to fire; 0.10 s aim wind-up. Faster movement enables repositioning but no firing while running.",
+      "rig": "Humanoid base with rigid shoulder shell and rifle attachment. Small battery glow intensity driven by shot event.",
+      "animations": [
+        "Idle 2.2 s: minimal breathing and small visor scan.",
+        "Run 0.7 s: light steps, stable upper body and no exaggerated hops.",
+        "Fire 0.8 s: emitter pulse, rifle recoil 0.008 m, shoulder return.",
+        "Garrison 0.9 s: rifle tucked and entry step.",
+        "Death 0.75 s: joints collapse; battery light fades over 0.4 s; no explosion."
+      ],
+      "geometry": "Keep armour plates broad and smooth; no excessive tiny fins. Thin cyan strips are emissive textures, not extra lights.",
+      "pivots": "Ground root; rifle muzzle, chest hit socket z=1.15 m and overhead rank socket z=2.05 m.",
+      "budget": [
+        5500,
+        2600,
+        750,
+        2,
+        1024
+      ],
+      "counter": "Good against infantry when positioned well; vulnerable to splash and durable vehicles; expensive to lose.",
+      "production": "Barracks; no additional tech.",
+      "sfx": "Short synthetic pulse, light mechanical steps, restrained radio acknowledgement.",
+      "faction_name": "NOVA DIRECTIVE",
+      "unit_file": "T01_Pulse_Trooper",
+      "weapons_dps": [
+        {
+          "weapon": "Pulse carbine",
+          "base_dps": 20.0,
+          "effective_dps": {
+            "infantry": 20.0,
+            "light": 6.0,
+            "heavy": 2.0,
+            "building": 4.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.32,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/T01_Pulse_Trooper.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "T02",
+      "name": "Disruptor",
+      "faction": "T",
+      "category": "Infantry",
+      "role": "Fragile anti-vehicle support with a limited slowing pulse",
+      "dimensions_m": {
+        "length": 1.18,
+        "width": 0.84,
+        "height": 1.92
+      },
+      "health": 100,
+      "armor": "infantry",
+      "cost": 400,
+      "build_seconds": 12,
+      "speed_mps": 5,
+      "sight_m": 40,
+      "collision_radius_m": 0.34,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Disruption lance - ground",
+          "kind": "guided",
+          "damage": 50,
+          "cycle_s": 2,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "light": 1,
+            "heavy": 1,
+            "building": 0.4,
+            "naval": 0.75
+          },
+          "projectile_speed_mps": 80,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 32,
+          "turn_deg_s": 180,
+          "life_s": 1.5
+        },
+        {
+          "name": "Disruption lance - air",
+          "kind": "guided",
+          "damage": 20,
+          "cycle_s": 2,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "air"
+          ],
+          "multipliers": {
+            "air": 1
+          },
+          "projectile_speed_mps": 90,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 38,
+          "turn_deg_s": 210,
+          "life_s": 1.5
+        }
+      ],
+      "silhouette": "Tall twin-prong weapon, rounded sensor crown and a narrow vertical battery pack. Thin upright silhouette.",
+      "views": [
+        "Front: twin prongs around glowing emitter, narrow visor and segmented chest.",
+        "Back: vertical battery spine, two cooling fins and left cable route.",
+        "Side: long lance held with both hands; prongs project ahead of helmet.",
+        "Top: small sensor crown and forked muzzle; battery stays inside shoulder width."
+      ],
+      "wear": "Ceramic edge scuffs; dust on boots and knee joints; emitter prongs remain clean with slight heat tint.",
+      "weapon_visual": "0.96 m twin-prong pulse lance. One emitter socket between prongs; small front charging ring.",
+      "projectile_visual": "0.22 m cyan energy bolt with short ribbon trail. Homes within turn limit; direct-hit only. EMP has a distinct expanding ring, not a damage explosion.",
+      "ability": "EMP: visible enemy vehicle, ship or aircraft within 30 m; 0.3 s wind-up; no damage. For 3 s, movement x0.70 and firing interval x1.25. Cooldown 20 s from release. Immune to EMP while affected and for 6 s after expiry.",
+      "movement": "Stops to fire after 0.20 s aim. AA and ground weapons share a 2 s firing lock. Cannot use EMP while moving or garrisoned.",
+      "rig": "Humanoid base, lance charge ring, battery fan and left-hand IK. No tentacle or cable physics required.",
+      "animations": [
+        "Idle 2.5 s: slow emitter pulse and small head tracking.",
+        "Run 0.8 s: lance held low; upper body stabilised.",
+        "Fire 2 s: charge 0.2 s, bolt release, cooling ring fades before next shot.",
+        "EMP 0.3 s: both prongs flare; arm extends; victim gets a 3 s cyan status icon.",
+        "Death 0.8 s: battery fades; lance becomes inert prop."
+      ],
+      "geometry": "Twin prongs must be separated by at least 0.12 m visually; use thick forms so they survive LOD reduction.",
+      "pivots": "Ground root; lance midpoint for grip, emitter muzzle, battery fan axis and overhead status socket.",
+      "budget": [
+        6000,
+        2900,
+        850,
+        2,
+        1024
+      ],
+      "counter": "Supports attacks on expensive vehicles; weak to basic infantry and sustained AA duty; cannot permanently lock targets.",
+      "production": "Barracks; no additional tech. No garrison fire in v0.1.",
+      "sfx": "Charging tick, concise pulse, EMP ring sound distinct from ordinary fire.",
+      "faction_name": "NOVA DIRECTIVE",
+      "unit_file": "T02_Disruptor",
+      "weapons_dps": [
+        {
+          "weapon": "Disruption lance - ground",
+          "base_dps": 25.0,
+          "effective_dps": {
+            "light": 25.0,
+            "heavy": 25.0,
+            "building": 10.0,
+            "naval": 18.75
+          }
+        },
+        {
+          "weapon": "Disruption lance - air",
+          "base_dps": 10.0,
+          "effective_dps": {
+            "air": 10.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "vertical_capsule",
+        "radius_m": 0.34,
+        "total_length_m": null,
+        "height_m": 1.65,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/T02_Disruptor.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "T03",
+      "name": "Wisp Hover Tank",
+      "faction": "T",
+      "category": "Tank",
+      "role": "Fast precision armour raider across land and shallows",
+      "dimensions_m": {
+        "length": 7.4,
+        "width": 3.6,
+        "height": 2.4
+      },
+      "health": 600,
+      "armor": "light",
+      "cost": 950,
+      "build_seconds": 24,
+      "speed_mps": 13,
+      "sight_m": 50,
+      "collision_radius_m": 1.5,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Accelerator cannon",
+          "kind": "ballistic",
+          "damage": 95,
+          "cycle_s": 2.5,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light",
+            "heavy",
+            "building",
+            "naval"
+          ],
+          "multipliers": {
+            "infantry": 0.2,
+            "light": 1,
+            "heavy": 1,
+            "building": 0.65,
+            "naval": 0.65
+          },
+          "projectile_speed_mps": 160,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 46
+        }
+      ],
+      "silhouette": "Low central hull, two broad hover side pods, recessed forward emitter and compact ring turret. No tracks.",
+      "views": [
+        "Front: wide separated hover pods and central emitter; underside glow stays subtle.",
+        "Back: two thrust vents, narrow cooling grille and no exhaust stack.",
+        "Side: elevated hull, slim turret and short recessed barrel.",
+        "Top: split triangular pods, tapered hull and circular turret collar."
+      ],
+      "wear": "Fine scratches on pod leading edges; dusty underside; slight scorching inside emitter. No mud-packed tracks.",
+      "weapon_visual": "Short recessed accelerator barrel; charge fins separate by 0.08 m during wind-up. One centre muzzle socket.",
+      "projectile_visual": "0.12 m bright slug with 0.12 s straight cyan streak at 160 m/s; compact impact spark. No hitscan, homing or splash.",
+      "ability": "Passive shallow-water crossing: permitted where authored water depth <=1.2 m. Cannot cross deep sea, cliffs or blocked terrain. No manual dash or shield.",
+      "movement": "Hover clearance 0.45 m; acceleration 5 m/s2, hull yaw 110 deg/s, turret yaw 140 deg/s. Speed limited to 65% during 0.25 s wind-up and 0.35 s recovery; fires on move.",
+      "rig": "Hull root, left/right pod float offsets, turret_yaw, gun_pitch, emitter fins and thrust vent sockets. Hover bob is cosmetic.",
+      "animations": [
+        "Hover: z bob \u00b10.06 m over 1.8 s; pods compensate slightly.",
+        "Move: directional thrust, small dust over land or spray over shallows.",
+        "Fire: fins spread, 0.25 s charge, slug release, fins close in 0.35 s.",
+        "Turn: bank up to 5 degrees; no wheel or track animation.",
+        "Death 1.1 s: hover stops and hull drops 0.45 m; inert wreck fades after 10 s."
+      ],
+      "geometry": "Separate pods from hull with visible dark gaps; bake panel seams. Overall H includes hover clearance above ground.",
+      "pivots": "Ground projection root; mesh hull sits above root; turret at collar; front muzzle and four underside thruster sockets.",
+      "budget": [
+        18000,
+        8500,
+        2200,
+        3,
+        2048
+      ],
+      "counter": "Raids and repositions well; loses prolonged exchanges and is vulnerable to both autocannon-style and missile attacks.",
+      "production": "War factory; no additional tech. Uses land/shallow navigation, never a generic unrestricted water mask.",
+      "sfx": "Low hover hum, directional thruster hiss and sharp accelerator discharge.",
+      "faction_name": "NOVA DIRECTIVE",
+      "unit_file": "T03_Wisp_Hover_Tank",
+      "weapons_dps": [
+        {
+          "weapon": "Accelerator cannon",
+          "base_dps": 38.0,
+          "effective_dps": {
+            "infantry": 7.6,
+            "light": 38.0,
+            "heavy": 38.0,
+            "building": 24.7,
+            "naval": 24.7
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 1.5,
+        "total_length_m": 4.81,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/T03_Wisp_Hover_Tank.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "T04",
+      "name": "Mote Recon Drone",
+      "faction": "T",
+      "category": "Air",
+      "role": "Scouting and light anti-infantry harassment",
+      "dimensions_m": {
+        "length": 2.6,
+        "width": 3.4,
+        "height": 0.9
+      },
+      "health": 230,
+      "armor": "air",
+      "cost": 650,
+      "build_seconds": 18,
+      "speed_mps": 22,
+      "sight_m": 60,
+      "collision_radius_m": 0.65,
+      "tier": 2,
+      "weapons": [
+        {
+          "name": "Light pulse emitter",
+          "kind": "hitscan",
+          "damage": 8,
+          "cycle_s": 0.4,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "infantry",
+            "light"
+          ],
+          "multipliers": {
+            "infantry": 1,
+            "light": 0.2
+          },
+          "projectile_speed_mps": 0,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 26
+        }
+      ],
+      "silhouette": "Flat central sensor body, four protected rotors and small forward eye. Cross-shaped silhouette with no cockpit.",
+      "views": [
+        "Front: central eye below body; two front rotor guards wider than body.",
+        "Back: small service panel, two rear guards and cyan status bar.",
+        "Side: shallow body, underslung sensor gimbal and thin rotor ducts.",
+        "Top: four rotors at corners around central battery shell; nose arrow marking."
+      ],
+      "wear": "Scuffed rotor guards and fine body scratches; clean sensor glass; tiny abrasion on forward edges.",
+      "weapon_visual": "Single underslung pulse emitter beside camera lens; gimbal separates visual camera and weapon aiming.",
+      "projectile_visual": "Instant hit; 0.05 s thin cyan tracer and small impact dot. No explosive splash and no damage against heavy armour, buildings, ships or aircraft.",
+      "ability": "Scan: choose map point within 60 m; reveal radius 18 m for 8 s, including through terrain occlusion. 0.25 s activation, 30 s cooldown. No damage or hidden accuracy bonus.",
+      "movement": "Altitude 8 m; acceleration 12 m/s2; yaw 180 deg/s. Can fire below 60% maximum speed; stops briefly for scan activation.",
+      "rig": "Root, four rotor axes, sensor yaw/pitch and emitter socket. Rotor motion is cosmetic and cannot affect navigation.",
+      "animations": [
+        "Hover 1.6 s: small positional correction and z bob \u00b10.04 m.",
+        "Flight: pitch/bank up to 12 degrees; rotor discs ramp brightness with speed.",
+        "Fire: gimbal tracks and emitter flashes every 0.4 s.",
+        "Scan 0.25 s: sensor turns down; expanding ground ring indicates affected area.",
+        "Death 0.6 s: motors stop, drone falls visually and fades; no damage on crash."
+      ],
+      "geometry": "Rotor guards are chunky and closed enough to read from above. Full width includes guards. No loose propeller cables.",
+      "pivots": "Root under main body; gimbal centre below nose; four vertical rotor axes; muzzle just ahead of sensor.",
+      "budget": [
+        8500,
+        4000,
+        1000,
+        2,
+        1024
+      ],
+      "counter": "Provides vision and pressures exposed infantry; easily destroyed by AA and cannot fight aircraft.",
+      "production": "Airfield + radar tech; spawns above free launch socket; no landing pad occupancy after launch.",
+      "sfx": "Small electric rotor hum, light pulse ticks and a clear scan ping.",
+      "faction_name": "NOVA DIRECTIVE",
+      "unit_file": "T04_Mote_Recon_Drone",
+      "weapons_dps": [
+        {
+          "weapon": "Light pulse emitter",
+          "base_dps": 20.0,
+          "effective_dps": {
+            "infantry": 20.0,
+            "light": 4.0
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "target_sphere",
+        "radius_m": 0.65,
+        "total_length_m": null,
+        "height_m": null,
+        "ground_blocking": false
+      },
+      "visual_reference": "Realistic_Unit_Art/T04_Mote_Recon_Drone.png",
+      "visual_state": "Ready / concept turnaround"
+    },
+    {
+      "id": "T05",
+      "name": "Spectre Drone Corvette",
+      "faction": "T",
+      "category": "Sea",
+      "role": "Fast precision naval and coastal raiding",
+      "dimensions_m": {
+        "length": 24,
+        "width": 7,
+        "height": 5
+      },
+      "health": 700,
+      "armor": "naval",
+      "cost": 1100,
+      "build_seconds": 27,
+      "speed_mps": 15,
+      "sight_m": 72,
+      "collision_radius_m": 2.7,
+      "tier": 1,
+      "weapons": [
+        {
+          "name": "Guided raider missile - sea",
+          "kind": "guided",
+          "damage": 75,
+          "cycle_s": 2.2,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "naval"
+          ],
+          "multipliers": {
+            "naval": 1
+          },
+          "projectile_speed_mps": 75,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 65,
+          "turn_deg_s": 130,
+          "life_s": 2.5
+        },
+        {
+          "name": "Guided raider missile - shore",
+          "kind": "guided",
+          "damage": 75,
+          "cycle_s": 2.2,
+          "burst": 1,
+          "burst_gap_s": 0,
+          "targets": [
+            "light",
+            "heavy",
+            "building"
+          ],
+          "multipliers": {
+            "light": 0.9,
+            "heavy": 0.8,
+            "building": 0.7
+          },
+          "projectile_speed_mps": 75,
+          "splash_radius_m": 0,
+          "splash_edge_multiplier": 1,
+          "minimum_range_m": 0,
+          "range_m": 45,
+          "turn_deg_s": 130,
+          "life_s": 2.5
+        }
+      ],
+      "silhouette": "Uncrewed low catamaran hull, two long side floats, central sensor pod and enclosed missile box. No tall bridge.",
+      "views": [
+        "Front: two narrow wave-piercing bows and dark central gap; sensor above centre.",
+        "Back: twin waterjet outlets and recessed service hatch.",
+        "Side: very low roofline, forward sensor wedge and short launcher lid.",
+        "Top: twin hulls, central rectangular launcher and triangular sensor nose."
+      ],
+      "wear": "Fine salt staining on grey ceramic panels; rubbed bow edges; darker antifouling lower hulls. Thin cyan strips, never a bright neon hull.",
+      "weapon_visual": "Enclosed central launcher with one alternating launch aperture per side. Both target modes share one 2.2 s firing lock.",
+      "projectile_visual": "0.55 m small missile; cyan-white exhaust and thin trail. Guided direct hit only; sea impact has a small non-damaging water plume.",
+      "ability": "No manual ability. Fast water-only raider; remote-controlled theme does not create extra autonomous sub-units or free drone spawns.",
+      "movement": "Waterline 1.0 m from keel; acceleration 3.5 m/s2, hull yaw 45 deg/s. Fires while moving; shore targets have shorter range than ships.",
+      "rig": "Root at waterline, two waterjet control bones, sensor yaw/pitch, launcher lids and four wake sockets. No crew animation.",
+      "animations": [
+        "Float: tiny roll \u00b10.7 degrees; both hulls stay visually linked.",
+        "Sail: twin narrow wakes; waterjets steer during turns.",
+        "Fire: alternate launcher lids; open 0.15 s, launch, close 0.25 s.",
+        "Sensor: small target tracking; no full rotating radar mast.",
+        "Death 2.2 s: power cuts, bow dips and hull sinks; no damaging explosion."
+      ],
+      "geometry": "Twin-hull gap is essential; keep bridge absent to distinguish from manned ships. No interior and no nested drone scene.",
+      "pivots": "Waterline root; sensor centre; two missile apertures; twin stern waterjet and wake sockets.",
+      "budget": [
+        18000,
+        8500,
+        2200,
+        3,
+        2048
+      ],
+      "counter": "Good at raids and disengagement; loses direct sustained fights, has no AA and cannot attack infantry.",
+      "production": "Naval yard; no additional tech. Deep-water navigation only.",
+      "sfx": "Electric waterjet, sharp compact missile launch and quiet sensor movement.",
+      "faction_name": "NOVA DIRECTIVE",
+      "unit_file": "T05_Spectre_Drone_Corvette",
+      "weapons_dps": [
+        {
+          "weapon": "Guided raider missile - sea",
+          "base_dps": 34.09,
+          "effective_dps": {
+            "naval": 34.09
+          }
+        },
+        {
+          "weapon": "Guided raider missile - shore",
+          "base_dps": 34.09,
+          "effective_dps": {
+            "light": 30.68,
+            "heavy": 27.27,
+            "building": 23.86
+          }
+        }
+      ],
+      "collision_shape": {
+        "type": "horizontal_capsule",
+        "radius_m": 2.7,
+        "total_length_m": 20.4,
+        "height_m": null,
+        "ground_blocking": true
+      },
+      "visual_reference": "Realistic_Unit_Art/T05_Spectre_Drone_Corvette.png",
+      "visual_state": "Ready / concept turnaround"
+    }
+  ],
+  "mechanics_version": "0.1"
+}

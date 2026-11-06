@@ -1,0 +1,81 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Thunderhead sprite renderer</title>
+<script src="../vendor/three.min.js"></script>
+<script src="models.js"></script>
+<style>body{margin:0;background:#222;color:#ccc;font:12px monospace}canvas{image-rendering:pixelated}</style>
+</head><body>
+<div id="log"></div>
+<script>
+/* Renders every model from 16 facings into packed sprite atlases. Driven by build-atlas.js through window.renderFaction(). */
+const PX = 48;               // pixels per cell (resolution 2 → the game draws at 0.5 scale)
+const FACINGS = 16;
+const ELEV = 60 * Math.PI / 180;   // camera elevation
+const RT = 384;              // render target size
+const PAGE = 2048;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: false });
+renderer.setSize(RT, RT); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const target = new THREE.WebGLRenderTarget(RT, RT, { format: THREE.RGBAFormat, type: THREE.UnsignedByteType, colorSpace: THREE.SRGBColorSpace });
+const scene = new THREE.Scene(); const stage = new THREE.Group(); scene.add(stage);
+const half = RT / 2 / PX;
+const camera = new THREE.OrthographicCamera(-half, half, half, -half, 0.1, 100);
+const camDist = 30; camera.position.set(0, Math.sin(ELEV) * camDist, Math.cos(ELEV) * camDist); camera.lookAt(0, 0, 0); camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+const hemi = new THREE.HemisphereLight(0xe6eeff, 0x4a4536, 1.1); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff2dc, 2.2); sun.position.set(-2.5, 6, 3); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); const sc = sun.shadow.camera; sc.left = -4; sc.right = 4; sc.top = 4; sc.bottom = -4; sc.near = 0.5; sc.far = 30; sun.shadow.bias = -0.0005; scene.add(sun); scene.add(sun.target);
+const fill = new THREE.DirectionalLight(0x9fb8ff, 0.35); fill.position.set(4, 3, -3); scene.add(fill);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: 0.38 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+const GEO = { box: new THREE.BoxGeometry(1, 1, 1), cyl: new THREE.CylinderGeometry(1, 1, 1, 24), sph: new THREE.SphereGeometry(1, 20, 14), cone: new THREE.ConeGeometry(1, 1, 20) };
+{ // wedge: a box with the front top edge pulled down (ramp), sloping toward +x
+  const g = new THREE.BoxGeometry(1, 1, 1); const pos = g.attributes.position; for (let i = 0; i < pos.count; i++) { if (pos.getX(i) > 0 && pos.getY(i) > 0) pos.setY(i, -0.5 + 0.08); } g.computeVertexNormals(); GEO.wedge = g; }
+const matCache = new Map();
+function material(f, key) { const k = f + ':' + key; if (matCache.has(k)) return matCache.get(k); const pal = PAL[f]; const col = pal[key] != null ? pal[key] : 0xff00ff; let m; if (key === 'glass') m = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: f === 'helix' ? 0.2 : 0.55, roughness: 0.25, metalness: 0.1 }); else if (key === 'neon') m = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.0, roughness: 0.4 }); else if (key === 'team') m = new THREE.MeshStandardMaterial({ color: 0x8a8a8a, roughness: 0.6, metalness: 0.1 }); else if (key === 'metal' || key === 'trim') m = new THREE.MeshStandardMaterial({ color: col, roughness: 0.35, metalness: 0.6 }); else if (key === 'track' || key === 'gun') m = new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, metalness: 0.3 }); else m = new THREE.MeshStandardMaterial({ color: col, roughness: f === 'helix' ? 0.35 : f === 'lattice' ? 0.6 : 0.8, metalness: f === 'helix' ? 0.5 : 0.15 }); matCache.set(k, m); return m; }
+const teamMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0.05 });
+function buildGroup(parts, f) { const g = new THREE.Group(); const inner = parts.group ? new THREE.Group() : g; if (parts.group) { const gr = parts.group; inner.rotation.set(gr.rx || 0, gr.ry || 0, gr.rz || 0); inner.position.set(gr.x || 0, gr.y || 0, gr.z || 0); g.add(inner); } for (const p of parts) { const mesh = new THREE.Mesh(GEO[p.t], material(f, p.m)); mesh.position.set(p.x, p.y, p.z); mesh.scale.set(p.sx, p.sy, p.sz); if (p.rx) mesh.rotation.x = p.rx; if (p.ry) mesh.rotation.y = p.ry; if (p.rz) mesh.rotation.z = p.rz; mesh.castShadow = true; mesh.receiveShadow = false; mesh.userData = { team: !!p.team, turret: !!p.turret, mat: mesh.material }; inner.add(mesh); } return g; }
+const buf = new Uint8Array(RT * RT * 4);
+function shot(group, mode, shadows) { // mode: 'body' | 'bodyTeam' | 'turret' | 'turretTeam'
+  const wantTurret = mode.startsWith('turret'), mask = mode.endsWith('Team');
+  group.traverse(m => { if (!m.isMesh) return; const u = m.userData; m.visible = (u.turret === wantTurret) && (!mask || u.team); m.material = mask ? teamMat : u.mat; m.castShadow = !mask; });
+  ground.visible = shadows && !mask; renderer.shadowMap.enabled = shadows && !mask;
+  renderer.setRenderTarget(target); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(scene, camera); renderer.readRenderTargetPixels(target, 0, 0, RT, RT, buf); renderer.setRenderTarget(null); return buf;
+}
+function bounds(px) { let x0 = RT, y0 = RT, x1 = -1, y1 = -1; for (let y = 0; y < RT; y++) for (let x = 0; x < RT; x++) { if (px[(y * RT + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } } return x1 < 0 ? null : { x0: Math.max(0, x0 - 1), y0: Math.max(0, y0 - 1), x1: Math.min(RT - 1, x1 + 1), y1: Math.min(RT - 1, y1 + 1) }; }
+function outline(img) { const { width: w, height: h, data } = img; const a = new Uint8Array(w * h); for (let i = 0; i < w * h; i++) a[i] = data[i * 4 + 3] > 140 ? 1 : 0; for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = y * w + x; if (a[i]) continue; const n = (x > 0 && a[i - 1]) || (x < w - 1 && a[i + 1]) || (y > 0 && a[i - w]) || (y < h - 1 && a[i + w]); if (n) { const k = i * 4; const sa = data[k + 3] / 255; data[k] = Math.round(data[k] * sa * 0.3); data[k + 1] = Math.round(data[k + 1] * sa * 0.3); data[k + 2] = Math.round(data[k + 2] * sa * 0.3); data[k + 3] = Math.max(data[k + 3], 165); } } return img; }
+function project(v) { const p = new THREE.Vector3(v.x, v.y, v.z).project(camera); return { x: (p.x + 1) / 2 * RT, y: (1 - (p.y + 1) / 2) * RT }; } // screen px, y down
+class Packer { constructor() { this.pages = []; this.newPage(); } newPage() { const c = document.createElement('canvas'); c.width = PAGE; c.height = PAGE; this.pages.push({ c, ctx: c.getContext('2d'), x: 2, y: 2, rowH: 0 }); } put(img) { let pg = this.pages[this.pages.length - 1]; if (pg.x + img.width + 2 > PAGE) { pg.x = 2; pg.y += pg.rowH + 2; pg.rowH = 0; } if (pg.y + img.height + 2 > PAGE) { this.newPage(); pg = this.pages[this.pages.length - 1]; } pg.ctx.putImageData(img, pg.x, pg.y); const r = { page: this.pages.length - 1, x: pg.x, y: pg.y }; pg.x += img.width + 2; pg.rowH = Math.max(pg.rowH, img.height); return r; } }
+function crop(px, b, flipRows = true) { const w = b.x1 - b.x0 + 1, h = b.y1 - b.y0 + 1; const img = new ImageData(w, h); for (let y = 0; y < h; y++) { const sy = flipRows ? RT - 1 - (b.y0 + y) : b.y0 + y; img.data.set(px.subarray((sy * RT + b.x0) * 4, (sy * RT + b.x0 + w) * 4), y * w * 4); } return img; }
+// readRenderTargetPixels gives rows bottom-up; convert the buffer to top-down once per shot
+function topDown(px) { const out = new Uint8Array(px.length); for (let y = 0; y < RT; y++) out.set(px.subarray((RT - 1 - y) * RT * 4, (RT - y) * RT * 4), y * RT * 4); return out; }
+window.renderFaction = function (faction, ids, classOf) {
+  const packer = new Packer(); const frames = {}; const log = [];
+  for (const id of ids) {
+    const fn = MODELS[id]; if (!fn) { log.push('missing ' + id); continue; }
+    setAnim({ t: 0, pose: 'idle' }); const parts = fn(faction); let group = buildGroup(parts, faction); stage.add(group); stage.scale.z = 1 / Math.sin(ELEV);
+    const cls = classOf[id]; const isStruct = cls === 'structure' || cls === 'defence'; const isAir = cls === 'aircraft';
+    const hasTurret = parts.some(p => p.turret); const nFacings = isStruct ? 1 : FACINGS;
+    const anchorWorld = isAir ? { x: 0, y: 0.45, z: 0 } : { x: 0, y: 0, z: 0 };
+    const animKind = isStruct ? null : parts.anim; const nAnim = animKind === 'walk' ? 4 : animKind === 'rotor' ? 3 : 1; const hasDead = animKind === 'walk' && (cls === 'infantry' || cls === 'drone' && /mimic|aria/.test(id));
+    const rec = { body: [], team: [], cls, nAnim }; if (hasTurret) { rec.turret = []; rec.tteam = []; } if (hasDead) { rec.dead = []; rec.dteam = []; }
+    const turretFacings = hasTurret ? FACINGS : 0;
+    const shadows = !isAir;
+    const shootPose = (grp, k, out, outTeam, withShadow) => { grp.rotation.y = -k * Math.PI * 2 / FACINGS; const a = project(anchorWorld); const body = topDown(shot(grp, 'body', withShadow)); const b = bounds(body); if (!b) return false; const img = outline(crop(body, b, false)); const r = packer.put(img); out.push([r.page, r.x, r.y, img.width, img.height, +(a.x - b.x0).toFixed(1), +(a.y - b.y0).toFixed(1)]); const team = topDown(shot(grp, 'bodyTeam', false)); const ti = crop(team, b, false); const tr = packer.put(ti); outTeam.push([tr.page, tr.x, tr.y, ti.width, ti.height, +(a.x - b.x0).toFixed(1), +(a.y - b.y0).toFixed(1)]); return true; };
+    let ok = true;
+    for (let k = 0; k < nFacings && ok; k++) for (let j = 0; j < nAnim && ok; j++) {
+      if (nAnim > 1) { stage.remove(group); setAnim({ t: j / nAnim, pose: animKind === 'walk' ? 'walk' : 'idle' }); group = buildGroup(fn(faction), faction); stage.add(group); }
+      ok = shootPose(group, k, rec.body, rec.team, shadows); if (!ok) log.push('empty ' + id);
+    }
+    if (hasDead) { stage.remove(group); setAnim({ t: 0, pose: 'dead' }); group = buildGroup(fn(faction), faction); stage.add(group); for (let k = 0; k < FACINGS; k++) shootPose(group, k, rec.dead, rec.dteam, true); }
+    if (nAnim > 1 || hasDead) { stage.remove(group); setAnim({ t: 0, pose: 'idle' }); group = buildGroup(fn(faction), faction); stage.add(group); }
+    for (let k = 0; k < turretFacings; k++) {
+      group.rotation.y = -k * Math.PI * 2 / FACINGS; const a = project({ x: 0, y: 0, z: 0 });
+      const tur = topDown(shot(group, 'turret', false)); const b = bounds(tur); if (!b) break;
+      const img = outline(crop(tur, b, false)); const r = packer.put(img); rec.turret.push([r.page, r.x, r.y, img.width, img.height, +(a.x - b.x0).toFixed(1), +(a.y - b.y0).toFixed(1)]);
+      const team = topDown(shot(group, 'turretTeam', false)); const ti = crop(team, b, false); const tr = packer.put(ti); rec.tteam.push([tr.page, tr.x, tr.y, ti.width, ti.height, +(a.x - b.x0).toFixed(1), +(a.y - b.y0).toFixed(1)]);
+    }
+    frames[id] = rec; stage.remove(group);
+  }
+  const pages = packer.pages.map(p => p.c.toDataURL('image/png'));
+  return { pages, frames, log, px: PX, facings: FACINGS };
+};
+window.previewSheet = function (faction, ids, classOf) { const r = window.renderFaction(faction, ids, classOf); const img = new Image(); img.src = r.pages[0]; document.body.appendChild(img); return r.log; };
+</script>
+</body></html>

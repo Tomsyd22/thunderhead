@@ -1,0 +1,30 @@
+{
+  "_doc": "Derived, non-authoritative build decisions layered on layouts.json. Every entry is listed in the validation report. Authoritative coordinates are never changed here; heights and treatments of compounds the layout leaves open are.",
+  "base_kit": {
+    "_doc": "Local offsets in metres from pad centre (x east, y north), rotation 0, from build-prompt section 3.",
+    "structures": [
+      {"id": "hq", "asset": "bld_hq", "center": [-45, 35], "size": [30, 24]},
+      {"id": "barracks", "asset": "bld_barracks", "center": [-45, -5], "size": [24, 12]},
+      {"id": "factory", "asset": "bld_vehicle_factory", "center": [30, 30], "size": [40, 30], "door": "south"},
+      {"id": "refinery_a", "asset": "bld_ore_refinery", "center": [-38, -55], "size": [36, 28]},
+      {"id": "refinery_b", "asset": "bld_ore_refinery", "center": [25, -55], "size": [36, 28]},
+      {"id": "substation", "asset": "bld_power_substation", "center": [65, -15], "size": [20, 16]}
+    ],
+    "aisle": {"y": -26, "x": [-90, 90], "clear_w": 12},
+    "rally": [30, -10],
+    "factory_apron_m": 12,
+    "infantry_group": [-75, 0],
+    "resolution": {
+      "substation_vs_aisle": "The specified substation footprint (y -23..-7) overlaps the 12 m service aisle band (y -32..-20) by 3 m. The aisle is kept at y=-26 and full width from x=-90 to +48; east of the refineries it bends 3 m south (centre y=-29) between x=+48 and +90 so the substation keeps its specified centre. Reported as a layout conflict."
+    }
+  },
+  "landmarks": {
+    "01:container-port": {"pad_h": 6.0, "quay": true, "note": "Port terrace lowered to 6 m with a quay wall on its sea side; the west-flank road keeps its 24 m corridor through the compound."},
+    "02:waterworks": {"split_by_road": "central-spine"},
+    "02:radar": {"note": "Capture compound straddles the central-spine road; radar mast placed outside the road clear width."}
+  },
+  "dock": {"deck_z": 3.0, "trestle_w": 16, "apron": [40, 30], "berth_depth": 6.0, "max_trestle_grade": 0.055},
+  "beach": {"grade": 0.07, "apron_m": 32, "underwater_to": -2.0},
+  "road": {"grade": 0.058, "shoulder_m": 2.0, "safety_band_m": 6.0, "side_slope": 0.5, "fillet_max_m": 90, "waypoint_tol_m": 7.5},
+  "quarry": {"ramp_clear_w": 16, "grade": 0.058}
+}

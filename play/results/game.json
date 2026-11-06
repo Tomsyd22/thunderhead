@@ -1,0 +1,44 @@
+{
+ "boot": {
+  "errors": [],
+  "units": 12,
+  "structs": 2,
+  "views": 12,
+  "cameos": 23,
+  "audio": true
+ },
+ "logs": [
+  "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+ ],
+ "match": {
+  "t": 612.0000000001007,
+  "wall": 7.328700000000186,
+  "errors": [],
+  "over": null,
+  "players": [
+   {
+    "f": "helix",
+    "s": 5,
+    "u": 4,
+    "lost": 23,
+    "h": 8000
+   },
+   {
+    "f": "compact",
+    "s": 9,
+    "u": 28,
+    "lost": 1,
+    "h": 7500
+   }
+  ],
+  "present": {
+   "hitReactions": 502,
+   "debris": 229,
+   "tossed": 2,
+   "flashes": 361,
+   "shakes": 145,
+   "structsBuilt": 16,
+   "sfx": 1276
+  }
+ }
+}

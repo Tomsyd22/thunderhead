@@ -1,0 +1,177 @@
+# 1. DOMINANCE (win rate vs all enemy objects it can engage, cost-for-cost $3000)
+lat_scuttler        41%  11/27 
+lat_hornet          59%  19/32 
+lat_sapper          52%  14/27 
+lat_lamplighter     44%  12/27 
+lat_aria            50%  16/32 
+lat_crawler         20%  5/25 
+lat_wasp            23%  7/31 
+lat_phalanx         64%  18/28 
+lat_lancer          43%  12/28 
+lat_hive            54%  15/28 
+lat_nullproj         0%  0/22 USELESS
+lat_colossus        67%  22/33 
+lat_raptor           8%  1/12 USELESS
+lat_stratos         58%  7/12 
+lat_gnat             0%  0/12 USELESS
+lat_barracuda       25%  1/4 
+lat_trident         73%  11/15 
+lat_leviathan      100%  8/8 DOMINANT
+cmp_rifleman        50%  12/24 
+cmp_grenadier       71%  17/24 
+cmp_rockettrooper   52%  15/29 
+cmp_warhound        80%  8/10 
+cmp_sniper          25%  6/24 
+cmp_sapper          50%  12/24 
+cmp_ironside        55%  16/29 
+cmp_harvester       31%  9/29 
+cmp_scoutcar        34%  10/29 
+cmp_bastion         69%  20/29 
+cmp_hunter          79%  27/34 
+cmp_hailstorm       31%  9/29 
+cmp_behemoth        71%  24/34 
+cmp_falcon          25%  3/12 
+cmp_kondor          17%  2/12 
+cmp_strato          58%  7/12 
+cmp_corvette        47%  8/17 
+cmp_pike            50%  2/4 
+cmp_admiral         60%  6/10 
+hlx_contractor      37%  10/27 
+hlx_enforcer        52%  14/27 
+hlx_netrunner       86%  12/14 DOMINANT
+hlx_nanodust        29%  6/21 
+hlx_ghost            0%  0/27 USELESS
+hlx_vesper          12%  4/33 USELESS
+hlx_interceptor     43%  12/28 
+hlx_arbiter         57%  16/28 
+hlx_shade           54%  15/28 
+hlx_suppressor      74%  25/34 
+hlx_puppeteer       81%  13/16 
+hlx_disruptor       29%  8/28 
+hlx_mogul           71%  27/38 
+hlx_dragonfly        8%  1/12 USELESS
+hlx_specter         58%  7/12 
+hlx_razor           42%  5/12 
+hlx_phantom          0%  0/4 USELESS
+hlx_warden          80%  12/15 
+lat_sentinel        47%  15/32 
+lat_lance          100%  5/5 DOMINANT
+lat_nullifier       60%  12/20 
+cmp_bunker          47%  15/32 
+cmp_railturret      59%  19/32 
+cmp_sam            100%  5/5 DOMINANT
+hlx_autoturret      34%  11/32 
+hlx_stuntower       56%  10/18 
+hlx_flaknest       100%  6/6 DOMINANT
+
+FLAGS:
+USELESS lat_nullproj 0% (0/22) [specialist]
+USELESS lat_raptor 8% (1/12) [specialist]
+USELESS lat_gnat 0% (0/12) [specialist]
+DOMINANT lat_leviathan 100% (8/8) [specialist]
+DOMINANT hlx_netrunner 86% (12/14) [specialist]
+USELESS hlx_ghost 0% (0/27) [specialist]
+USELESS hlx_vesper 12% (4/33) [specialist]
+USELESS hlx_dragonfly 8% (1/12) [specialist]
+USELESS hlx_phantom 0% (0/4) [specialist]
+DOMINANT lat_lance 100% (5/5) [specialist]
+DOMINANT cmp_sam 100% (5/5) [specialist]
+DOMINANT hlx_flaknest 100% (6/6) [specialist]
+
+# 2. DECLARED COUNTERS (data: counters.beats / losesTo)
+Counters: 292/292 pass
+
+# 3. MIRRORS
+  MBT           lat_phalanx vs cmp_bastion: winner lat_phalanx by 5% of value 
+  MBT           lat_phalanx vs hlx_arbiter: winner lat_phalanx by 2% of value 
+  MBT           cmp_bastion vs hlx_arbiter: winner cmp_bastion by 13% of value 
+  basicInf      lat_scuttler vs cmp_rifleman: winner cmp_rifleman by 6% of value 
+  basicInf      lat_scuttler vs hlx_contractor: winner lat_scuttler by 34% of value 
+  basicInf      cmp_rifleman vs hlx_contractor: winner cmp_rifleman by 17% of value 
+  heavy         lat_colossus vs cmp_behemoth: winner lat_colossus by 2% of value 
+  heavy         lat_colossus vs hlx_mogul: winner lat_colossus by 14% of value 
+  heavy         cmp_behemoth vs hlx_mogul: winner cmp_behemoth by 4% of value 
+  antiInf       lat_lamplighter vs cmp_grenadier: winner cmp_grenadier by 37% of value 
+  destroyer     lat_trident vs hlx_warden: winner lat_trident by 20% of value 
+  escort        cmp_corvette vs hlx_razor: winner cmp_corvette by 28% of value 
+  sub           lat_barracuda vs cmp_pike: winner cmp_pike by 1% of value 
+  scout         lat_wasp vs cmp_scoutcar: winner cmp_scoutcar by 6% of value 
+  scout         lat_wasp vs hlx_interceptor: winner hlx_interceptor by 32% of value 
+  scout         cmp_scoutcar vs hlx_interceptor: winner hlx_interceptor by 28% of value 
+
+# 4. TECH TREE
+  lattice: {"structure":14,"defence":3,"infantry":0,"drone":7,"vehicle":9,"aircraft":4,"naval":3}
+  compact: {"structure":15,"defence":3,"infantry":8,"drone":0,"vehicle":9,"aircraft":4,"naval":3}
+  helix: {"structure":14,"defence":3,"infantry":7,"drone":0,"vehicle":10,"aircraft":3,"naval":3}
+Tech: OK
+
+# 5. POWER BUDGET
+  lattice: full base drains 1180; Reactor Array gives 200 ($800) -> 6 plants ($4800), $/power 4.00
+  compact: full base drains 1130; Fusion Plant gives 180 ($700) -> 7 plants ($4900), $/power 3.89
+  helix: full base drains 1260; Solar Grid gives 200 ($800) -> 7 plants ($5600), $/power 4.00
+
+# 6. ECONOMY / TECH TIMING (standard opening, 1 harvester per refinery, trip 40 s = $500)
+  lattice: T3 tech online at 195s, credits left $800, power 600/370. Reactor Array@13s > Tantalum Extractor@45s > Fabrication Bay@53s > Assembly Plant@85s > Reactor Array@98s > Tantalum Extractor@130s > Uplink Spire@146s > Reactor Array@158s > Logic Tower@195s
+  compact: T3 tech online at 186s, credits left $920, power 540/340. Fusion Plant@11s > Ore Refinery@43s > Barracks@51s > Armour Works@83s > Fusion Plant@94s > Ore Refinery@126s > Radar Dome@142s > Fusion Plant@154s > Strategic Research Centre@186s
+  helix: T3 tech online at 195s, credits left $800, power 600/340. Solar Grid@13s > Extraction Rig@45s > Recruitment Office@53s > Fabrication Plant@85s > Solar Grid@98s > Extraction Rig@130s > Surveillance Hub@146s > Solar Grid@158s > R&D Campus@195s
+
+# 7. TTK: $3000 of MBTs vs enemy refinery / conyard
+  lat_phalanx x5 kills cmp_refinery in 41s; cmp_hq in 34s
+  cmp_bastion x4 kills hlx_refinery in 31s; hlx_tower in 27s
+  hlx_arbiter x5 kills lat_extractor in 32s; lat_nexus in 29s
+
+# 8. HEROES: one hero vs $800 of basic infantry (must win) and vs $2000 of MBTs (must lose)
+  lat_aria: vs 4 cmp_rifleman -> WIN (1.00 hp left); vs 2 cmp_bastion -> LOSS (0.87 enemy left)
+  cmp_ironside: vs 5 hlx_contractor -> WIN (0.84 hp left); vs 2 hlx_shade -> LOSS (0.92 enemy left)
+  hlx_vesper: vs 7 lat_scuttler -> WIN (0.56 hp left); vs 3 lat_phalanx -> LOSS (0.98 enemy left)
+
+# 9. COST EFFICIENCY vs preferred armour (DPS per $100)
+  lat_scuttler       t1 $120   hp90    SA     vs none     dps   12.5  dps/$100 10.42  hp/$100  75.0
+  lat_hornet         t1 $320   hp120   ROCKET vs light    dps   20.0  dps/$100  6.25  hp/$100  37.5
+  lat_lamplighter    t2 $400   hp190   TOXIN  vs none     dps   36.0  dps/$100  9.00  hp/$100  47.5
+  lat_aria           t3 $2000  hp400   SA     vs none     dps  233.3  dps/$100 11.67  hp/$100  20.0
+  lat_crawler        t1 $1400  hp900   SA     vs none     dps   12.0  dps/$100  0.86  hp/$100  64.3
+  lat_wasp           t1 $500   hp160   SA     vs none     dps   40.0  dps/$100  8.00  hp/$100  32.0
+  lat_phalanx        t1 $800   hp480   AP     vs light    dps   18.8  dps/$100  2.34  hp/$100  60.0
+  lat_lancer         t2 $1200  hp240   BEAM   vs light    dps   52.0  dps/$100  4.33  hp/$100  20.0
+  lat_colossus       t3 $2000  hp1100  BEAM   vs light    dps   66.7  dps/$100  3.33  hp/$100  55.0
+  lat_raptor         t2 $1000  hp170   ROCKET vs light    dps  175.0  dps/$100 17.50  hp/$100  17.0
+  lat_stratos        t3 $1800  hp350   SIEGE  vs wood     dps 8000.0  dps/$100 444.44  hp/$100  19.4
+  lat_gnat           t2 $700   hp120   SA     vs none     dps   30.0  dps/$100  4.29  hp/$100  17.1
+  lat_barracuda      t2 $1000  hp400   ROCKET vs light    dps   30.0  dps/$100  3.00  hp/$100  40.0
+  lat_trident        t2 $1100  hp580   BEAM   vs light    dps   33.3  dps/$100  3.03  hp/$100  52.7
+  cmp_rifleman       t1 $200   hp130   SA     vs none     dps   17.8  dps/$100  8.89  hp/$100  65.0
+  cmp_grenadier      t1 $300   hp140   HE     vs plate    dps   25.0  dps/$100  8.33  hp/$100  46.7
+  cmp_rockettrooper  t1 $350   hp120   ROCKET vs light    dps   23.1  dps/$100  6.59  hp/$100  34.3
+  cmp_warhound       t1 $200   hp70    SA     vs none     dps  100.0  dps/$100 50.00  hp/$100  35.0
+  cmp_sniper         t2 $600   hp110   SA     vs none     dps   46.7  dps/$100  7.78  hp/$100  18.3
+  cmp_sapper         t2 $600   hp120   SUPER  vs none     dps  140.0  dps/$100 23.33  hp/$100  20.0
+  cmp_ironside       t3 $2000  hp500   SUPER  vs none     dps  250.0  dps/$100 12.50  hp/$100  25.0
+  cmp_harvester      t1 $1400  hp1000  SA     vs none     dps   17.5  dps/$100  1.25  hp/$100  71.4
+  cmp_scoutcar       t1 $500   hp180   SA     vs none     dps   36.7  dps/$100  7.33  hp/$100  36.0
+  cmp_bastion        t1 $950   hp560   AP     vs light    dps   23.6  dps/$100  2.49  hp/$100  58.9
+  cmp_hunter         t1 $700   hp300   FLAK   vs none     dps   80.0  dps/$100 11.43  hp/$100  42.9
+  cmp_hailstorm      t2 $1200  hp220   SIEGE  vs wood     dps   46.7  dps/$100  3.89  hp/$100  18.3
+  cmp_behemoth       t3 $2000  hp1200  AP     vs light    dps   68.6  dps/$100  3.43  hp/$100  60.0
+  cmp_falcon         t2 $1200  hp200   ROCKET vs light    dps  300.0  dps/$100 25.00  hp/$100  16.7
+  cmp_kondor         t2 $1500  hp450   SA     vs none     dps   60.0  dps/$100  4.00  hp/$100  30.0
+  cmp_strato         t3 $2500  hp1300  SIEGE  vs wood     dps  125.0  dps/$100  5.00  hp/$100  52.0
+  cmp_corvette       t2 $900   hp500   FLAK   vs none     dps   43.8  dps/$100  4.86  hp/$100  55.6
+  cmp_pike           t2 $1000  hp450   ROCKET vs light    dps   31.1  dps/$100  3.11  hp/$100  45.0
+  cmp_admiral        t3 $2000  hp1000  SIEGE  vs wood     dps   75.0  dps/$100  3.75  hp/$100  50.0
+  hlx_contractor     t1 $150   hp105   SA     vs none     dps   15.0  dps/$100 10.00  hp/$100  70.0
+  hlx_enforcer       t1 $450   hp260   SA     vs none     dps   30.9  dps/$100  6.87  hp/$100  57.8
+  hlx_nanodust       t2 $900   hp110   TOXIN  vs none     dps   45.7  dps/$100  5.08  hp/$100  12.2
+  hlx_ghost          t2 $1000  hp120   SUPER  vs none     dps  100.0  dps/$100 10.00  hp/$100  12.0
+  hlx_vesper         t3 $2000  hp380   SA     vs none     dps  140.0  dps/$100  7.00  hp/$100  19.0
+  hlx_interceptor    t1 $400   hp150   SA     vs none     dps   33.3  dps/$100  8.33  hp/$100  37.5
+  hlx_arbiter        t1 $750   hp440   AP     vs light    dps   20.7  dps/$100  2.76  hp/$100  58.7
+  hlx_shade          t1 $1000  hp450   AP     vs light    dps   26.7  dps/$100  2.67  hp/$100  45.0
+  hlx_suppressor     t1 $650   hp280   FLAK   vs none     dps   83.3  dps/$100 12.82  hp/$100  43.1
+  hlx_disruptor      t2 $1300  hp300   SIEGE  vs wood     dps   34.0  dps/$100  2.62  hp/$100  23.1
+  hlx_mogul          t3 $2000  hp800   ROCKET vs light    dps   56.0  dps/$100  2.80  hp/$100  40.0
+  hlx_dragonfly      t2 $1200  hp260   BEAM   vs light    dps   40.0  dps/$100  3.33  hp/$100  21.7
+  hlx_specter        t3 $2000  hp250   SIEGE  vs wood     dps  550.0  dps/$100 27.50  hp/$100  12.5
+  hlx_razor          t2 $900   hp380   FLAK   vs none     dps   50.0  dps/$100  5.56  hp/$100  42.2
+  hlx_phantom        t3 $1500  hp450   SIEGE  vs wood     dps   35.7  dps/$100  2.38  hp/$100  30.0
+  hlx_warden         t2 $1300  hp650   ROCKET vs light    dps   54.3  dps/$100  4.18  hp/$100  50.0

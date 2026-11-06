@@ -1,0 +1,7 @@
+01 home R1-H2:24.8 B1-H2:24.9 R1-H1:25.8 B1-H1:25.9 | b2b B1-R1:53.3(tank) | errors 0
+02 home B2-H1:23.4 B1-H1:23.5 B1-H2:23.5 R1-H1:23.6 R2-H2:23.7 R1-H2:23.8 B2-H2:24.5 R2-H1:24.8 | b2b B1-R1:69.6(tank) B1-R2:87.7(tank) B2-R1:87.8(tank) B2-R2:72.5(tank) | errors 0
+03 home B1-H1:22.5 R1-H2:22.9 B1-H2:22.9 R1-H1:23.1 | b2b B1-R1:40.7(tank) | errors 0
+04 home R2-H2:27.2 R1-H2:27.3 B2-H1:27.3 B1-H1:27.4 R1-H1:27.5 B1-H2:27.6 R2-H1:27.7 B2-H2:27.8 | b2b B1-R1:92.5(amphibious) B1-R2:140.2(amphibious) B2-R1:137.9(amphibious) B2-R2:92.4(amphibious) | errors 0
+05 home B1-H1:23.2 B2-H1:23.4 R1-H2:23.5 R2-H2:23.7 B1-H2:24.3 R1-H1:24.4 B2-H2:24.5 R2-H1:24.5 | b2b B1-R1:62.4(tank) B1-R2:99.1(tank) B2-R1:99.2(tank) B2-R2:90.1(tank) | errors 0
+wrote results/pace.json
+EXIT 0

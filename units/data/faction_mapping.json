@@ -1,0 +1,34 @@
+{
+ "_doc": "Approved 2026-11-06. How the 15 pack units enter the game's three factions. units/data/unit_specs.json stays the pack's unchanged source; integration reads this file for faction, slot, display name and retunes. Rule: the game's existing names win every clash.",
+ "approved_on": "2026-11-06",
+ "factions": {
+  "H": { "pack": "Iron Legion", "game": "compact", "game_name": "The Compact", "theme": "Cold War 2.0", "palette": "olive drab and gunmetal with red stripes (the pack's oxide red becomes the stripe accent)" },
+  "T": { "pack": "Nova Directive", "game": "lattice", "game_name": "The Lattice", "theme": "drones and AI war", "palette": "matte white carbon with cyan status lights (already close to the pack)" },
+  "A": { "pack": "Vanguard Alliance", "game": "helix", "game_name": "Helix Dynamics", "theme": "cyberpunk megacorps", "palette": "black glass, brushed titanium, magenta and teal neon (full re-skin from navy, light grey and amber)" }
+ },
+ "units": [
+  { "pack_id": "H01", "pack_name": "Conscript", "faction": "compact", "slot": "cmp_rifleman", "display_name": "Conscript", "in_game": true },
+  { "pack_id": "H02", "pack_name": "Rocket Trooper", "faction": "compact", "slot": "cmp_rockettrooper", "display_name": "Rocket Trooper", "in_game": true },
+  { "pack_id": "H03", "pack_name": "Bastion Heavy Tank", "faction": "compact", "slot": "cmp_bastion", "display_name": "Bastion", "in_game": true },
+  { "pack_id": "H04", "pack_name": "Hammer Assault Helicopter", "faction": "compact", "slot": "cmp_kondor", "display_name": "Hammer", "in_game": true },
+  { "pack_id": "H05", "pack_name": "Bulwark Armoured Gunboat", "faction": "compact", "slot": "cmp_corvette", "display_name": "Bulwark", "in_game": true,
+    "retune": { "role": "Anti-sub / anti-air escort (the Corvette role)", "model": "unchanged",
+      "weapons": "deck gun on the existing turret; CIWS anti-air and stern depth charges fire from sockets on the existing hull (effects only, no new geometry); values follow cmp_corvette, converted to metric at integration",
+      "replaces": "the pack's single naval assault gun (110 dmg / 2.5 s, 50 m)" } },
+  { "pack_id": "T01", "pack_name": "Pulse Trooper", "faction": "lattice", "slot": "lat_scuttler", "display_name": "Pulse Trooper", "in_game": true,
+    "restyle": "android: graphite synthetic body, exposed joint actuators, ribbed neck, faceless head with a cyan visor slit (applied to the LOD0 model before the LODs were built)" },
+  { "pack_id": "T02", "pack_name": "Disruptor", "faction": "lattice", "slot": "EMP infantry-class (new; lat_nullproj stays the EMP vehicle)", "display_name": "Nullifier", "in_game": true,
+    "rename": "clashes with Helix's Disruptor (hlx_disruptor); 'Nullifier' is a placeholder in the Lattice's Null Field / Null Projector family" },
+  { "pack_id": "T03", "pack_name": "Wisp Hover Tank", "faction": "lattice", "slot": "lat_phalanx", "display_name": "Wisp", "in_game": true },
+  { "pack_id": "T04", "pack_name": "Mote Recon Drone", "faction": "lattice", "slot": "lat_wasp", "display_name": "Mote", "in_game": true, "note": "flies, where the Wasp Skimmer hovers" },
+  { "pack_id": "T05", "pack_name": "Spectre Drone Corvette", "faction": "lattice", "slot": "lat_trident", "display_name": "Trident", "in_game": true,
+    "rename": "clashes with Helix's Specter (hlx_specter); takes the name of the slot it fills" },
+  { "pack_id": "A01", "pack_name": "Ranger", "faction": "helix", "slot": "hlx_enforcer", "display_name": "Ranger", "in_game": true },
+  { "pack_id": "A02", "pack_name": "Missile Specialist", "faction": "helix", "slot": null, "display_name": "Missile Specialist", "in_game": false,
+    "dropped": "Helix has no rocket infantry by design; the model stays in the pack and the sandbox" },
+  { "pack_id": "A03", "pack_name": "Lancer Medium Tank", "faction": "helix", "slot": "hlx_arbiter", "display_name": "Arbiter", "in_game": true,
+    "rename": "clashes with the Lattice's Lancer (lat_lancer); takes the name of the slot it fills" },
+  { "pack_id": "A04", "pack_name": "Kestrel Strike Jet", "faction": "helix", "slot": "hlx_specter", "display_name": "Kestrel", "in_game": true, "note": "fills the strike-bomber slot; no stealth" },
+  { "pack_id": "A05", "pack_name": "Sentinel Missile Frigate", "faction": "helix", "slot": "hlx_warden", "display_name": "Sentinel", "in_game": true }
+ ]
+}

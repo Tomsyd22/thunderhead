@@ -1,0 +1,436 @@
+{
+ "date": "2026-11-06T11:26:27.932Z",
+ "map": "01",
+ "quality": "medium",
+ "viewport": [
+  1280,
+  720
+ ],
+ "renderer": "headless Chromium, ANGLE + SwiftShader (software rasteriser) — draw calls, triangles and instance counts are GPU-independent; timings are not",
+ "runs": {
+  "game": {
+   "console": [],
+   "pageErrors": [],
+   "wallLoadMs": 6166,
+   "timings": {
+    "mapDataMs": 161,
+    "mapViewMs": 4449,
+    "totalMs": 4710
+   },
+   "errors": [],
+   "notes": [],
+   "views": {
+    "overview": {
+     "shot": "results/map01_game_overview.png",
+     "drawCalls": 285,
+     "triangles": 1791033,
+     "instancesDrawn": 1814,
+     "instancesTotal": 4549,
+     "lod1": 1562,
+     "byCategory": {
+      "struct": {
+       "total": 252,
+       "drawn": 252
+      },
+      "smallprop": {
+       "total": 230,
+       "drawn": 0
+      },
+      "tree": {
+       "total": 1562,
+       "drawn": 1562
+      },
+      "smallveg": {
+       "total": 2288,
+       "drawn": 0
+      },
+      "rock": {
+       "total": 217,
+       "drawn": 0
+      }
+     },
+     "instancedMeshesVisible": 46,
+     "terrainLevels": {
+      "2": 225
+     },
+     "instanceUpdateMs": 2.5,
+     "renderCallCpuMs": 1.1
+    },
+    "base": {
+     "shot": "results/map01_game_base.png",
+     "drawCalls": 64,
+     "triangles": 506868,
+     "instancesDrawn": 274,
+     "instancesTotal": 4549,
+     "lod1": 62,
+     "byCategory": {
+      "struct": {
+       "total": 252,
+       "drawn": 33
+      },
+      "smallprop": {
+       "total": 230,
+       "drawn": 48
+      },
+      "tree": {
+       "total": 1562,
+       "drawn": 93
+      },
+      "smallveg": {
+       "total": 2288,
+       "drawn": 95
+      },
+      "rock": {
+       "total": 217,
+       "drawn": 5
+      }
+     },
+     "instancedMeshesVisible": 23,
+     "terrainLevels": {
+      "0": 27,
+      "1": 109,
+      "2": 89
+     },
+     "instanceUpdateMs": 0.7,
+     "renderCallCpuMs": 10.3
+    },
+    "forest": {
+     "shot": "results/map01_game_forest.png",
+     "drawCalls": 55,
+     "triangles": 1693225,
+     "instancesDrawn": 579,
+     "instancesTotal": 4549,
+     "lod1": 21,
+     "byCategory": {
+      "struct": {
+       "total": 252,
+       "drawn": 6
+      },
+      "smallprop": {
+       "total": 230,
+       "drawn": 0
+      },
+      "tree": {
+       "total": 1562,
+       "drawn": 324
+      },
+      "smallveg": {
+       "total": 2288,
+       "drawn": 239
+      },
+      "rock": {
+       "total": 217,
+       "drawn": 10
+      }
+     },
+     "instancedMeshesVisible": 17,
+     "terrainLevels": {
+      "0": 27,
+      "1": 140,
+      "2": 58
+     },
+     "instanceUpdateMs": 1.7,
+     "renderCallCpuMs": 5.1
+    }
+   },
+   "stats": {
+    "instances": {
+     "total": 4549,
+     "excluded": 52,
+     "sets": 24,
+     "instancedMeshes": 57
+    },
+    "terrainChunks": 225,
+    "assets": {
+     "glbs": 26,
+     "missing": [],
+     "failed": {},
+     "assetsMs": 3972
+    },
+    "memory": {
+     "geometries": 355,
+     "textures": 35,
+     "programs": 33
+    },
+    "structures": [],
+    "buildMs": 4448
+   },
+   "deckCheck": {
+    "cells": 454,
+    "hit": 36,
+    "maxDh": 0.02926304449925965,
+    "meanDh": 0.017005822410624205,
+    "samples": [
+     {
+      "x": 1621,
+      "y": 437,
+      "T": 3.33,
+      "drawn": 3.35,
+      "what": "Mesh"
+     },
+     {
+      "x": 1625,
+      "y": 449,
+      "T": 3.11,
+      "drawn": 3.13,
+      "what": "Mesh"
+     },
+     {
+      "x": 181,
+      "y": 1353,
+      "T": 3.936,
+      "drawn": 3.951,
+      "what": "Mesh"
+     },
+     {
+      "x": 173,
+      "y": 1357,
+      "T": 3.52,
+      "drawn": 3.513,
+      "what": "Mesh"
+     },
+     {
+      "x": 165,
+      "y": 1361,
+      "T": 3.104,
+      "drawn": 3.075,
+      "what": "Mesh"
+     }
+    ]
+   },
+   "heightCheck": {
+    "points": 396,
+    "skippedDeck": 4,
+    "missed": 0,
+    "maxDh": 2.2737367544323206e-13,
+    "meanDh": 3.2183010465346204e-14,
+    "maxDhBilinear": 1.4381182256718539,
+    "maxNormalDeg": 0.0000014787793334710982,
+    "meanNormalDeg": 2.517513181388335e-7,
+    "worst": {
+     "x": 704.87,
+     "y": 1516.36,
+     "kind": "random",
+     "T": 9.9966,
+     "mesh": 9.9966
+    },
+    "worstNormal": {
+     "x": 923.22,
+     "y": 676.16,
+     "kind": "random"
+    },
+    "pass": true
+   },
+   "minimap": "results/map01_minimap.png",
+   "api": {
+    "W": "number",
+    "H": "number",
+    "height": "function",
+    "surface": "function",
+    "depth": "function",
+    "slopeDeg": "function",
+    "normal": "function",
+    "los": "function",
+    "rocks": "array(0)",
+    "features": "object",
+    "meta": "object",
+    "id": "string",
+    "g": "number",
+    "n": "number",
+    "terrain": "function",
+    "deckAt": "function",
+    "waterLevel": "number",
+    "navBits": "Uint8Array(202500)",
+    "surfaceClass": "Uint8Array(203401)",
+    "roadMask": "Uint8Array(202500)",
+    "cellOf": "function",
+    "instances": "object",
+    "samples": {
+     "base": {
+      "height": 14,
+      "surface": 14,
+      "depth": 0,
+      "slopeDeg": 0,
+      "normal": [
+       0,
+       0,
+       1
+      ],
+      "nav": 15,
+      "tank": true
+     },
+     "sea": {
+      "height": -20,
+      "surface": 0,
+      "depth": 20,
+      "ship": true
+     },
+     "dock": {
+      "height": 3,
+      "surface": 0,
+      "terrain": -7.346799850463867,
+      "deck": 3
+     },
+     "los": {
+      "overRidge": false,
+      "short": true
+     }
+    }
+   }
+  },
+  "full": {
+   "console": [],
+   "pageErrors": [],
+   "wallLoadMs": 3925,
+   "timings": {
+    "mapDataMs": 90,
+    "mapViewMs": 2893,
+    "totalMs": 3051
+   },
+   "errors": [],
+   "notes": [],
+   "views": {
+    "overview": {
+     "shot": "results/map01_full_overview.png",
+     "drawCalls": 350,
+     "triangles": 2284005,
+     "instancesDrawn": 1866,
+     "instancesTotal": 4601,
+     "lod1": 1562,
+     "byCategory": {
+      "struct": {
+       "total": 304,
+       "drawn": 304
+      },
+      "smallprop": {
+       "total": 230,
+       "drawn": 0
+      },
+      "tree": {
+       "total": 1562,
+       "drawn": 1562
+      },
+      "smallveg": {
+       "total": 2288,
+       "drawn": 0
+      },
+      "rock": {
+       "total": 217,
+       "drawn": 0
+      }
+     },
+     "instancedMeshesVisible": 111,
+     "terrainLevels": {
+      "2": 225
+     },
+     "instanceUpdateMs": 1.4,
+     "renderCallCpuMs": 2.8
+    },
+    "base": {
+     "shot": "results/map01_full_base.png",
+     "drawCalls": 122,
+     "triangles": 705018,
+     "instancesDrawn": 294,
+     "instancesTotal": 4601,
+     "lod1": 62,
+     "byCategory": {
+      "struct": {
+       "total": 304,
+       "drawn": 53
+      },
+      "smallprop": {
+       "total": 230,
+       "drawn": 48
+      },
+      "tree": {
+       "total": 1562,
+       "drawn": 93
+      },
+      "smallveg": {
+       "total": 2288,
+       "drawn": 95
+      },
+      "rock": {
+       "total": 217,
+       "drawn": 5
+      }
+     },
+     "instancedMeshesVisible": 81,
+     "terrainLevels": {
+      "0": 27,
+      "1": 109,
+      "2": 89
+     },
+     "instanceUpdateMs": 2.6,
+     "renderCallCpuMs": 4.5
+    }
+   },
+   "stats": {
+    "instances": {
+     "total": 4601,
+     "excluded": 0,
+     "sets": 35,
+     "instancedMeshes": 122
+    },
+    "terrainChunks": 225,
+    "assets": {
+     "glbs": 37,
+     "missing": [],
+     "failed": {},
+     "assetsMs": 2725
+    },
+    "memory": {
+     "geometries": 390,
+     "textures": 47,
+     "programs": 36
+    },
+    "structures": [],
+    "buildMs": 2893
+   },
+   "deckCheck": {
+    "cells": 454,
+    "hit": 36,
+    "maxDh": 0.02926304449925965,
+    "meanDh": 0.017005822410624205,
+    "samples": [
+     {
+      "x": 1621,
+      "y": 437,
+      "T": 3.33,
+      "drawn": 3.35,
+      "what": "Mesh"
+     },
+     {
+      "x": 1625,
+      "y": 449,
+      "T": 3.11,
+      "drawn": 3.13,
+      "what": "Mesh"
+     },
+     {
+      "x": 181,
+      "y": 1353,
+      "T": 3.936,
+      "drawn": 3.951,
+      "what": "Mesh"
+     },
+     {
+      "x": 173,
+      "y": 1357,
+      "T": 3.52,
+      "drawn": 3.513,
+      "what": "Mesh"
+     },
+     {
+      "x": 165,
+      "y": 1361,
+      "T": 3.104,
+      "drawn": 3.075,
+      "what": "Mesh"
+     }
+    ]
+   }
+  }
+ },
+ "failures": []
+}

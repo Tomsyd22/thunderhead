@@ -1,0 +1,2600 @@
+{
+  "schema_version": 1,
+  "coordinate_system": {
+    "horizontal": "layout coordinates q; 0..1000 per axis",
+    "origin": "southwest",
+    "x": "east",
+    "y": "north",
+    "height": "metres above mean sea level",
+    "conversion": "metres = q * size_m / 1000",
+    "engine_mapping": "Unity: (east_m, height_m, north_m)"
+  },
+  "maps": [
+    {
+      "id": "01",
+      "name": "Emerald Strait",
+      "size_m": 1800,
+      "mode": "1v1",
+      "seed": 4101,
+      "base_ground_m": 10,
+      "land": {
+        "type": "polygon",
+        "vertices": [
+          [
+            150,
+            100
+          ],
+          [
+            820,
+            100
+          ],
+          [
+            900,
+            250
+          ],
+          [
+            880,
+            850
+          ],
+          [
+            750,
+            920
+          ],
+          [
+            220,
+            920
+          ],
+          [
+            100,
+            780
+          ],
+          [
+            100,
+            300
+          ]
+        ]
+      },
+      "bases": [
+        {
+          "id": "B1",
+          "position": [
+            250,
+            780
+          ],
+          "ground_height_m": 14,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R1",
+          "position": [
+            750,
+            220
+          ],
+          "ground_height_m": 14,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        }
+      ],
+      "deposits": [
+        {
+          "id": "B1-H1",
+          "kind": "home",
+          "position": [
+            205,
+            855
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B1-H2",
+          "kind": "home",
+          "position": [
+            295,
+            855
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "R1-H1",
+          "kind": "home",
+          "position": [
+            705,
+            145
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R1-H2",
+          "kind": "home",
+          "position": [
+            795,
+            145
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "E1",
+          "kind": "expansion",
+          "position": [
+            250,
+            220
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "expansion",
+          "position": [
+            750,
+            780
+          ]
+        },
+        {
+          "id": "C1",
+          "kind": "contested",
+          "position": [
+            410,
+            560
+          ]
+        },
+        {
+          "id": "C2",
+          "kind": "contested",
+          "position": [
+            590,
+            440
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "central",
+          "points": [
+            [
+              250,
+              780
+            ],
+            [
+              360,
+              680
+            ],
+            [
+              450,
+              570
+            ],
+            [
+              500,
+              500
+            ],
+            [
+              550,
+              430
+            ],
+            [
+              640,
+              320
+            ],
+            [
+              750,
+              220
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "west-flank",
+          "points": [
+            [
+              250,
+              780
+            ],
+            [
+              180,
+              650
+            ],
+            [
+              180,
+              430
+            ],
+            [
+              180,
+              250
+            ],
+            [
+              250,
+              170
+            ],
+            [
+              480,
+              170
+            ],
+            [
+              750,
+              220
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "east-flank",
+          "points": [
+            [
+              250,
+              780
+            ],
+            [
+              500,
+              830
+            ],
+            [
+              750,
+              850
+            ],
+            [
+              820,
+              780
+            ],
+            [
+              820,
+              600
+            ],
+            [
+              820,
+              390
+            ],
+            [
+              750,
+              220
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "cross-link",
+          "points": [
+            [
+              180,
+              430
+            ],
+            [
+              350,
+              430
+            ],
+            [
+              500,
+              500
+            ],
+            [
+              660,
+              580
+            ],
+            [
+              820,
+              600
+            ]
+          ],
+          "clear_width_m": 16
+        }
+      ],
+      "hills": [
+        {
+          "id": "west-ridge",
+          "center": [
+            300,
+            520
+          ],
+          "radii": [
+            75,
+            160
+          ],
+          "peak_height_m": 30
+        },
+        {
+          "id": "east-radar-ridge",
+          "center": [
+            685,
+            590
+          ],
+          "radii": [
+            90,
+            150
+          ],
+          "peak_height_m": 36
+        },
+        {
+          "id": "north-ridge",
+          "center": [
+            530,
+            740
+          ],
+          "radii": [
+            100,
+            55
+          ],
+          "peak_height_m": 28
+        },
+        {
+          "id": "south-ridge",
+          "center": [
+            470,
+            260
+          ],
+          "radii": [
+            100,
+            55
+          ],
+          "peak_height_m": 28
+        }
+      ],
+      "docks": [
+        {
+          "player": "B1",
+          "water_center": [
+            80,
+            755
+          ],
+          "land_access": [
+            150,
+            755
+          ],
+          "orientation": "berth-long-axis-north-south"
+        },
+        {
+          "player": "R1",
+          "water_center": [
+            915,
+            245
+          ],
+          "land_access": [
+            850,
+            245
+          ],
+          "orientation": "berth-long-axis-north-south"
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "container-port",
+          "center": [
+            155,
+            520
+          ],
+          "size_m": [
+            150,
+            100
+          ],
+          "role": "decorative"
+        },
+        {
+          "id": "radar",
+          "center": [
+            700,
+            650
+          ],
+          "size_m": [
+            24,
+            24
+          ],
+          "role": "capturable"
+        }
+      ],
+      "forest_patches": [
+        [
+          280,
+          600,
+          45,
+          70
+        ],
+        [
+          370,
+          770,
+          45,
+          40
+        ],
+        [
+          700,
+          430,
+          45,
+          70
+        ],
+        [
+          630,
+          230,
+          45,
+          40
+        ],
+        [
+          570,
+          660,
+          50,
+          45
+        ],
+        [
+          430,
+          340,
+          50,
+          45
+        ]
+      ],
+      "biome": "temperate oak and pine, meadow grass, limestone, teal coast"
+    },
+    {
+      "id": "02",
+      "name": "Delta Grid",
+      "size_m": 2400,
+      "mode": "2v2",
+      "seed": 4102,
+      "base_ground_m": 8,
+      "land": {
+        "type": "polygon",
+        "vertices": [
+          [
+            0,
+            180
+          ],
+          [
+            1000,
+            180
+          ],
+          [
+            1000,
+            1000
+          ],
+          [
+            0,
+            1000
+          ]
+        ]
+      },
+      "water_cuts": [
+        {
+          "type": "rectangle",
+          "bounds": [
+            290,
+            180,
+            410,
+            840
+          ],
+          "bed_height_m": -9
+        },
+        {
+          "type": "rectangle",
+          "bounds": [
+            590,
+            180,
+            710,
+            840
+          ],
+          "bed_height_m": -9
+        }
+      ],
+      "bases": [
+        {
+          "id": "B1",
+          "position": [
+            160,
+            760
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "B2",
+          "position": [
+            160,
+            300
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R1",
+          "position": [
+            840,
+            760
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R2",
+          "position": [
+            840,
+            300
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        }
+      ],
+      "deposits": [
+        {
+          "id": "B1-H1",
+          "kind": "home",
+          "position": [
+            115,
+            825
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B1-H2",
+          "kind": "home",
+          "position": [
+            205,
+            825
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B2-H1",
+          "kind": "home",
+          "position": [
+            115,
+            235
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "B2-H2",
+          "kind": "home",
+          "position": [
+            205,
+            235
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "R1-H1",
+          "kind": "home",
+          "position": [
+            795,
+            825
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R1-H2",
+          "kind": "home",
+          "position": [
+            885,
+            825
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R2-H1",
+          "kind": "home",
+          "position": [
+            795,
+            235
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "R2-H2",
+          "kind": "home",
+          "position": [
+            885,
+            235
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "E1",
+          "kind": "expansion",
+          "position": [
+            210,
+            610
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "expansion",
+          "position": [
+            210,
+            450
+          ]
+        },
+        {
+          "id": "E3",
+          "kind": "expansion",
+          "position": [
+            790,
+            610
+          ]
+        },
+        {
+          "id": "E4",
+          "kind": "expansion",
+          "position": [
+            790,
+            450
+          ]
+        },
+        {
+          "id": "C1",
+          "kind": "contested",
+          "position": [
+            465,
+            710
+          ]
+        },
+        {
+          "id": "C2",
+          "kind": "contested",
+          "position": [
+            535,
+            350
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "west-rear",
+          "points": [
+            [
+              160,
+              300
+            ],
+            [
+              110,
+              500
+            ],
+            [
+              160,
+              760
+            ],
+            [
+              160,
+              920
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "east-rear",
+          "points": [
+            [
+              840,
+              300
+            ],
+            [
+              890,
+              500
+            ],
+            [
+              840,
+              760
+            ],
+            [
+              840,
+              920
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "north-ring",
+          "points": [
+            [
+              160,
+              920
+            ],
+            [
+              500,
+              920
+            ],
+            [
+              840,
+              920
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "upper-crossing",
+          "points": [
+            [
+              160,
+              760
+            ],
+            [
+              245,
+              680
+            ],
+            [
+              430,
+              680
+            ],
+            [
+              500,
+              640
+            ],
+            [
+              570,
+              680
+            ],
+            [
+              755,
+              680
+            ],
+            [
+              840,
+              760
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "lower-crossing",
+          "points": [
+            [
+              160,
+              300
+            ],
+            [
+              245,
+              400
+            ],
+            [
+              430,
+              400
+            ],
+            [
+              500,
+              440
+            ],
+            [
+              570,
+              400
+            ],
+            [
+              755,
+              400
+            ],
+            [
+              840,
+              300
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "central-spine",
+          "points": [
+            [
+              500,
+              350
+            ],
+            [
+              500,
+              440
+            ],
+            [
+              500,
+              640
+            ],
+            [
+              500,
+              710
+            ],
+            [
+              500,
+              920
+            ]
+          ],
+          "clear_width_m": 16
+        }
+      ],
+      "bridges": [
+        {
+          "id": "NW",
+          "start": [
+            290,
+            680
+          ],
+          "end": [
+            410,
+            680
+          ],
+          "deck_height_m": 14
+        },
+        {
+          "id": "NE",
+          "start": [
+            590,
+            680
+          ],
+          "end": [
+            710,
+            680
+          ],
+          "deck_height_m": 14
+        },
+        {
+          "id": "SW",
+          "start": [
+            290,
+            400
+          ],
+          "end": [
+            410,
+            400
+          ],
+          "deck_height_m": 14
+        },
+        {
+          "id": "SE",
+          "start": [
+            590,
+            400
+          ],
+          "end": [
+            710,
+            400
+          ],
+          "deck_height_m": 14
+        }
+      ],
+      "hills": [
+        {
+          "id": "NW-berm",
+          "center": [
+            235,
+            885
+          ],
+          "radii": [
+            60,
+            35
+          ],
+          "peak_height_m": 16
+        },
+        {
+          "id": "NE-berm",
+          "center": [
+            765,
+            885
+          ],
+          "radii": [
+            60,
+            35
+          ],
+          "peak_height_m": 16
+        }
+      ],
+      "docks": [
+        {
+          "player": "B1",
+          "water_center": [
+            325,
+            760
+          ],
+          "land_access": [
+            270,
+            760
+          ]
+        },
+        {
+          "player": "B2",
+          "water_center": [
+            325,
+            280
+          ],
+          "land_access": [
+            270,
+            280
+          ]
+        },
+        {
+          "player": "R1",
+          "water_center": [
+            675,
+            760
+          ],
+          "land_access": [
+            730,
+            760
+          ]
+        },
+        {
+          "player": "R2",
+          "water_center": [
+            675,
+            280
+          ],
+          "land_access": [
+            730,
+            280
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "waterworks",
+          "center": [
+            500,
+            540
+          ],
+          "size_m": [
+            140,
+            160
+          ],
+          "role": "decorative-compound"
+        },
+        {
+          "id": "radar",
+          "center": [
+            500,
+            790
+          ],
+          "size_m": [
+            24,
+            24
+          ],
+          "role": "capturable"
+        }
+      ],
+      "forest_patches": [
+        [
+          70,
+          620,
+          35,
+          60
+        ],
+        [
+          930,
+          620,
+          35,
+          60
+        ],
+        [
+          450,
+          250,
+          30,
+          30
+        ],
+        [
+          550,
+          250,
+          30,
+          30
+        ],
+        [
+          440,
+          820,
+          20,
+          35
+        ],
+        [
+          560,
+          820,
+          20,
+          35
+        ]
+      ],
+      "biome": "humid delta, reeds, mangroves at banks, palms, broadleaf trees, farms and levees"
+    },
+    {
+      "id": "03",
+      "name": "Granite Fjord",
+      "size_m": 2000,
+      "mode": "1v1",
+      "seed": 4103,
+      "base_ground_m": 28,
+      "land": {
+        "type": "full-square"
+      },
+      "water_cuts": [
+        {
+          "type": "polygon",
+          "vertices": [
+            [
+              300,
+              0
+            ],
+            [
+              700,
+              0
+            ],
+            [
+              700,
+              300
+            ],
+            [
+              650,
+              500
+            ],
+            [
+              600,
+              650
+            ],
+            [
+              400,
+              650
+            ],
+            [
+              350,
+              500
+            ],
+            [
+              300,
+              300
+            ]
+          ],
+          "bed_height_m": -22
+        }
+      ],
+      "land_additions": [
+        {
+          "type": "ellipse",
+          "center": [
+            500,
+            290
+          ],
+          "radii": [
+            70,
+            85
+          ],
+          "ground_height_m": 8
+        }
+      ],
+      "bases": [
+        {
+          "id": "B1",
+          "position": [
+            235,
+            790
+          ],
+          "ground_height_m": 32,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R1",
+          "position": [
+            765,
+            790
+          ],
+          "ground_height_m": 32,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        }
+      ],
+      "deposits": [
+        {
+          "id": "B1-H1",
+          "kind": "home",
+          "position": [
+            190,
+            860
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B1-H2",
+          "kind": "home",
+          "position": [
+            280,
+            860
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "R1-H1",
+          "kind": "home",
+          "position": [
+            720,
+            860
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R1-H2",
+          "kind": "home",
+          "position": [
+            810,
+            860
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "E1",
+          "kind": "expansion",
+          "position": [
+            210,
+            420
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "expansion",
+          "position": [
+            790,
+            420
+          ]
+        },
+        {
+          "id": "C1",
+          "kind": "contested",
+          "position": [
+            455,
+            790
+          ]
+        },
+        {
+          "id": "C2",
+          "kind": "contested",
+          "position": [
+            545,
+            790
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "rear-plateau",
+          "points": [
+            [
+              235,
+              790
+            ],
+            [
+              235,
+              920
+            ],
+            [
+              500,
+              920
+            ],
+            [
+              765,
+              920
+            ],
+            [
+              765,
+              790
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "central-saddle",
+          "points": [
+            [
+              235,
+              790
+            ],
+            [
+              350,
+              760
+            ],
+            [
+              455,
+              730
+            ],
+            [
+              545,
+              730
+            ],
+            [
+              650,
+              760
+            ],
+            [
+              765,
+              790
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "lower-crossing",
+          "points": [
+            [
+              235,
+              790
+            ],
+            [
+              310,
+              680
+            ],
+            [
+              440,
+              700
+            ],
+            [
+              560,
+              700
+            ],
+            [
+              690,
+              680
+            ],
+            [
+              765,
+              790
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "west-coastal",
+          "points": [
+            [
+              235,
+              790
+            ],
+            [
+              190,
+              650
+            ],
+            [
+              160,
+              420
+            ],
+            [
+              300,
+              500
+            ],
+            [
+              330,
+              570
+            ],
+            [
+              310,
+              680
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "east-coastal",
+          "points": [
+            [
+              765,
+              790
+            ],
+            [
+              810,
+              650
+            ],
+            [
+              840,
+              420
+            ],
+            [
+              700,
+              500
+            ],
+            [
+              670,
+              570
+            ],
+            [
+              690,
+              680
+            ]
+          ],
+          "clear_width_m": 24
+        }
+      ],
+      "hills": [
+        {
+          "id": "west-massif",
+          "center": [
+            110,
+            650
+          ],
+          "radii": [
+            65,
+            125
+          ],
+          "peak_height_m": 54
+        },
+        {
+          "id": "east-massif",
+          "center": [
+            890,
+            650
+          ],
+          "radii": [
+            65,
+            125
+          ],
+          "peak_height_m": 54
+        },
+        {
+          "id": "north-center",
+          "center": [
+            500,
+            870
+          ],
+          "radii": [
+            100,
+            35
+          ],
+          "peak_height_m": 48
+        }
+      ],
+      "docks": [
+        {
+          "player": "B1",
+          "water_center": [
+            400,
+            500
+          ],
+          "land_access": [
+            330,
+            500
+          ]
+        },
+        {
+          "player": "R1",
+          "water_center": [
+            600,
+            500
+          ],
+          "land_access": [
+            670,
+            500
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "island-radar",
+          "center": [
+            500,
+            290
+          ],
+          "size_m": [
+            24,
+            24
+          ],
+          "role": "capturable"
+        },
+        {
+          "id": "west-wind-farm",
+          "center": [
+            130,
+            940
+          ],
+          "size_m": [
+            100,
+            70
+          ],
+          "role": "decorative"
+        },
+        {
+          "id": "east-wind-farm",
+          "center": [
+            870,
+            940
+          ],
+          "size_m": [
+            100,
+            70
+          ],
+          "role": "decorative"
+        }
+      ],
+      "landing_beaches": [
+        {
+          "center": [
+            440,
+            290
+          ],
+          "width_m": 60
+        },
+        {
+          "center": [
+            560,
+            290
+          ],
+          "width_m": 60
+        }
+      ],
+      "forest_patches": [
+        [
+          100,
+          500,
+          50,
+          65
+        ],
+        [
+          900,
+          500,
+          50,
+          65
+        ],
+        [
+          335,
+          850,
+          35,
+          30
+        ],
+        [
+          665,
+          850,
+          35,
+          30
+        ],
+        [
+          230,
+          590,
+          40,
+          40
+        ],
+        [
+          770,
+          590,
+          40,
+          40
+        ]
+      ],
+      "biome": "snow-free northern summer, Scots pine, ferns, granite slabs, scree, deep blue fjord"
+    },
+    {
+      "id": "04",
+      "name": "Sunbreak Atoll",
+      "size_m": 2600,
+      "mode": "2v2-naval",
+      "seed": 4104,
+      "base_ground_m": 6,
+      "land": {
+        "type": "ellipse-union",
+        "ellipses": [
+          {
+            "center": [
+              210,
+              780
+            ],
+            "radii": [
+              150,
+              180
+            ]
+          },
+          {
+            "center": [
+              210,
+              220
+            ],
+            "radii": [
+              150,
+              180
+            ]
+          },
+          {
+            "center": [
+              790,
+              780
+            ],
+            "radii": [
+              150,
+              180
+            ]
+          },
+          {
+            "center": [
+              790,
+              220
+            ],
+            "radii": [
+              150,
+              180
+            ]
+          },
+          {
+            "center": [
+              500,
+              730
+            ],
+            "radii": [
+              100,
+              110
+            ]
+          },
+          {
+            "center": [
+              500,
+              270
+            ],
+            "radii": [
+              100,
+              110
+            ]
+          },
+          {
+            "center": [
+              500,
+              500
+            ],
+            "radii": [
+              45,
+              45
+            ]
+          }
+        ]
+      },
+      "bases": [
+        {
+          "id": "B1",
+          "position": [
+            210,
+            750
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "B2",
+          "position": [
+            210,
+            250
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R1",
+          "position": [
+            790,
+            750
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R2",
+          "position": [
+            790,
+            250
+          ],
+          "ground_height_m": 8,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        }
+      ],
+      "deposits": [
+        {
+          "id": "B1-H1",
+          "kind": "home",
+          "position": [
+            165,
+            825
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B1-H2",
+          "kind": "home",
+          "position": [
+            255,
+            825
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B2-H1",
+          "kind": "home",
+          "position": [
+            165,
+            175
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "B2-H2",
+          "kind": "home",
+          "position": [
+            255,
+            175
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "R1-H1",
+          "kind": "home",
+          "position": [
+            745,
+            825
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R1-H2",
+          "kind": "home",
+          "position": [
+            835,
+            825
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R2-H1",
+          "kind": "home",
+          "position": [
+            745,
+            175
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "R2-H2",
+          "kind": "home",
+          "position": [
+            835,
+            175
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "E1",
+          "kind": "contested-expansion",
+          "position": [
+            465,
+            760
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "contested-expansion",
+          "position": [
+            535,
+            760
+          ]
+        },
+        {
+          "id": "E3",
+          "kind": "contested-expansion",
+          "position": [
+            465,
+            240
+          ]
+        },
+        {
+          "id": "E4",
+          "kind": "contested-expansion",
+          "position": [
+            535,
+            240
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "west-team-link",
+          "points": [
+            [
+              210,
+              750
+            ],
+            [
+              210,
+              600
+            ],
+            [
+              210,
+              400
+            ],
+            [
+              210,
+              250
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "east-team-link",
+          "points": [
+            [
+              790,
+              750
+            ],
+            [
+              790,
+              600
+            ],
+            [
+              790,
+              400
+            ],
+            [
+              790,
+              250
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "north-neutral-road",
+          "points": [
+            [
+              415,
+              730
+            ],
+            [
+              465,
+              730
+            ],
+            [
+              535,
+              730
+            ],
+            [
+              585,
+              730
+            ]
+          ],
+          "clear_width_m": 16
+        },
+        {
+          "id": "south-neutral-road",
+          "points": [
+            [
+              415,
+              270
+            ],
+            [
+              465,
+              270
+            ],
+            [
+              535,
+              270
+            ],
+            [
+              585,
+              270
+            ]
+          ],
+          "clear_width_m": 16
+        }
+      ],
+      "bridges": [
+        {
+          "id": "west-causeway",
+          "start": [
+            210,
+            400
+          ],
+          "end": [
+            210,
+            600
+          ],
+          "deck_height_m": 10
+        },
+        {
+          "id": "east-causeway",
+          "start": [
+            790,
+            400
+          ],
+          "end": [
+            790,
+            600
+          ],
+          "deck_height_m": 10
+        }
+      ],
+      "hills": [
+        {
+          "id": "NW-volcanic",
+          "center": [
+            190,
+            915
+          ],
+          "radii": [
+            65,
+            35
+          ],
+          "peak_height_m": 36
+        },
+        {
+          "id": "NE-volcanic",
+          "center": [
+            810,
+            915
+          ],
+          "radii": [
+            65,
+            35
+          ],
+          "peak_height_m": 36
+        },
+        {
+          "id": "SW-volcanic",
+          "center": [
+            190,
+            85
+          ],
+          "radii": [
+            65,
+            35
+          ],
+          "peak_height_m": 36
+        },
+        {
+          "id": "SE-volcanic",
+          "center": [
+            810,
+            85
+          ],
+          "radii": [
+            65,
+            35
+          ],
+          "peak_height_m": 36
+        }
+      ],
+      "docks": [
+        {
+          "player": "B1",
+          "water_center": [
+            350,
+            700
+          ],
+          "land_access": [
+            320,
+            740
+          ]
+        },
+        {
+          "player": "B2",
+          "water_center": [
+            350,
+            300
+          ],
+          "land_access": [
+            320,
+            260
+          ]
+        },
+        {
+          "player": "R1",
+          "water_center": [
+            650,
+            700
+          ],
+          "land_access": [
+            680,
+            740
+          ]
+        },
+        {
+          "player": "R2",
+          "water_center": [
+            650,
+            300
+          ],
+          "land_access": [
+            680,
+            260
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "radar",
+          "center": [
+            500,
+            500
+          ],
+          "size_m": [
+            24,
+            24
+          ],
+          "role": "capturable"
+        },
+        {
+          "id": "north-research",
+          "center": [
+            500,
+            780
+          ],
+          "size_m": [
+            70,
+            50
+          ],
+          "role": "decorative"
+        },
+        {
+          "id": "south-solar",
+          "center": [
+            500,
+            220
+          ],
+          "size_m": [
+            70,
+            50
+          ],
+          "role": "decorative"
+        }
+      ],
+      "landing_beaches": [
+        {
+          "center": [
+            410,
+            730
+          ],
+          "width_m": 75
+        },
+        {
+          "center": [
+            590,
+            730
+          ],
+          "width_m": 75
+        },
+        {
+          "center": [
+            410,
+            270
+          ],
+          "width_m": 75
+        },
+        {
+          "center": [
+            590,
+            270
+          ],
+          "width_m": 75
+        },
+        {
+          "center": [
+            460,
+            500
+          ],
+          "width_m": 50
+        },
+        {
+          "center": [
+            540,
+            500
+          ],
+          "width_m": 50
+        }
+      ],
+      "forest_patches": [
+        [
+          120,
+          740,
+          35,
+          55
+        ],
+        [
+          880,
+          740,
+          35,
+          55
+        ],
+        [
+          120,
+          260,
+          35,
+          55
+        ],
+        [
+          880,
+          260,
+          35,
+          55
+        ],
+        [
+          500,
+          830,
+          30,
+          15
+        ],
+        [
+          500,
+          170,
+          30,
+          15
+        ]
+      ],
+      "biome": "tropical palms, jungle clusters, grass, basalt, white sand, coral shallows and deep turquoise channels"
+    },
+    {
+      "id": "05",
+      "name": "Copperhead Bay",
+      "size_m": 2400,
+      "mode": "2v2",
+      "seed": 4105,
+      "base_ground_m": 12,
+      "land": {
+        "type": "full-square"
+      },
+      "water_cuts": [
+        {
+          "type": "polygon",
+          "vertices": [
+            [
+              280,
+              0
+            ],
+            [
+              720,
+              0
+            ],
+            [
+              720,
+              260
+            ],
+            [
+              650,
+              380
+            ],
+            [
+              550,
+              430
+            ],
+            [
+              450,
+              430
+            ],
+            [
+              350,
+              380
+            ],
+            [
+              280,
+              260
+            ]
+          ],
+          "bed_height_m": -16
+        }
+      ],
+      "bases": [
+        {
+          "id": "B1",
+          "position": [
+            150,
+            800
+          ],
+          "ground_height_m": 12,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "B2",
+          "position": [
+            150,
+            250
+          ],
+          "ground_height_m": 12,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R1",
+          "position": [
+            850,
+            800
+          ],
+          "ground_height_m": 12,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        },
+        {
+          "id": "R2",
+          "position": [
+            850,
+            250
+          ],
+          "ground_height_m": 12,
+          "pad_size_m": [
+            220,
+            220
+          ],
+          "layout_rotation_deg": 0
+        }
+      ],
+      "deposits": [
+        {
+          "id": "B1-H1",
+          "kind": "home",
+          "position": [
+            105,
+            865
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B1-H2",
+          "kind": "home",
+          "position": [
+            195,
+            865
+          ],
+          "initial_nearest_player": "B1"
+        },
+        {
+          "id": "B2-H1",
+          "kind": "home",
+          "position": [
+            105,
+            185
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "B2-H2",
+          "kind": "home",
+          "position": [
+            195,
+            185
+          ],
+          "initial_nearest_player": "B2"
+        },
+        {
+          "id": "R1-H1",
+          "kind": "home",
+          "position": [
+            805,
+            865
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R1-H2",
+          "kind": "home",
+          "position": [
+            895,
+            865
+          ],
+          "initial_nearest_player": "R1"
+        },
+        {
+          "id": "R2-H1",
+          "kind": "home",
+          "position": [
+            805,
+            185
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "R2-H2",
+          "kind": "home",
+          "position": [
+            895,
+            185
+          ],
+          "initial_nearest_player": "R2"
+        },
+        {
+          "id": "E1",
+          "kind": "expansion",
+          "position": [
+            230,
+            700
+          ]
+        },
+        {
+          "id": "E2",
+          "kind": "expansion",
+          "position": [
+            230,
+            450
+          ]
+        },
+        {
+          "id": "E3",
+          "kind": "expansion",
+          "position": [
+            770,
+            700
+          ]
+        },
+        {
+          "id": "E4",
+          "kind": "expansion",
+          "position": [
+            770,
+            450
+          ]
+        },
+        {
+          "id": "C1",
+          "kind": "contested",
+          "position": [
+            405,
+            680
+          ]
+        },
+        {
+          "id": "C2",
+          "kind": "contested",
+          "position": [
+            595,
+            680
+          ]
+        }
+      ],
+      "roads": [
+        {
+          "id": "north-ridge",
+          "points": [
+            [
+              150,
+              800
+            ],
+            [
+              280,
+              850
+            ],
+            [
+              500,
+              850
+            ],
+            [
+              720,
+              850
+            ],
+            [
+              850,
+              800
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "industrial-boulevard",
+          "points": [
+            [
+              150,
+              800
+            ],
+            [
+              240,
+              620
+            ],
+            [
+              400,
+              620
+            ],
+            [
+              600,
+              620
+            ],
+            [
+              760,
+              620
+            ],
+            [
+              850,
+              800
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "coastal-road",
+          "points": [
+            [
+              150,
+              250
+            ],
+            [
+              240,
+              470
+            ],
+            [
+              450,
+              470
+            ],
+            [
+              550,
+              470
+            ],
+            [
+              760,
+              470
+            ],
+            [
+              850,
+              250
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "west-rear",
+          "points": [
+            [
+              150,
+              250
+            ],
+            [
+              100,
+              500
+            ],
+            [
+              150,
+              800
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "east-rear",
+          "points": [
+            [
+              850,
+              250
+            ],
+            [
+              900,
+              500
+            ],
+            [
+              850,
+              800
+            ]
+          ],
+          "clear_width_m": 24
+        },
+        {
+          "id": "west-crosslink",
+          "points": [
+            [
+              240,
+              470
+            ],
+            [
+              240,
+              620
+            ],
+            [
+              280,
+              850
+            ]
+          ],
+          "clear_width_m": 16
+        },
+        {
+          "id": "east-crosslink",
+          "points": [
+            [
+              760,
+              470
+            ],
+            [
+              760,
+              620
+            ],
+            [
+              720,
+              850
+            ]
+          ],
+          "clear_width_m": 16
+        }
+      ],
+      "hills": [
+        {
+          "id": "north-west-ridge",
+          "center": [
+            350,
+            900
+          ],
+          "radii": [
+            100,
+            45
+          ],
+          "peak_height_m": 32
+        },
+        {
+          "id": "north-east-ridge",
+          "center": [
+            650,
+            900
+          ],
+          "radii": [
+            100,
+            45
+          ],
+          "peak_height_m": 32
+        }
+      ],
+      "quarries": [
+        {
+          "center": [
+            405,
+            680
+          ],
+          "radii": [
+            55,
+            40
+          ],
+          "floor_height_m": 5,
+          "entries": [
+            [
+              350,
+              680
+            ],
+            [
+              460,
+              680
+            ]
+          ]
+        },
+        {
+          "center": [
+            595,
+            680
+          ],
+          "radii": [
+            55,
+            40
+          ],
+          "floor_height_m": 5,
+          "entries": [
+            [
+              540,
+              680
+            ],
+            [
+              650,
+              680
+            ]
+          ]
+        }
+      ],
+      "docks": [
+        {
+          "player": "B2",
+          "water_center": [
+            340,
+            240
+          ],
+          "land_access": [
+            260,
+            240
+          ]
+        },
+        {
+          "player": "R2",
+          "water_center": [
+            660,
+            240
+          ],
+          "land_access": [
+            740,
+            240
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "freight-terminal",
+          "center": [
+            500,
+            550
+          ],
+          "size_m": [
+            260,
+            140
+          ],
+          "role": "decorative-compound"
+        },
+        {
+          "id": "rail-siding",
+          "center": [
+            500,
+            585
+          ],
+          "size_m": [
+            260,
+            16
+          ],
+          "role": "decorative"
+        },
+        {
+          "id": "radar",
+          "center": [
+            500,
+            940
+          ],
+          "size_m": [
+            24,
+            24
+          ],
+          "role": "capturable"
+        }
+      ],
+      "forest_patches": [
+        [
+          65,
+          620,
+          25,
+          70
+        ],
+        [
+          935,
+          620,
+          25,
+          70
+        ],
+        [
+          300,
+          760,
+          40,
+          25
+        ],
+        [
+          700,
+          760,
+          40,
+          25
+        ],
+        [
+          310,
+          450,
+          30,
+          12
+        ],
+        [
+          690,
+          450,
+          30,
+          12
+        ]
+      ],
+      "biome": "reclaimed grass, poplar windbreaks, pine belts, copper earth, concrete, asphalt and blue sea"
+    }
+  ]
+}

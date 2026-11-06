@@ -1,0 +1,99 @@
+{
+ "_doc": "Approved revisions applied over layouts.json, which stays unchanged as the original specification. gen/mapgen.py applies every entry on load, so the generated data, the checks and the Map Lab all use the revised values. Each entry records the old and new value and why. Remove an entry and regenerate to revert it.",
+ "approved_on": "2026-11-06",
+ "revisions": [
+  {
+   "map": "01",
+   "target": "landmarks",
+   "id": "radar",
+   "field": "center",
+   "old": [
+    700,
+    650
+   ],
+   "new": [
+    685,
+    680
+   ],
+   "reason": "equal tank travel time from both pad centres: was B1 114.4 s vs R1 95.6 s (19.6%), now 105.7 s vs 105.0 s (0.7%); stays on the east radar ridge, about 60 m NNW of the original point"
+  },
+  {
+   "map": "02",
+   "target": "deposits",
+   "id": "C1",
+   "field": "position",
+   "old": [
+    465,
+    710
+   ],
+   "new": [
+    460,
+    737
+   ],
+   "reason": "C1 and C2 are rotational twins; blue's best time to C1 now matches red's best time to C2, and red's best to C1 matches blue's best to C2: was 87.2 s vs 96.4 s (10.1%), now 97.8 s vs 97.5 s (0.3%) and 111.4 s vs 110.6 s (0.8%); moved 66 m NNW"
+  },
+  {
+   "map": "04",
+   "target": "landing_beaches",
+   "index": 4,
+   "field": "width_m",
+   "old": 50,
+   "new": 60,
+   "reason": "meet the 60–75 m landing-approach rule; measured continuous approach now 60 m, gradient 7.0%, apron 45–51 m deep",
+   "label": "landing beach 5 width"
+  },
+  {
+   "map": "04",
+   "target": "landing_beaches",
+   "index": 5,
+   "field": "width_m",
+   "old": 50,
+   "new": 60,
+   "reason": "meet the 60–75 m landing-approach rule; measured continuous approach now 60 m, gradient 7.0%, apron 45–51 m deep",
+   "label": "landing beach 6 width"
+  },
+  {
+   "map": "01",
+   "target": "deposits",
+   "id": "E2",
+   "field": "position",
+   "old": [
+    750,
+    780
+   ],
+   "new": [
+    759,
+    797
+   ],
+   "approved_on": "2026-11-06",
+   "reason": "E1/E2 are rotational twins; red reached E1 in 93.1 s but blue needed 97.8 s for E2 (5.1%). E2 moved 34 m NNE; E1 stays at its layout coordinate (decided 2026-11-06: the rotated E1 point clipped a road band)."
+  }
+ ],
+ "base_kit": {
+  "rule": "Each start's copy of the identical kit is mirrored so the factory side faces the map centre (x) and the refineries face that start's home deposits (y); buildings are rigid models, rotated 180° where the mirror flips their facing, so no mirrored geometry is used",
+  "result": "Emerald Strait: R1's kit is B1's rotated 180°; Delta Grid, Granite Fjord, Sunbreak Atoll and Copperhead Bay: opposing kits mirror east–west"
+ },
+ "approved_moves": [
+  {
+   "what": "base kit service aisle bends 3 m away from the substation",
+   "maps": "all"
+  },
+  {
+   "what": "Copperhead Bay deposits E2 and E4: rig and service area offset 50 m (a road runs through the layout point); offsets are exact mirror images, (−37.1, +33.5) m and (+37.1, +33.5) m",
+   "maps": "05"
+  },
+  {
+   "what": "Granite Fjord deposits E1 and E2: rig and service area offset 2 m off the road band",
+   "maps": "03"
+  },
+  {
+   "what": "Delta Grid radar mast offset 22 m so the central spine road stays clear",
+   "maps": "02"
+  },
+  {
+   "what": "base kit refineries: where the short bay mouth faces the field, the refinery sits 10.4 m further from the field, so every start's unloading grate and 25.2 m approach are exact mirror images (equal docking for paired bases)",
+   "maps": "all"
+  }
+ ],
+ "proposals": []
+}

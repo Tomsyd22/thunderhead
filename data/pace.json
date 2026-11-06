@@ -1,0 +1,27 @@
+{
+ "_doc": "Thunderhead pace settings: the single source for game speed. Read by maps/gen (navcheck, export_web), the Map Lab and the Unit Sandbox (copies made by data/sync_pace.py). Every duration and rate below is in GAME seconds at game speed 1. Game speed is a uniform time scale, as in RA2: the simulation runs game_speed times faster against the wall clock, so unit speeds, accelerations, turn rates, weapon reloads, projectile flight, ability timers, harvesting, unloading and build times all speed up together, while distances, turning circles, map scale and model scale stay the same. Real seconds = game seconds / game_speed.",
+ "version": 1,
+ "game_speed": 2.4,
+ "game_speed_range": [1.0, 4.0],
+ "harvester_speed_ratio": 1.25,
+ "harvester_ratio_range": [1.0, 1.6],
+ "reference_tank": {
+  "_doc": "Harvester top speed = harvester_speed_ratio x the reference tank's top speed on the same surface.",
+  "maps": { "class": "tank", "road_mps": 12.0, "offroad_mps": 7.0, "note": "the Map Lab's main-battle-tank movement class" },
+  "sandbox": { "unit": "A03", "mps": 10.0, "note": "Lancer Medium Tank, the pack's standard tank" }
+ },
+ "harvester": {
+  "capacity_bails": 20,
+  "load_s": 10.0,
+  "unload_s": 1.5,
+  "accel_mps2": 3.0,
+  "brake_mps2": 4.8,
+  "hull_turn_dps": 45,
+  "reverse_mps": 4.0,
+  "dock_reverse_m": 25.2,
+  "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+ },
+ "tank": { "accel_mps2": 4.5, "brake_mps2": 7.2, "hull_turn_dps": 75, "_note": "main-battle-tank class kinematics for base-to-base timing (A03 Lancer values)" },
+ "drive": { "corner_radius_m": 6.0, "pivot_over_deg": 45, "tick_hz": 30, "_note": "same path-following rules as the sandbox's tracked-vehicle model: pure pursuit, pivot in place when more than 45 deg off course, corner speed limits, braking to stop" },
+ "targets": { "base_to_enemy_base_s": [45, 60], "harvest_round_trip_nearest_home_s": [20, 30] }
+}

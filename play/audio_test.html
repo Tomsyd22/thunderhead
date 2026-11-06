@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thunderhead Audio Bench</title>
+<style>
+  :root {
+    --bg: #0f1215; --panel: #171b20; --panel2: #1e242b; --line: #2b333c; --text: #d9dee4; --dim: #8b96a3; --accent: #e0a040;
+    --compact: #c4574d; --lattice: #2fb3a8; --helix: #b04fd6; --ok: #5fbf7a; --bad: #e0584c;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 16px; background: #0b0d10ee; border-bottom: 1px solid var(--line); }
+  header h1 { margin: 0 12px 0 0; font-size: 16px; letter-spacing: .04em; text-transform: uppercase; }
+  header h1 span { color: var(--accent); }
+  #status { font: 12px var(--mono); color: var(--dim); }
+  main { display: grid; grid-template-columns: 320px 1fr; gap: 16px; padding: 16px; max-width: 1500px; margin: 0 auto; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  main > div, section { min-width: 0; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
+  section h2 { margin: 0 0 10px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+  h3 { margin: 12px 0 6px; font-size: 12px; color: var(--dim); font-weight: 600; }
+  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 5px; padding: 6px 10px; font: 13px system-ui, sans-serif; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 600; }
+  .grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .grid button { font: 12px var(--mono); }
+  label.row { display: grid; grid-template-columns: 82px 1fr 44px; align-items: center; gap: 8px; margin: 4px 0; font-size: 12px; color: var(--dim); }
+  label.row output { font: 12px var(--mono); color: var(--text); text-align: right; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  canvas { display: block; width: 100%; max-width: 288px; aspect-ratio: 1; background: #0b0e11; border: 1px solid var(--line); border-radius: 6px; cursor: crosshair; }
+  .hint { font-size: 12px; color: var(--dim); margin: 6px 0; }
+  #subtitle { min-height: 34px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--panel2); font: 600 15px system-ui, sans-serif; letter-spacing: .02em; }
+  table { border-collapse: collapse; width: 100%; font: 12px var(--mono); }
+  th, td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--dim); font-weight: 500; }
+  .units td button { padding: 3px 8px; font-size: 12px; }
+  .fac { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .pass { color: var(--ok); } .fail { color: var(--bad); }
+  pre { margin: 0; font: 12px var(--mono); color: var(--dim); white-space: pre-wrap; }
+  .scroll { overflow-x: auto; }
+  select { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px; max-width: 100%; font-size: 12px; }
+  .voicerow { display: grid; grid-template-columns: 80px 1fr; gap: 6px; align-items: center; margin: 4px 0; font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Thunderhead <span>Audio bench</span></h1>
+  <button id="start" class="primary">Start audio</button>
+  <label><input type="checkbox" id="mute"> Mute</label>
+  <span id="status">audio not started</span>
+</header>
+<main>
+  <div>
+    <section>
+      <h2>Listener</h2>
+      <canvas id="pad" width="576" height="576"></canvas>
+      <p class="hint">Click to place the source (±500 m around the camera focus; the ring is the audible radius for a rifle, the dashed ring for a large explosion). Screen-up is the camera heading.</p>
+      <label class="row">Positional <input type="checkbox" id="positional" checked> <output></output></label>
+      <label class="row">View height <input type="range" id="vh" min="30" max="600" value="150"> <output id="vhv">150</output></label>
+      <label class="row">Heading <input type="range" id="hd" min="0" max="359" value="90"> <output id="hdv">90°</output></label>
+    </section>
+    <section>
+      <h2>Mixer</h2>
+      <div id="mixer"></div>
+    </section>
+    <section>
+      <h2>Speech voices</h2>
+      <div id="voices"><p class="hint">Start audio to list the voices this browser offers.</p></div>
+    </section>
+  </div>
+  <div>
+    <section>
+      <h2>Sounds</h2>
+      <div id="sounds"></div>
+      <h3>Scenes</h3>
+      <div class="grid">
+        <button data-demo="battle">Battle, 8 s</button>
+        <button data-demo="volley">Volley: 24 rifles in one tick</button>
+        <button data-demo="heli">Helicopter pass</button>
+        <button data-demo="duel">Tank duel</button>
+        <button data-demo="jet">Strike run</button>
+        <button data-demo="harvest">Harvester cycle</button>
+      </div>
+    </section>
+    <section>
+      <h2>Announcer</h2>
+      <div id="subtitle">&nbsp;</div>
+      <div class="grid" id="announcer" style="margin-top:10px"></div>
+    </section>
+    <section>
+      <h2>Unit voices</h2>
+      <div class="scroll"><table class="units" id="units"></table></div>
+    </section>
+    <section>
+      <h2>Live stats</h2>
+      <pre id="stats">–</pre>
+    </section>
+    <section>
+      <h2>Offline self-test</h2>
+      <p class="hint">Renders every sound into an OfflineAudioContext through the full mixer chain and checks levels, caps, rate limits, panning, baking and the speech queue logic.</p>
+      <button id="selftest">Run self-test</button>
+      <div class="scroll" id="report" style="margin-top:10px"></div>
+    </section>
+  </div>
+</main>
+<script type="module">
+import { Audio, createAudio, SOUND_NAMES, SOUND_DEFS, ANNOUNCER_LINES, UNIT_LINES, UNIT_IDS, UNIT_KINDS, GENERIC_LINES, linesFor, audibleRadius } from './audio.js';
+
+// ───────────────────────────── offline self-test (also driven by test_audio.js) ─────────────────────────────
+const SR = 48000;
+const EXPECTED_ANNOUNCER = { construction_complete: 'Construction complete', unit_ready: 'Unit ready', building: 'Building', insufficient_funds: 'Insufficient funds', low_power: 'Low power',
+  base_under_attack: 'Our base is under attack', harvester_under_attack: 'Our harvester is under attack', unit_lost: 'Unit lost', structure_lost: 'Structure lost',
+  new_options: 'New construction options', cannot_place: 'Cannot deploy here', on_hold: 'On hold', cancelled: 'Cancelled', selected_target: 'Target acquired',
+  mission_accomplished: 'Mission accomplished', mission_failed: 'Mission failed', game_speed: 'Game speed changed' };
+const REQUIRED_SOUNDS = ['rifle', 'carbine', 'mg', 'rocket_launch', 'missile_launch', 'cannon_heavy', 'cannon_medium', 'deck_gun', 'chin_cannon', 'pulse', 'energy_cannon', 'lance', 'emp',
+  'bomb_drop', 'whoosh', 'impact_small', 'impact_metal', 'impact_dirt', 'impact_water', 'explosion_small', 'explosion_large', 'explosion_building', 'debris', 'shield_deploy', 'deploy',
+  'rotor', 'jet_pass', 'hover_whine', 'harvest_load', 'harvest_unload', 'place_building', 'building_rise', 'ui_click', 'ui_hover', 'ui_error', 'ui_ready', 'ui_queue', 'ui_cancel',
+  'order_ack', 'alert', 'select'];
+const FACTION_OF = (uid) => ({ H: 'compact', T: 'lattice', A: 'helix' })[uid[0]];
+
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) { let cr = 1, ci = 0; for (let k = 0; k < len / 2; k++) { const a = i + k, b = a + len / 2, xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr; re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi; const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t; } }
+  }
+}
+/** level / timing / spectrum figures of a rendered stereo buffer */
+function measure(buf, from = 0) {
+  const sr = buf.sampleRate, i0 = Math.floor(from * sr), L = buf.getChannelData(0).subarray(i0), R = (buf.numberOfChannels > 1 ? buf.getChannelData(1) : buf.getChannelData(0)).subarray(i0), n = L.length;
+  let peak = 0, last = -1, nan = false, eL = 0, eR = 0;
+  for (let i = 0; i < n; i++) { const a = Math.max(Math.abs(L[i]), Math.abs(R[i])); if (a !== a) nan = true; if (a > peak) peak = a; if (a > .001) last = i; eL += L[i] * L[i]; eR += R[i] * R[i]; }
+  let sum = 0; for (let i = 0; i <= last; i++) sum += (L[i] * L[i] + R[i] * R[i]) / 2;
+  const rms = Math.sqrt(sum / Math.max(1, last + 1));
+  // attack: from onset (first sample above 1 % of peak) to 90 % of peak. The two master compressors add a fixed 12 ms look-ahead delay.
+  let on = 0; for (let i = 0; i < n; i++) if (Math.max(Math.abs(L[i]), Math.abs(R[i])) >= .01 * peak) { on = i; break; }
+  let atk = on; for (let i = on; i < n; i++) if (Math.max(Math.abs(L[i]), Math.abs(R[i])) >= .9 * peak) { atk = i; break; }
+  atk -= on;
+  // momentary loudness: loudest 50 ms window (RMS)
+  const W = Math.floor(sr * .05), H = Math.floor(sr * .01); let mom = 0;
+  for (let s0 = 0; s0 + W <= Math.max(last + 1, W); s0 += H) { let e = 0; for (let i = s0; i < s0 + W; i++) e += ((L[i] || 0) * (L[i] || 0) + (R[i] || 0) * (R[i] || 0)) / 2; mom = Math.max(mom, Math.sqrt(e / W)); }
+  // averaged power spectrum over the first 1.5 s of sound
+  const N = 4096, hop = 2048, end = Math.min(last + 1, Math.floor(sr * 1.5)), pow = new Float64Array(N / 2), win = new Float32Array(N);
+  for (let i = 0; i < N; i++) win[i] = .5 - .5 * Math.cos(2 * Math.PI * i / (N - 1));
+  for (let s = 0; s + N <= Math.max(end, N); s += hop) {
+    const re = new Float64Array(N), im = new Float64Array(N);
+    for (let i = 0; i < N; i++) re[i] = ((L[s + i] || 0) + (R[s + i] || 0)) * .5 * win[i];
+    fft(re, im); for (let k = 0; k < N / 2; k++) pow[k] += re[k] * re[k] + im[k] * im[k];
+    if (s + N >= end) break;
+  }
+  const bands = { sub: [0, 120], low: [120, 500], mid: [500, 2000], high: [2000, 8000], air: [8000, sr / 2] }, frac = {};
+  const aw = (f) => { const f2 = f * f, ra = (148693636 * f2 * f2) / ((f2 + 424.36) * Math.sqrt((f2 + 11599.29) * (f2 + 544496.41)) * (f2 + 148693636)); return ra * 1.2589; };   // A-weighting (+2 dB at 1 kHz → 0 dB)
+  let tot = 0, cen = 0, totA = 0; for (let k = 1; k < N / 2; k++) { const f = k * sr / N, a = aw(f); tot += pow[k]; cen += pow[k] * f; totA += pow[k] * a * a; }
+  for (const [b, [lo, hi]] of Object.entries(bands)) { let e = 0; for (let k = 1; k < N / 2; k++) { const f = k * sr / N; if (f >= lo && f < hi) e += pow[k]; } frac[b] = tot ? +(e / tot * 100).toFixed(1) : 0; }
+  const db = (x) => (x > 0 ? +(20 * Math.log10(x)).toFixed(1) : -200);
+  const punchA = tot > 0 && mom > 0 ? +(db(mom) + 10 * Math.log10(totA / tot)).toFixed(1) : -200;
+  return { peak: +peak.toFixed(4), peakDb: db(peak), rmsDb: db(rms), punchA, dur: +((last + 1) / sr).toFixed(3), attackMs: +(atk / sr * 1000).toFixed(1), crestDb: +(db(peak) - db(rms)).toFixed(1),
+    centroid: Math.round(tot ? cen / tot : 0), bands: frac, nan, balance: eL + eR > 0 ? +((eR - eL) / (eR + eL)).toFixed(3) : 0 };
+}
+/** render through a fresh engine on an OfflineAudioContext. Sounds start after a PRE pre-roll (the compressor's makeup
+ *  gain settles in ~0.2 s after a context starts; a running game is always settled) and are measured from there. */
+const PRE = .4;
+async function render(names, { raw = false, lis = [0, 0, 100, Math.PI / 2], at = null, seconds = null, bake = false, calls = null } = {}) {
+  names = [].concat(names);
+  const len = PRE + (seconds || Math.max(...names.map((n) => SOUND_DEFS[n].len)) + 1.8);
+  const oc = new OfflineAudioContext(2, Math.ceil(len * SR), SR), a = createAudio();
+  a.init({ context: oc, speech: null, raw }); a.setListener(...lis);
+  if (bake) await a.bake(names);
+  const handles = calls ? calls(a, PRE) : names.map((n) => a.sfx(n, at ? { x: at[0], y: at[1], delay: PRE } : { delay: PRE }));
+  const stats = a.stats(); const t0 = performance.now(); const buf = await oc.startRendering();
+  return { buf, m: measure(buf, PRE), handles, stats, ms: performance.now() - t0, engine: a };
+}
+
+// fake speech backend + fake clock / timers for deterministic queue tests
+function fakeEnv() {
+  const env = { now: 0, timers: [], id: 0, log: [], current: null };
+  env.clock = () => env.now;
+  env.setTimeout = (f, ms) => { const id = ++env.id; env.timers.push({ id, at: env.now + ms / 1000, f }); return id; };
+  env.clearTimeout = (id) => { env.timers = env.timers.filter((t) => t.id !== id); };
+  env.advance = (s) => { const end = env.now + s; for (;;) { env.timers.sort((a, b) => a.at - b.at || a.id - b.id); const t = env.timers[0]; if (!t || t.at > end + 1e-9) break; env.timers.shift(); env.now = Math.max(env.now, t.at); t.f(); } env.now = end; };
+  env.speech = {
+    getVoices: () => [{ name: 'Samantha', lang: 'en-US', localService: true }, { name: 'Daniel', lang: 'en-GB', localService: true }, { name: 'Fred', lang: 'en-US', localService: true },
+      { name: 'Alex', lang: 'en-US', localService: true }, { name: 'Karen', lang: 'en-AU', localService: true }, { name: 'Zarvox', lang: 'en-US', localService: true }, { name: 'Thomas', lang: 'fr-FR', localService: true }],
+    speak(o) { env.log.push({ ev: 'speak', text: o.text, voice: o.voice && o.voice.name, pitch: o.pitch, rate: o.rate, t: env.now }); env.current = o; return o; },
+    cancel() { env.log.push({ ev: 'cancel', t: env.now }); const c = env.current; env.current = null; if (c && c.onend) c.onend(); },
+  };
+  env.finish = () => { const c = env.current; env.current = null; if (c && c.onend) c.onend(); };
+  env.spoken = () => env.log.filter((l) => l.ev === 'speak').map((l) => l.text);
+  return env;
+}
+function speechEngine() { const env = fakeEnv(), a = createAudio(); a.init({ webAudio: false, speech: env.speech, clock: env.clock, setTimeout: env.setTimeout, clearTimeout: env.clearTimeout }); return { a, env }; }
+
+async function runSuite() {
+  const checks = [], sounds = [], t0 = performance.now();
+  const check = (name, pass, detail = '') => { checks.push({ name, pass: !!pass, detail: typeof detail === 'string' ? detail : JSON.stringify(detail) }); };
+
+  // 1 · every sound through the full chain (live synthesis), plus a raw render (no dynamics) for the pre-limiter peak
+  check('all required sound names exist', REQUIRED_SOUNDS.every((n) => SOUND_NAMES.includes(n)), REQUIRED_SOUNDS.filter((n) => !SOUND_NAMES.includes(n)).join(',') || 'ok');
+  for (const name of [...SOUND_NAMES, '_chirp', '_radio_out', '_data']) {
+    const def = SOUND_DEFS[name], positional = (def.bus || 'sfx') === 'sfx';
+    const r = await render(name, { at: positional ? [0, 0] : null }), raw = await render(name, { raw: true, at: positional ? [0, 0] : null });
+    const h = r.handles[0], recipe = h ? +(h.end - h.start).toFixed(3) : null;
+    sounds.push({ name, bus: def.bus || 'sfx', recipe, len: def.len, ...r.m, rawPeak: raw.m.peak, renderMs: Math.round(r.ms) });
+  }
+  const pub = sounds.filter((s) => s.name[0] !== '_');
+  check('no sound clips after the limiter (peak ≤ 1.0)', sounds.every((s) => s.peak <= 1), sounds.filter((s) => s.peak > 1).map((s) => `${s.name}:${s.peak}`).join(',') || `max ${Math.max(...sounds.map((s) => s.peak)).toFixed(3)}`);
+  check('no sound is silent (peak > -36 dBFS, RMS > -50 dBFS)', sounds.every((s) => s.peakDb > -36 && s.rmsDb > -50), sounds.filter((s) => !(s.peakDb > -36 && s.rmsDb > -50)).map((s) => s.name).join(',') || `quietest peak ${Math.min(...sounds.map((s) => s.peakDb))} dBFS`);
+  check('no NaN in any render', sounds.every((s) => !s.nan));
+  // recipe lengths are random: schedule 16 instances of each (no rendering) and compare the longest with its bake slot
+  const longest = {};
+  for (const name of Object.keys(SOUND_DEFS)) { const oc = new OfflineAudioContext(1, 128, SR), a = createAudio(); a.init({ context: oc, speech: null }); let mx = 0; for (let i = 0; i < 16; i++) { const h = a.sfx(name, { delay: i * 10 }); if (h) mx = Math.max(mx, h.end - h.start); } longest[name] = +mx.toFixed(3); }
+  const over = Object.keys(longest).filter((n) => !(longest[n] > 0 && longest[n] <= SOUND_DEFS[n].len + 1e-6));
+  check('every recipe fits its bake slot (longest of 16 random instances ≤ len)', !over.length, over.map((n) => `${n}:${longest[n]}>${SOUND_DEFS[n].len}`).join(',') || 'ok');
+  const weapons = ['rifle', 'carbine', 'mg', 'cannon_heavy', 'cannon_medium', 'deck_gun', 'chin_cannon', 'pulse', 'energy_cannon', 'lance', 'rocket_launch'];
+  const S = (n) => sounds.find((s) => s.name === n);
+  check('weapons have a sharp transient (onset to 90 % peak ≤ 6 ms; energy weapons ≤ 10 ms)', weapons.every((n) => S(n).attackMs <= (['pulse', 'energy_cannon', 'lance'].includes(n) ? 10 : 6)), weapons.map((n) => `${n}:${S(n).attackMs}ms`).join(' '));
+  const booms = ['explosion_small', 'explosion_large', 'explosion_building', 'cannon_heavy', 'cannon_medium', 'deck_gun'];
+  check('explosions / cannons: sub-bass thump (≥ 15 % below 120 Hz) plus body that small speakers reproduce (≥ 12 % at 120 Hz–8 kHz, punch ≥ −24 dB(A))',
+    booms.every((n) => S(n).bands.sub >= 15 && S(n).bands.low + S(n).bands.mid + S(n).bands.high >= 12 && S(n).punchA >= -24),
+    booms.map((n) => `${n}: sub ${S(n).bands.sub}% · body ${(S(n).bands.low + S(n).bands.mid + S(n).bands.high).toFixed(1)}% · ${S(n).punchA} dB(A)`).join(' | '));
+  check('energy weapons are tonal and bright (centroid ≥ 250 Hz, ≥ 15 % at 500 Hz–8 kHz)', ['pulse', 'lance', 'energy_cannon'].every((n) => S(n).centroid >= 250 && S(n).bands.mid + S(n).bands.high >= 15), ['pulse', 'lance', 'energy_cannon'].map((n) => `${n}:${S(n).centroid}Hz`).join(' '));
+  check('loudness order: explosion_large > cannon_heavy > rifle > ui_click (A-weighted punch)', S('explosion_large').punchA > S('cannon_heavy').punchA - 1 && S('cannon_heavy').punchA > S('rifle').punchA && S('rifle').punchA > S('ui_click').punchA,
+    ['explosion_large', 'cannon_heavy', 'rifle', 'ui_click'].map((n) => `${n}:${S(n).punchA}`).join(' '));
+
+  // 2 · rate limiter and voice caps
+  {
+    const r = await render('rifle', { seconds: 3, calls: (a, p) => { const hs = []; for (let i = 0; i < 40; i++) hs.push(a.sfx('rifle', { x: 0, y: 0, delay: p + i * .025 })); return hs; } });
+    const st = r.stats;
+    check('rifle cap: ≤ 8 simultaneous voices, oldest stolen', st.peak.rifle <= 8 && (st.stolen.rifle || 0) > 0 && r.m.peak <= 1, { peak: st.peak.rifle, stolen: st.stolen.rifle || 0, played: st.played.rifle, outPeak: r.m.peak });
+    const v = await render('rifle', { seconds: 1.2, calls: (a, p) => { const hs = []; for (let i = 0; i < 24; i++) hs.push(a.sfx('rifle', { x: (i % 6) * 3, y: 0, delay: p })); return hs; } });
+    const ok = v.handles.filter(Boolean);
+    check('same-tick volley collapses to a short stagger (24 calls → ≤ 3 voices, 20–40 ms apart)', ok.length <= 3 && ok.length >= 2 && (v.stats.dropped.rifle || 0) >= 21,
+      { accepted: ok.length, starts: ok.map((h) => +(h.start - PRE).toFixed(3)), dropped: v.stats.dropped.rifle || 0, outPeak: v.m.peak });
+    const e = await render('explosion_large', { seconds: 4, calls: (a, p) => { const hs = []; for (let i = 0; i < 12; i++) hs.push(a.sfx('explosion_large', { x: 0, y: 0, delay: p + i * .1 })); return hs; } });
+    check('explosion_large cap ≤ 4 and limiter holds 12 stacked blasts ≤ 1.0', e.stats.peak.explosion_large <= 4 && e.m.peak <= 1, { peak: e.stats.peak.explosion_large, stolen: e.stats.stolen.explosion_large || 0, outPeak: e.m.peak, outPeakDb: e.m.peakDb });
+    check('stats() reports live voices per name', typeof e.stats.live.explosion_large === 'number' && e.stats.live.explosion_large <= 4, e.stats.live);
+  }
+
+  // 3 · distance attenuation, panning, heading
+  {
+    const R = audibleRadius(100) * SOUND_DEFS.explosion_small.range, ds = [0, 150, 250, 320, 400], rms = [];
+    for (const d of ds) { const r = await render('explosion_small', { at: [d, 0] }); rms.push(r.handles[0] ? r.m.rmsDb : null); }
+    check(`distance falloff (explosion_small, radius ${Math.round(R)} m at 100 m view height)`, rms[0] > rms[1] && rms[1] > rms[2] && rms[2] > rms[3] && rms[4] === null, ds.map((d, i) => `${d}m:${rms[i] === null ? 'culled' : rms[i] + 'dB'}`).join(' '));
+    const right = await render('rifle', { at: [120, 0] }), left = await render('rifle', { at: [-120, 0] });
+    check('pans by screen side (heading +y: +x is right)', right.m.balance > .3 && left.m.balance < -.3, { right: right.m.balance, left: left.m.balance });
+    const turned = await render('rifle', { at: [0, -120], lis: [0, 0, 100, 0] });
+    check('heading respected (heading 0 = looking +x: −y is right)', turned.m.balance > .3, { balance: turned.m.balance });
+    const far = await render('rifle', { at: [150, 0] }), near = await render('rifle', { at: [10, 0] });
+    check('distant sounds are darker (air low-pass)', far.m.centroid < near.m.centroid, { near: near.m.centroid, far: far.m.centroid });
+    const hi = await render('rifle', { at: [300, 0], lis: [0, 0, 400, Math.PI / 2] }), lo = await render('rifle', { at: [300, 0], lis: [0, 0, 100, Math.PI / 2] });
+    check('audible radius grows with view height (rifle at 300 m: culled at 100 m, heard at 400 m)', !lo.handles[0] && !!hi.handles[0], { at100: !!lo.handles[0], at400: !!hi.handles[0] });
+  }
+
+  // 4 · battle stress: ~700 calls over 8 s at random positions
+  {
+    const pool = ['rifle', 'rifle', 'rifle', 'carbine', 'carbine', 'pulse', 'pulse', 'mg', 'impact_small', 'impact_small', 'impact_dirt', 'impact_metal', 'cannon_heavy', 'cannon_medium', 'energy_cannon',
+      'rocket_launch', 'missile_launch', 'whoosh', 'explosion_small', 'explosion_small', 'explosion_large', 'chin_cannon', 'lance', 'deck_gun', 'debris', 'explosion_building'];
+    let rs = 12345; const rnd = () => ((rs = (rs * 1103515245 + 12345) >>> 0) / 4294967296);
+    const plan = []; for (let i = 0; i < 700; i++) plan.push({ n: pool[(rnd() * pool.length) | 0], x: (rnd() - .5) * 500, y: (rnd() - .5) * 500, delay: rnd() * 8 }); plan.sort((p, q) => p.delay - q.delay);
+    const play = (a, pre) => plan.map((p) => a.sfx(p.n, { ...p, delay: pre + p.delay }));
+    const r = await render(pool, { seconds: 9, bake: true, calls: play }), rl = await render(pool, { seconds: 9, calls: play });
+    const capsOk = Object.entries(r.stats.peak).every(([n, p]) => p <= SOUND_DEFS[n].cap);
+    check('battle (baked, as played): 700 calls in 8 s — no clipping, caps hold, no NaN', r.m.peak <= 1 && capsOk && !r.m.nan, { outPeak: r.m.peak, rmsDb: r.m.rmsDb, accepted: r.handles.filter(Boolean).length, stolen: Object.values(r.stats.stolen).reduce((a, b) => a + b, 0), culled: r.stats.culled, peakVoices: r.stats.peak });
+    check('battle CPU: baked playback renders much faster than live synthesis (same calls)', r.ms < rl.ms * .5 && rl.m.peak <= 1, { bakedMs: Math.round(r.ms), liveMs: Math.round(rl.ms), audioSeconds: 9.4, bakedXRealtime: +(9400 / r.ms).toFixed(1), liveXRealtime: +(9400 / rl.ms).toFixed(2) });
+    var battleInfo = { bakedMs: Math.round(r.ms), liveMs: Math.round(rl.ms), audioSeconds: 9.4, accepted: r.handles.filter(Boolean).length, outPeak: r.m.peak, rmsDb: r.m.rmsDb };
+  }
+
+  // 5 · baking: identical recipes pre-rendered; baked playback level matches live synthesis
+  {
+    const names = ['rifle', 'cannon_heavy', 'explosion_large', 'pulse', 'ui_ready', 'rotor'], diffs = [];
+    for (const n of names) { const def = SOUND_DEFS[n], at = (def.bus || 'sfx') === 'sfx' ? [0, 0] : null, live = await render(n, { at }), baked = await render(n, { at, bake: true });
+      diffs.push({ n, live: live.m.rmsDb, baked: baked.m.rmsDb, d: +(baked.m.rmsDb - live.m.rmsDb).toFixed(1), usedBake: baked.engine.stats().baked === 1 }); }
+    check('baked playback matches live synthesis (RMS within ±3.5 dB)', diffs.every((x) => x.usedBake && Math.abs(x.d) <= 3.5), diffs.map((x) => `${x.n}:${x.d}dB`).join(' '));
+    const oc = new OfflineAudioContext(2, SR, SR), a = createAudio(); a.init({ context: oc, speech: null });
+    const tb = performance.now(); const count = await a.bake(); const ms = performance.now() - tb, st = a.stats();
+    check('bake() renders every sound', count === Object.keys(SOUND_DEFS).length, { baked: count, of: Object.keys(SOUND_DEFS).length, seconds: st.bakedSeconds, MB: +(st.bakedSeconds * SR * 4 / 1e6).toFixed(1), ms: Math.round(ms) });
+    var bakeInfo = { count, seconds: st.bakedSeconds, MB: +(st.bakedSeconds * SR * 4 / 1e6).toFixed(1), ms: Math.round(ms) };
+  }
+
+  // 6 · safe before init / without audio
+  {
+    const a = createAudio(); let threw = null;
+    try { a.setListener(1, 2, 100, 0); a.setVolume('sfx', .5); a.mute(true); a.mute(false); a.onSubtitle(() => {}); a.stats(); a.setVoice('announcer', 'x'); a.voices(); } catch (e) { threw = e.message; }
+    check('before init: every call is a silent no-op', !threw && a.sfx('rifle') === null && a.announce('unit_ready') === null && a.unitVoice('H03', 'select', 'compact') === null, threw || 'ok');
+    const b = createAudio(); const okInit = b.init({ webAudio: false, speech: null }); const subs = []; b.onSubtitle((t, k) => subs.push(k));
+    const txt = b.announce('low_power');
+    check('without Web Audio or speech: sfx is a no-op, announcements still return text', okInit === false && b.sfx('rifle', { x: 0, y: 0 }) === null && txt === 'Low power', { init: okInit, txt });
+  }
+
+  // 7 · line tables
+  {
+    const missing = [];
+    for (const uid of UNIT_IDS) for (const fac of uid === 'HV' ? ['compact', 'lattice', 'helix'] : [FACTION_OF(uid)]) for (const k of UNIT_KINDS) { const arr = (linesFor(uid, fac) || {})[k]; if (!arr || arr.length < 3 || arr.some((s) => typeof s !== 'string' || !s.trim())) missing.push(`${uid}/${fac}/${k}`); }
+    for (const uid of UNIT_IDS) if (uid !== 'HV' && UNIT_LINES[uid].faction !== FACTION_OF(uid)) missing.push(`${uid} faction`);
+    check('unit lines: ≥ 3 per uid per kind (HV per faction)', !missing.length, missing.join(',') || `${UNIT_IDS.length} uids × ${UNIT_KINDS.length} kinds`);
+    const bad = Object.entries(EXPECTED_ANNOUNCER).filter(([k, v]) => !ANNOUNCER_LINES[k] || ANNOUNCER_LINES[k].text !== v).map(([k]) => k);
+    check('announcer: every key with its exact line', !bad.length && Object.keys(ANNOUNCER_LINES).length === Object.keys(EXPECTED_ANNOUNCER).length, bad.join(',') || `${Object.keys(EXPECTED_ANNOUNCER).length} keys`);
+    check('generic fallback lines per faction', ['compact', 'lattice', 'helix'].every((f) => UNIT_KINDS.every((k) => GENERIC_LINES[f][k].length >= 3)));
+  }
+
+  // 8 · speech queue logic (fake backend, fake clock)
+  {
+    let { a, env } = speechEngine(); const subs = []; a.onSubtitle((t, k) => subs.push([t, k, env.now]));
+    const r1 = a.announce('unit_ready'); env.advance(.2);
+    check('announce returns the line; chirp delay then speaks; subtitle fires', r1 === 'Unit ready' && env.spoken()[0] === 'Unit ready.' && subs.length === 1 && subs[0][1] === 'unit_ready', { r1, spoken: env.spoken(), subs });
+    check('announcer uses a female English voice', env.log[0].voice === 'Samantha', env.log[0].voice);
+    const r2 = a.announce('unit_ready'); env.finish(); env.advance(1); const r3 = a.announce('unit_ready');
+    check('unit_ready collapses rapid repeats', r2 === null && r3 === null, { r2, r3 });
+    env.advance(1); const r4 = a.announce('unit_ready'); env.advance(.2); env.finish(); env.advance(.3);
+    check('unit_ready accepted again after 1.5 s', r4 === 'Unit ready');
+    ({ a, env } = speechEngine());
+    a.announce('base_under_attack'); env.advance(.2); env.finish(); env.advance(.3);
+    const b1 = a.announce('base_under_attack'); env.advance(10); const b2 = a.announce('base_under_attack'); env.advance(10.5); const b3 = a.announce('base_under_attack');
+    check('base_under_attack at most once per 20 s', b1 === null && b2 === null && b3 === 'Our base is under attack', { b1, b2, b3 });
+    ({ a, env } = speechEngine());
+    a.announce('construction_complete'); a.announce('new_options'); a.announce('low_power'); env.advance(.2);
+    const firstSpoken = env.spoken().slice(); const overlap = env.current && env.log.filter((l) => l.ev === 'speak').length;
+    env.finish(); env.advance(.4); const second = env.spoken()[1]; env.finish(); env.advance(.4); const third = env.spoken()[2];
+    check('announcements never overlap; queue plays in priority order', firstSpoken.length === 1 && overlap === 1 && second === 'Low power.' && third === 'New construction options.', env.spoken());
+    ({ a, env } = speechEngine());
+    a.announce('construction_complete'); a.announce('unit_lost'); env.advance(4.5); env.finish(); env.advance(.4);
+    check('stale queued announcements (> 4 s) are dropped', env.spoken().length === 1 && a.stats().speech.stale === 1, { spoken: env.spoken(), stale: a.stats().speech.stale });
+    ({ a, env } = speechEngine());
+    a.announce('building'); a.announce('on_hold'); env.advance(.2); a.announce('mission_accomplished'); env.advance(.2);
+    check('mission end interrupts and clears the queue', env.spoken().slice(-1)[0] === 'Mission accomplished.' && a.stats().speech.queue.length === 0, env.spoken());
+    // unit voices
+    ({ a, env } = speechEngine());
+    const s1 = a.unitVoice('H03', 'select', 'compact'); env.advance(.1);
+    const s2 = a.unitVoice('H01', 'select', 'compact'); env.advance(.1);
+    const m1 = a.unitVoice('H03', 'move', 'compact'); env.advance(.2);
+    const m2 = a.unitVoice('H03', 'attack', 'compact'); env.advance(.45);
+    const m3 = a.unitVoice('H03', 'attack', 'compact'); env.advance(.7);
+    const m4 = a.unitVoice('H03', 'attack', 'compact');
+    check('unit voices: drop within 0.6 s; an order cancels a select line; replace after 0.6 s; same unit+kind waits',
+      !!s1 && s2 === null && !!m1 && UNIT_LINES.H03.move.includes(m1) && m2 === null && !!m3 && UNIT_LINES.H03.attack.includes(m3) && m4 === null,
+      { s1, s2, m1, m2, m3, m4, cancels: env.log.filter((l) => l.ev === 'cancel').length });
+    check('compact voice settings (gruff: low pitch, male voice)', env.log.filter((l) => l.ev === 'speak').every((l) => l.pitch < .8 && l.voice === 'Daniel'), env.log.filter((l) => l.ev === 'speak').map((l) => `${l.voice}@${l.pitch}`).join(' '));
+    env.finish(); env.advance(.1);
+    a.unitVoice('T04', 'select', 'lattice'); env.advance(.1);
+    const lat = env.log.filter((l) => l.ev === 'speak').slice(-1)[0];
+    check('lattice drone uses the synthetic voice (Fred) with its own pitch / rate', lat.voice === 'Fred' && lat.pitch > 1 && lat.rate > 1.1, lat);
+    env.finish(); env.advance(.1);
+    const u1 = a.unitVoice('A01', 'move', 'helix'); env.advance(.2); const ann = a.announce('insufficient_funds'); env.advance(.05);
+    const cancelledUnit = env.log.slice(-2).some((l) => l.ev === 'cancel'); const u2 = a.unitVoice('A03', 'select', 'helix'); env.advance(.2);
+    check('announcer has priority: cancels a unit line, blocks unit lines while busy', !!u1 && ann === 'Insufficient funds' && cancelledUnit && u2 === null && env.spoken().slice(-1)[0] === 'Insufficient funds.', { u1, ann, u2, last: env.spoken().slice(-1)[0] });
+    env.finish(); env.advance(.4); const u3 = a.unitVoice('A03', 'select', 'helix');
+    check('unit lines resume after the announcement', !!u3 && UNIT_LINES.A03.select.includes(u3), u3);
+    env.finish(); env.advance(.1); const hv = a.unitVoice('HV', 'attack', 'lattice');
+    check('harvester lines follow its faction', UNIT_LINES.HV.lattice.attack.includes(hv), hv);
+    env.finish(); env.advance(.1); const k1 = a.unitVoice('A04', 'select', 'helix'); env.advance(.1); const kv = env.log.filter((l) => l.ev === 'speak').slice(-1)[0];
+    check('helix pilot uses a different female voice from the announcer', kv.voice === 'Karen', kv.voice);
+    // muted: no unit voices, announcements become subtitle-only
+    ({ a, env } = speechEngine()); const msubs = []; a.onSubtitle((t) => msubs.push(t)); a.mute(true);
+    const mu = a.unitVoice('H01', 'select', 'compact'); const ma = a.announce('low_power'); env.advance(2);
+    check('muted: unit voices off, announcer subtitles still fire without speech', mu === null && ma === 'Low power' && msubs[0] === 'Low power' && env.spoken().length === 0, { mu, ma, msubs, spoken: env.spoken() });
+    // watchdog: onend never arrives
+    ({ a, env } = speechEngine()); a.announce('unit_lost'); a.announce('structure_lost'); env.advance(6);
+    check('watchdog ends a line whose onend never fires; the queue moves on', env.spoken().length === 2, env.spoken());
+  }
+
+  // 9 · live engine on a real AudioContext (when the page can make one)
+  let live = null;
+  try {
+    const okInit = Audio.init(); await new Promise((r) => setTimeout(r, 300));
+    if (okInit && Audio.ctx.state === 'running') {
+      Audio.setListener(0, 0, 120); const h = Audio.sfx('cannon_heavy', { x: 10, y: 5 });
+      await new Promise((r) => setTimeout(r, 1500)); const n = await Audio.bake(); const st = Audio.stats();
+      live = { state: Audio.ctx.state, sampleRate: Audio.ctx.sampleRate, played: !!h, baked: st.baked, bakedSeconds: st.bakedSeconds };
+      check('real AudioContext: plays and bakes every sound in the background', !!h && st.baked === Object.keys(SOUND_DEFS).length, live);
+    } else live = { state: Audio.ctx ? Audio.ctx.state : 'none' };
+  } catch (e) { live = { error: e.message }; }
+
+  return { sounds, checks, bake: bakeInfo, battle: battleInfo, live, passed: checks.every((c) => c.pass), ms: Math.round(performance.now() - t0) };
+}
+window.__audioSuite = { run: runSuite, measure };
+
+// ───────────────────────────── manual bench ─────────────────────────────
+const $ = (s) => document.querySelector(s), el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === 'on') for (const [ev, f] of Object.entries(v)) e.addEventListener(ev, f); else if (k === 'style') e.style.cssText = v; else e.setAttribute(k, v); } for (const c of kids) e.append(c); return e; };
+const src = { x: 40, y: 60 }; let positional = true;
+let benched = false;
+function ensure() { Audio.init(); if (!benched) { benched = true; Audio.onSubtitle((t, k) => { $('#subtitle').textContent = t; $('#subtitle').title = k; }); buildVoices(); } Audio.resume(); }
+function lis() { Audio.setListener(0, 0, +$('#vh').value, (+$('#hd').value) * Math.PI / 180); }
+function play(name, o = {}) { ensure(); lis(); return Audio.sfx(name, positional && !o.np ? { x: o.x ?? src.x, y: o.y ?? src.y, ...o } : o); }
+
+const GROUPS = {
+  'Small arms': ['rifle', 'carbine', 'mg', 'pulse', 'lance'],
+  'Heavy weapons': ['cannon_heavy', 'cannon_medium', 'deck_gun', 'chin_cannon', 'energy_cannon', 'rocket_launch', 'missile_launch', 'bomb_drop', 'emp'],
+  'Impacts and explosions': ['whoosh', 'impact_small', 'impact_metal', 'impact_dirt', 'impact_water', 'explosion_small', 'explosion_large', 'explosion_building', 'debris'],
+  'Vehicles and base': ['rotor', 'jet_pass', 'hover_whine', 'shield_deploy', 'deploy', 'harvest_load', 'harvest_unload', 'place_building', 'building_rise'],
+  'Interface': ['ui_click', 'ui_hover', 'ui_error', 'ui_ready', 'ui_queue', 'ui_cancel', 'order_ack', 'alert', 'select'],
+};
+for (const [g, names] of Object.entries(GROUPS)) { $('#sounds').append(el('h3', {}, g)); const row = el('div', { class: 'grid' }); for (const n of names) row.append(el('button', { on: { click: () => play(n) } }, n)); $('#sounds').append(row); }
+for (const k of Object.keys(ANNOUNCER_LINES)) $('#announcer').append(el('button', { title: ANNOUNCER_LINES[k].text, on: { click: () => { ensure(); const r = Audio.announce(k); if (!r) $('#subtitle').textContent = `(${k}: rate-limited)`; } } }, k));
+{
+  const t = $('#units'); t.append(el('tr', {}, el('th', {}, 'uid'), el('th', {}, 'unit'), el('th', {}, 'faction'), el('th', {}, ''), el('th', {}, 'last line')));
+  const facs = ['compact', 'lattice', 'helix'], col = { compact: 'var(--compact)', lattice: 'var(--lattice)', helix: 'var(--helix)' };
+  for (const uid of UNIT_IDS) {
+    const u = UNIT_LINES[uid], out = el('td', { style: 'color:var(--dim)' }, '');
+    const fsel = uid === 'HV' ? el('select', {}, ...facs.map((f) => el('option', { value: f }, f))) : null;
+    const fac = () => (fsel ? fsel.value : u.faction);
+    const btns = el('td', {}, ...UNIT_KINDS.map((k) => el('button', { on: { click: () => { ensure(); const line = Audio.unitVoice(uid, k, fac()); out.textContent = line || '(dropped)'; } } }, k)));
+    t.append(el('tr', {}, el('td', {}, uid), el('td', {}, u.name), el('td', {}, fsel || el('span', {}, el('span', { class: 'fac', style: `background:${col[u.faction]}` }), u.faction)), btns, out));
+  }
+}
+{
+  const m = $('#mixer');
+  for (const bus of ['master', 'sfx', 'voice', 'announcer', 'ui']) { const o = el('output', {}, '100'); const r = el('input', { type: 'range', min: 0, max: 100, value: 100, on: { input: (e) => { o.textContent = e.target.value; Audio.setVolume(bus, e.target.value / 100); } } }); m.append(el('label', { class: 'row' }, bus, r, o)); }
+}
+function buildVoices() {
+  const box = $('#voices'), vs = Audio.voices(); box.innerHTML = '';
+  if (!vs.length) { box.append(el('p', { class: 'hint' }, 'No speech voices reported yet (some browsers load them late).')); setTimeout(() => Audio.voices().length && buildVoices(), 800); return; }
+  for (const role of ['announcer', 'compact', 'lattice', 'helix', 'helix_f']) {
+    const cur = Audio.voiceFor(role), s = el('select', { on: { change: (e) => { Audio.setVoice(role, e.target.value || null); } } }, el('option', { value: '' }, `auto (${cur || 'none'})`), ...vs.map((v) => el('option', { value: v.name }, `${v.name} · ${v.lang}${v.local ? '' : ' · net'}`)));
+    box.append(el('div', { class: 'voicerow' }, role, s));
+  }
+}
+$('#start').addEventListener('click', () => { ensure(); $('#start').textContent = 'Audio on'; });
+$('#mute').addEventListener('change', (e) => Audio.mute(e.target.checked));
+$('#positional').addEventListener('change', (e) => { positional = e.target.checked; draw(); });
+for (const id of ['vh', 'hd']) $('#' + id).addEventListener('input', () => { $('#vhv').textContent = $('#vh').value; $('#hdv').textContent = $('#hd').value + '°'; lis(); draw(); });
+
+// listener pad: ±500 m, screen-up = camera heading
+const pad = $('#pad'), g2 = pad.getContext('2d'), SPAN = 500;
+const toScreen = (x, y) => { const h = (+$('#hd').value) * Math.PI / 180, fx = Math.cos(h), fy = Math.sin(h), rx = Math.sin(h), ry = -Math.cos(h); const right = x * rx + y * ry, fwd = x * fx + y * fy; return [pad.width / 2 + right / SPAN * pad.width / 2, pad.height / 2 - fwd / SPAN * pad.height / 2]; };
+const toWorld = (sx, sy) => { const h = (+$('#hd').value) * Math.PI / 180, right = (sx - pad.width / 2) / (pad.width / 2) * SPAN, fwd = -(sy - pad.height / 2) / (pad.height / 2) * SPAN; return [right * Math.sin(h) + fwd * Math.cos(h), -right * Math.cos(h) + fwd * Math.sin(h)]; };
+function draw() {
+  const w = pad.width, c = g2; c.clearRect(0, 0, w, w); c.strokeStyle = '#222a32'; c.lineWidth = 1;
+  for (let i = -500; i <= 500; i += 100) { const p = i / SPAN * w / 2 + w / 2; c.beginPath(); c.moveTo(p, 0); c.lineTo(p, w); c.moveTo(0, p); c.lineTo(w, p); c.stroke(); }
+  const vh = +$('#vh').value, R = audibleRadius(vh);
+  c.strokeStyle = '#e0a04088'; c.lineWidth = 2; c.beginPath(); c.arc(w / 2, w / 2, R * SOUND_DEFS.rifle.range / SPAN * w / 2, 0, 7); c.stroke();
+  c.setLineDash([6, 6]); c.beginPath(); c.arc(w / 2, w / 2, R * SOUND_DEFS.explosion_large.range / SPAN * w / 2, 0, 7); c.stroke(); c.setLineDash([]);
+  c.fillStyle = '#d9dee4'; c.beginPath(); c.moveTo(w / 2, w / 2 - 12); c.lineTo(w / 2 - 8, w / 2 + 8); c.lineTo(w / 2 + 8, w / 2 + 8); c.fill();
+  if (positional) { const [sx, sy] = toScreen(src.x, src.y); c.fillStyle = '#c4574d'; c.beginPath(); c.arc(sx, sy, 9, 0, 7); c.fill(); c.fillStyle = '#8b96a3'; c.font = '20px monospace'; c.fillText(`${Math.round(Math.hypot(src.x, src.y))} m`, sx + 14, sy + 6); }
+}
+pad.addEventListener('click', (e) => { const r = pad.getBoundingClientRect(), [x, y] = toWorld((e.clientX - r.left) / r.width * pad.width, (e.clientY - r.top) / r.height * pad.height); src.x = Math.round(x); src.y = Math.round(y); draw(); });
+draw();
+
+// scenes
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const rnd = (a, b) => a + (b - a) * Math.random();
+const DEMOS = {
+  async battle() {
+    const shots = ['rifle', 'rifle', 'carbine', 'pulse', 'mg', 'impact_small', 'impact_dirt', 'impact_metal', 'cannon_heavy', 'cannon_medium', 'energy_cannon', 'rocket_launch', 'whoosh', 'explosion_small', 'chin_cannon', 'lance'];
+    const end = performance.now() + 8000;
+    while (performance.now() < end) { for (let i = 0; i < 6; i++) if (Math.random() < .5) play(shots[(Math.random() * shots.length) | 0], { x: rnd(-260, 260), y: rnd(-200, 260) }); if (Math.random() < .04) play('explosion_large', { x: rnd(-200, 200), y: rnd(-100, 250) }); await wait(33); }
+    play('explosion_building', { x: 60, y: 120 });
+  },
+  async volley() { for (let i = 0; i < 24; i++) play('rifle', { x: src.x + (i % 6) * 2, y: src.y + ((i / 6) | 0) * 2 }); await wait(300); for (let i = 0; i < 24; i++) play('pulse', { x: src.x, y: src.y }); },
+  async heli() { for (let i = 0; i <= 8; i++) { const x = -320 + i * 80; play('rotor', { x, y: 60 }); if (i === 4) { play('rocket_launch', { x, y: 60 }); await wait(150); play('rocket_launch', { x, y: 60 }); await wait(500); play('chin_cannon', { x, y: 60 }); } await wait(850); } },
+  async duel() { for (let i = 0; i < 3; i++) { play('cannon_heavy', { x: -80, y: 40 }); await wait(260); play('whoosh', { x: 0, y: 40 }); await wait(160); play('impact_metal', { x: 80, y: 40 }); await wait(900); play('cannon_medium', { x: 80, y: 40 }); await wait(200); play('impact_dirt', { x: -70, y: 50 }); await wait(1100); } play('explosion_large', { x: -80, y: 40 }); await wait(500); play('debris', { x: -80, y: 40 }); },
+  async jet() { play('jet_pass', { x: 0, y: 30 }); await wait(1000); play('bomb_drop', { x: 20, y: 60 }); await wait(1350); play('explosion_large', { x: 30, y: 80 }); await wait(250); play('explosion_large', { x: 45, y: 90 }); },
+  async harvest() { play('hover_whine', { x: src.x, y: src.y }); for (let i = 0; i < 3; i++) { play('harvest_load', { x: src.x, y: src.y }); await wait(1350); } await wait(400); play('deploy', { x: src.x, y: src.y }); await wait(700); play('harvest_unload', { x: src.x, y: src.y }); },
+};
+for (const b of document.querySelectorAll('[data-demo]')) b.addEventListener('click', () => { ensure(); DEMOS[b.dataset.demo](); });
+
+// live stats
+setInterval(() => {
+  const s = Audio.stats();
+  $('#status').textContent = Audio.ready ? `${s.state} · baked ${s.baked}/${Object.keys(SOUND_DEFS).length} (${s.bakedSeconds} s) · live voices ${s.total}` : 'audio not started';
+  if (!Audio.ready) return;
+  const live = Object.entries(s.live).map(([k, v]) => `${k} ${v}`).join('  ') || '–';
+  const sum = (o) => Object.values(o).reduce((a, b) => a + b, 0);
+  $('#stats').textContent = `live: ${live}\nplayed ${sum(s.played)} · dropped by rate limit ${sum(s.dropped)} · stolen ${sum(s.stolen)} · culled ${s.culled}\nspeech: ${s.speech.current ? `${s.speech.current.type} "${s.speech.current.text}"` : 'idle'} · queue [${s.speech.queue.join(', ')}] · spoken ${s.speech.spoken} · dropped ${s.speech.dropped} · blocked ${s.speech.blocked} · rate-limited ${s.speech.rateLimited} · stale ${s.speech.stale}`;
+}, 250);
+
+// self-test button
+$('#selftest').addEventListener('click', async () => {
+  $('#report').textContent = 'Rendering…'; const r = await runSuite();
+  const tbl = el('table', {}, el('tr', {}, ...['sound', 'bus', 'dur s', 'peak', 'peak dB', 'RMS dB', 'punch dB(A)', 'crest', 'attack ms', 'centroid', 'sub/low/mid/high/air %', 'pre-limiter'].map((h) => el('th', {}, h))));
+  for (const s of r.sounds) tbl.append(el('tr', {}, ...[s.name, s.bus, s.dur, s.peak, s.peakDb, s.rmsDb, s.punchA, s.crestDb, s.attackMs, s.centroid, Object.values(s.bands).join('/'), s.rawPeak].map((v) => el('td', {}, String(v)))));
+  const chk = el('table', {}, ...r.checks.map((c) => el('tr', {}, el('td', { class: c.pass ? 'pass' : 'fail' }, c.pass ? 'PASS' : 'FAIL'), el('td', {}, c.name), el('td', { style: 'white-space:normal;color:var(--dim)' }, c.detail))));
+  $('#report').innerHTML = ''; $('#report').append(el('p', {}, `${r.checks.filter((c) => c.pass).length}/${r.checks.length} checks passed in ${r.ms} ms`), chk, el('h3', {}, 'Per-sound render'), tbl);
+});
+</script>
+</body>
+</html>

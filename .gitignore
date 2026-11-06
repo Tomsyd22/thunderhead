@@ -1,0 +1,8 @@
+# regenerable / machine-local
+__pycache__/
+*.pyc
+*.blend1
+node_modules/
+.cache/
+.sync/
+play/index.local.html

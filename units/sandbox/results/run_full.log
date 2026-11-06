@@ -1,0 +1,26 @@
+tour {"ev":10,"deaths":1,"jumps":0,"feet":0.21,"tracks":0,"js":{"p50":0.8,"p95":2,"max":9.9},"errs":0}
+battle {"ev":430,"deaths":21,"jumps":0,"feet":0.22,"tracks":0,"js":{"p50":1.1,"p95":2.1,"max":8.8},"errs":0}
+sortie {"ev":0,"deaths":0,"jumps":0,"feet":0,"tracks":0,"js":{"p50":0.1,"p95":0.2,"max":24.4},"errs":0}
+emp {"ev":4,"deaths":0,"jumps":0,"feet":0,"tracks":0,"js":{"p50":0.1,"p95":0.5,"max":4.5},"errs":0}
+garrison {"ev":27,"deaths":3,"jumps":0,"feet":0.02,"tracks":0,"js":{"p50":0.3,"p95":0.7,"max":5.4},"errs":0}
+deploy {"ev":40,"deaths":2,"jumps":0,"feet":0.02,"tracks":0,"js":{"p50":0.3,"p95":1.1,"max":7.2},"errs":0}
+naval {"ev":46,"deaths":2,"jumps":0,"feet":0,"tracks":0,"js":{"p50":0.3,"p95":0.8,"max":120.1},"errs":0}
+economy {"ev":0,"deaths":0,"jumps":0,"feet":0,"tracks":0,"js":{"p50":0,"p95":0.1,"max":4},"errs":0}
+cost {"units":18,"p50":1.2,"p95":4.1,"p99":6.6,"max":9.9,"perFrame":{"sim":0.174,"views":1.204,"infantry":0.986,"fx":0.101}}
+ok   tank climbing the 20° ramp pitches nose-up (max 21.1°)
+ok   H03 turret turned toward a target on its left (turret 67.6°, view yaw 67.6°)
+ok   H03 muzzle socket points at the target (cos 1.0000)
+ok   sim muzzle ≈ model muzzle (0.12 m)
+ok   H04 at 19.0 m/s pitches nose-down (-8.4°, max 12°)
+ok   H04 main rotor turning
+ok   H04 banks into a left turn (right side up, max 12.2°, limit 15°)
+ok   H05 leans outward in a left turn (min roll -4.50°)
+ok   T03 banks into a left turn (5.00°) within ±5° (|max| 5.00°)
+ok   A04 bank ≤ 55° (max 24.6°), gear stowed in the attack run (true)
+ok   A05 cell lid opens upward before launch (free edge rises to 81°)
+ok   H05 barrel recoils 0.180 m (spec 0.18 m)
+pace {"near@1":{"cycles":2,"game_s":[53.9,53.8667],"real_s":[53.9,53.867],"legs":{"out":17.700000000014086,"load":10.000000000007958,"back":14.966666666678577,"dock":9.70000000000772,"unload":1.5000000000011937},"predicted_game_s":53.967},"far@1":{"cycles":2,"game_s":[82.2333,82.2],"real_s":[82.233,82.2],"legs":{"out":30.766666666638685,"load":9.999999999990905,"back":29.366666666639958,"dock":10.566666666657056,"unload":1.4999999999986358},"predicted_game_s":81.8},"near@2.4":{"cycles":2,"game_s":[53.9,53.8667],"real_s":[22.458,22.444],"legs":{"out":17.699999999983902,"load":9.999999999990905,"back":14.966666666653055,"dock":9.699999999991178,"unload":1.4999999999986358},"predicted_game_s":53.967},"far@2.4":{"cycles":2,"game_s":[82.2333,82.2],"real_s":[34.264,34.25],"legs":{"out":30.766666666638685,"load":9.999999999990905,"back":29.366666666639958,"dock":10.566666666657056,"unload":1.4999999999986358},"predicted_game_s":81.8}} {"battle":{"real_s":20,"game_s":48,"jumps":0,"samples":23554,"feetWorstCm":0.21,"stances":380,"tracksWorstM":0},"tour":{"real_s":20,"game_s":48,"jumps":0,"samples":19927,"feetWorstCm":0.21,"stances":178,"tracksWorstM":0}}
+lod {"gameplay":{"camera_m":230,"tris_auto":282133,"tris_lod0":412572,"saved_pct":31.6,"unit_tris_auto":47762,"unit_tris_lod0":200482,"unit_saved_pct":76.2,"levels":[0,3,24]},"close":{"camera_m":70,"tris_auto":233381,"tris_lod0":263944,"saved_pct":11.6,"unit_tris_auto":95979,"unit_tris_lod0":200482,"unit_saved_pct":52.1,"levels":[4,5,18]},"static":0,"dolly":{"switches":14,"units":26,"levels_end":[0,1,25]}}
+live {"avgMs":83.3,"p50":33.4,"p95":250,"p99":250,"max":250,"calls":338,"tris":283895,"units":27,"simMs":0.372}
+wrote results/sandbox_results.json
+EXIT 0

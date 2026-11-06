@@ -1,0 +1,77 @@
+<title>Thunderhead Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: full-screen canvas, RA-style sidebar on the right, radar top-right, selection panel bottom-left. Single committed dark look (a war-room screen). */
+:root { --bg:#0b0f12; --panel:#141b21; --panel2:#1c252d; --line:#2c3a45; --fg:#e8eef2; --muted:#8aa0b0; --accent:#e8b84a; --ok:#52d273; --warn:#f2c744; --bad:#ef4b4b; --display:'Chakra Petch', 'Segoe UI', system-ui, sans-serif; --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace; color-scheme: dark; }
+html, body { height:100%; } [hidden] { display:none !important; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:var(--display); overflow:hidden; -webkit-user-select:none; user-select:none; touch-action:none; }
+#game { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:crosshair; }
+#hud { position:fixed; inset:0; pointer-events:none; }
+#hud > * { pointer-events:auto; }
+button { font-family:var(--display); font-weight:700; letter-spacing:.02em; background:var(--panel2); color:var(--fg); border:1px solid var(--line); border-radius:4px; padding:8px 12px; cursor:pointer; min-height:40px; }
+button:hover { border-color:var(--accent); } button.on { background:var(--accent); color:#1a1200; border-color:var(--accent); } button:disabled { opacity:.45; cursor:default; } button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#top { position:fixed; top:env(safe-area-inset-top,0px); left:max(16px, env(safe-area-inset-left,0px)); right:232px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:8px 0; font-family:var(--mono); font-size:15px; }
+#top span { background:rgba(20,27,33,.9); border:1px solid var(--line); padding:6px 10px; border-radius:4px; font-variant-numeric:tabular-nums; }
+#credits { color:var(--accent); font-weight:600; } #power.low { color:var(--bad); animation:blink 1s steps(2) infinite; } @keyframes blink { 50% { opacity:.4 } }
+#msgs { position:fixed; top:calc(env(safe-area-inset-top,0px) + 56px); left:max(16px, env(safe-area-inset-left,0px)); font-family:var(--mono); font-size:13px; color:var(--fg); text-shadow:0 1px 2px #000; max-width:min(420px, 60vw); }
+#msgs div { background:rgba(11,15,18,.75); padding:3px 8px; margin-bottom:3px; border-left:3px solid var(--accent); }
+#side { position:fixed; top:env(safe-area-inset-top,0px); right:0; bottom:0; width:216px; background:var(--panel); border-left:1px solid var(--line); display:flex; flex-direction:column; padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px)) 8px; padding-right:max(8px, env(safe-area-inset-right,0px)); box-sizing:border-box; gap:8px; }
+#mini { width:100%; aspect-ratio:4/3; background:#000; border:1px solid var(--line); border-radius:3px; display:block; }
+#tabs { display:grid; grid-template-columns:repeat(5,1fr); gap:3px; } #tabs button { padding:6px 0; font-size:11px; min-height:32px; }
+#grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; overflow-y:auto; flex:1; align-content:start; }
+.item { position:relative; display:grid; grid-template-rows:auto auto auto; gap:2px; padding:6px 6px 5px; min-height:64px; text-align:left; overflow:hidden; }
+.item .ic { font-size:18px; color:var(--accent); } .item .nm { font-size:11px; line-height:1.15; font-weight:500; } .item .cost { font-family:var(--mono); font-size:11px; color:var(--muted); }
+.item.off { opacity:.4; } .item.ready { border-color:var(--ok); box-shadow:0 0 0 1px var(--ok) inset; animation:blink 1.2s steps(2) infinite; }
+.item .prog { position:absolute; left:0; right:0; bottom:0; background:rgba(0,0,0,.6); display:none; pointer-events:none; } .item .cnt { position:absolute; top:4px; right:6px; font-family:var(--mono); font-size:11px; color:var(--ok); }
+#selpanel { position:fixed; left:max(16px, env(safe-area-inset-left,0px)); bottom:calc(56px + env(safe-area-inset-bottom,0px)); width:min(330px, calc(100vw - 260px)); background:rgba(20,27,33,.94); border:1px solid var(--line); border-radius:6px; padding:10px 12px; box-sizing:border-box; }
+#selname { font-size:17px; font-weight:700; } #selrole { font-size:12px; color:var(--muted); margin-bottom:6px; }
+#selhpbar { height:8px; background:#000; border-radius:2px; overflow:hidden; } #selhp { height:100%; width:0; } #selhptxt { font-family:var(--mono); font-size:11px; color:var(--muted); margin:3px 0 6px; }
+#weap { font-family:var(--mono); font-size:11px; color:var(--muted); line-height:1.4; margin-bottom:8px; min-height:0; }
+.cmds { display:flex; flex-wrap:wrap; gap:6px; } .cmds button { flex:1 1 auto; font-size:12px; padding:8px 6px; }
+#bottom { position:fixed; left:max(16px, env(safe-area-inset-left,0px)); right:232px; bottom:calc(8px + env(safe-area-inset-bottom,0px)); display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+#bottom button { font-size:12px; padding:8px 10px; min-width:44px; } #groups { display:flex; gap:4px; flex-wrap:wrap; }
+.overlay { position:fixed; inset:0; background:radial-gradient(ellipse at 30% 20%, #16222b, #07090b 70%); display:grid; place-items:center; padding:24px max(16px, env(safe-area-inset-right,0px)) 24px max(16px, env(safe-area-inset-left,0px)); overflow:auto; z-index:5; }
+.card { max-width:720px; width:100%; background:rgba(20,27,33,.96); border:1px solid var(--line); border-radius:8px; padding:24px; box-sizing:border-box; }
+h1 { font-size:clamp(28px, 5vw, 44px); margin:0 0 4px; letter-spacing:.04em; text-wrap:balance; } h1 small { display:block; font-size:14px; letter-spacing:.3em; color:var(--accent); font-weight:500; }
+.card p { color:var(--muted); line-height:1.5; max-width:62ch; margin:10px 0; }
+.facs { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:14px 0 8px; } .facs button { padding:12px 8px; display:grid; gap:4px; } .facs button b { font-size:15px; } .facs button span { font-size:11px; font-weight:500; opacity:.8; }
+.row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:12px 0; } select { font-family:var(--display); font-size:14px; background:var(--panel2); color:var(--fg); border:1px solid var(--line); border-radius:4px; padding:8px; min-height:40px; } label { font-size:13px; color:var(--muted); display:grid; gap:4px; }
+#go { background:var(--accent); color:#1a1200; font-size:16px; padding:12px 22px; border-color:var(--accent); }
+.keys { font-family:var(--mono); font-size:12px; color:var(--muted); line-height:1.6; columns:2; column-gap:24px; } .keys b { color:var(--fg); }
+@media (max-width: 760px) { #side { width:148px; } #grid { grid-template-columns:1fr; } #tabs { grid-template-columns:repeat(5,1fr); } #tabs button { font-size:9px; padding:4px 0; } #selpanel { width:calc(100vw - 180px); bottom:calc(52px + env(safe-area-inset-bottom,0px)); padding:8px; } #bottom { right:160px; } .facs { grid-template-columns:1fr; } .keys { columns:1; } #top { font-size:12px; gap:6px; right:160px; } #weap { display:none; } }
+</style>
+<canvas id="game"></canvas>
+<div id="hud" hidden>
+  <div id="top"><span id="credits">$10,000</span><span id="power">⚡ +0</span><span id="clock">0:00</span><button id="speed" title="Game speed">1×</button><button id="homebtn" title="Centre on base (H)">Base</button></div>
+  <div id="msgs"></div>
+  <aside id="side"><canvas id="mini" width="200" height="150"></canvas><div id="tabs"></div><div id="grid"></div></aside>
+  <div id="selpanel" hidden>
+    <div id="selname"></div><div id="selrole"></div>
+    <div id="selhpbar"><div id="selhp"></div></div><div id="selhptxt"></div>
+    <div id="weap"></div>
+    <div class="cmds"><button id="amovebtn" title="Attack-move (A): advance and engage anything on the way">Attack-move</button><button id="stopbtn" title="Stop (S)">Stop</button><button id="secbtn" title="Secondary ability (D)">Deploy</button><button id="sellbtn" title="Sell for 50%">Sell</button></div>
+  </div>
+  <div id="bottom"><button id="selmode" title="Touch: drag to box-select instead of panning">Box select</button><button id="deselect" title="Clear selection (Esc)">✕</button><button id="grpadd" title="Save selection as a control group (Ctrl+1..9)">+ Group</button><div id="groups"></div></div>
+</div>
+<div id="start" class="overlay">
+  <div class="card">
+    <h1><small>PROTOTYPE 0.1</small>THUNDERHEAD</h1>
+    <p>A Red Alert-style RTS slice: harvest tantalum, keep the power on, build a base inside the radius, and flatten the enemy construction yard. Tier 1–2 rosters for all three factions, armour-versus-warhead combat, veterancy, crushing, cloak, EMP, hacking, and a scripted opponent. Numbers come from the same data file as the balance simulator.</p>
+    <div class="facs">
+      <button data-faction="lattice" data-desc="Swarms of cheap drones, hover tanks, beam weapons. Pylons buff everything nearby. Nothing can be hacked except the big vehicles; everything hates EMP."><b>The Lattice</b><span>Drone swarm · beams · mesh network</span></button>
+      <button data-faction="compact" class="on" data-desc="Heavy tanks, dug-in riflemen, rocket artillery and flak. Slow and expensive but every unit is the toughest of its kind."><b>The Compact</b><span>Heavy armour · trenches · artillery</span></button>
+      <button data-faction="helix" data-desc="Cheap contractors with bounties, hackers that steal tanks, cloaked ambush tanks and a rotary cannon that shreds infantry and aircraft."><b>Helix Dynamics</b><span>Hackers · cloak · bounties</span></button>
+    </div>
+    <p id="fdesc">Heavy tanks, dug-in riflemen, rocket artillery and flak. Slow and expensive but every unit is the toughest of its kind.</p>
+    <div class="row">
+      <label>Opponent <select id="enemy"><option value="random">Random faction</option><option value="lattice">The Lattice</option><option value="compact">The Compact</option><option value="helix">Helix Dynamics</option></select></label>
+      <label>Difficulty <select id="diff"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard (+$4,000)</option></select></label>
+      <button id="go">Deploy</button>
+    </div>
+    <div class="keys"><b>Mouse</b> left click / drag selects · right click orders · wheel zooms · arrows pan<br><b>Touch</b> tap selects · tap with a selection orders · long-press attack-moves · drag pans · pinch zooms · "Box select" turns drag into selection<br><b>Keys</b> A attack-move · S stop · D deploy · E select army on screen · H base · Ctrl+1–9 group · 1–9 recall · Tab next build tab · Esc cancel<br><b>Build</b> click a sidebar icon; when it flashes READY click it again and tap the map inside the dotted build radius. Right-click an icon to cancel.</div>
+  </div>
+</div>
+<div id="end" class="overlay" hidden>
+  <div class="card"><h1 id="endtitle">Mission accomplished</h1><p id="endtxt"></p><div class="row"><button id="again">Play again</button></div></div>
+</div>

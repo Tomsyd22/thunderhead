@@ -1,0 +1,40 @@
+{
+ "stats": {
+  "terrain_chunks": 441,
+  "terrain_tris": 2438450,
+  "asset_types": 34,
+  "instances": 7304,
+  "demo_instances": 76,
+  "missing_assets": [],
+  "collision_boxes": 482,
+  "grass_clumps": 66700,
+  "build_s": 9.0
+ },
+ "renders": [
+  {
+   "file": "preset_1_overview.png",
+   "preset": "overview",
+   "seconds": 313.3
+  },
+  {
+   "file": "preset_2_gameplay.png",
+   "preset": "gameplay",
+   "seconds": 216.4
+  },
+  {
+   "file": "preset_3_base.png",
+   "preset": "base",
+   "seconds": 129.3
+  },
+  {
+   "file": "preset_4_harbor.png",
+   "preset": "harbor",
+   "seconds": 132.3
+  },
+  {
+   "file": "preset_5_detail.png",
+   "preset": "detail",
+   "seconds": 172.0
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+✓ boot: page loads and the match starts — 9.3 s, 12 units, 2 structures, 12 unit views, 23 portraits, audio true
+✓ movement: a mixed group moves at the slowest speed and arrives in formation — 9/9 arrived in 54 game s, tanks held to 4.4 m/s (infantry 4.4), all within 15.6 m of the click
+✓ movement: three harvesters share one refinery dock without jamming — 3 harvesters, 15 loads delivered in 360 game s (one alone ≈ 6), longest wait in a queue 32 s
+✓ movement: ten tanks pass the narrowest point of the base-to-base route without jamming — choke at (579, 1278), clearance 4.3 m · 10/10 through in 34 game s (one tank alone ≈ 26 s for the 200 m)
+✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 7 s wall · helix: 5 structures, 4 units, 23 lost, $8000 mined | compact: 9 structures, 28 units, 1 lost, $7500 mined
+5/5

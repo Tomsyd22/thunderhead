@@ -1,0 +1,1825 @@
+{
+ "date": "2026-11-06T11:52:49.753Z",
+ "pass": 303,
+ "total": 303,
+ "checks": [
+  {
+   "group": "1 spec transcription",
+   "name": "H01 3 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,death,run"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "H02 3 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,death,run"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A01 5 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,deploy.setup,deploy.pack,death,run"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A02 4 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,deploy.setup,deploy.pack,run"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "T01 3 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,death,run"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "T02 4 sheet values match MECH",
+   "ok": true,
+   "detail": "aim,death,run,emp"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "H03 10 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,turretYaw,pitchMin,pitchMax,tol,recoil.dist,recoil.back,recoil.return,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A03 10 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,turretYaw,pitchMin,pitchMax,tol,recoil.dist,recoil.back,recoil.return,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "T03 8 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,turretYaw,clearance,death,chargeSpeed,precharge,recovery"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "H04 4 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,alt,fireSpeed,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A04 7 sheet values match MECH",
+   "ok": true,
+   "detail": "alt,rmin,align,death,land,reload,takeoff"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "T04 6 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,alt,fireSpeed,death,scan"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "H05 8 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,turretYaw,waterline,recoil.dist,recoil.back,recoil.return,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A05 4 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,waterline,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "T05 4 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,waterline,death"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H01 top speed 4.40 ≈ spec 4.4 m/s (±1 %)",
+   "ok": true,
+   "detail": "4.400"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H01 stops at the goal without overshoot (0.07 m)",
+   "ok": true,
+   "detail": "0.07"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H02 top speed 3.80 ≈ spec 3.8 m/s (±1 %)",
+   "ok": true,
+   "detail": "3.800"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H02 stops at the goal without overshoot (0.06 m)",
+   "ok": true,
+   "detail": "0.06"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A01 top speed 4.60 ≈ spec 4.6 m/s (±1 %)",
+   "ok": true,
+   "detail": "4.600"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A01 stops at the goal without overshoot (0.07 m)",
+   "ok": true,
+   "detail": "0.07"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A02 top speed 4.20 ≈ spec 4.2 m/s (±1 %)",
+   "ok": true,
+   "detail": "4.200"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A02 stops at the goal without overshoot (0.07 m)",
+   "ok": true,
+   "detail": "0.07"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T01 top speed 5.40 ≈ spec 5.4 m/s (±1 %)",
+   "ok": true,
+   "detail": "5.400"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T01 stops at the goal without overshoot (0.08 m)",
+   "ok": true,
+   "detail": "0.08"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T02 top speed 5.00 ≈ spec 5 m/s (±1 %)",
+   "ok": true,
+   "detail": "5.000"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T02 stops at the goal without overshoot (0.08 m)",
+   "ok": true,
+   "detail": "0.08"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 top speed 7.80 ≈ spec 7.8 m/s (±1 %)",
+   "ok": true,
+   "detail": "7.800"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 stops at the goal without overshoot (0.13 m)",
+   "ok": true,
+   "detail": "0.13"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 0→90 % speed in 2.37 s ≈ v/a 2.34 s (±12 %)",
+   "ok": true,
+   "detail": "2.367"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 EMP speed ×0.70 → 5.46 m/s",
+   "ok": true,
+   "detail": "5.460"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 top speed 10.00 ≈ spec 10 m/s (±1 %)",
+   "ok": true,
+   "detail": "10.000"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 stops at the goal without overshoot (0.17 m)",
+   "ok": true,
+   "detail": "0.17"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 0→90 % speed in 2.03 s ≈ v/a 2.00 s (±12 %)",
+   "ok": true,
+   "detail": "2.033"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 EMP speed ×0.70 → 7.00 m/s",
+   "ok": true,
+   "detail": "7.000"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T03 top speed 13.00 ≈ spec 13 m/s (±1 %)",
+   "ok": true,
+   "detail": "13.000"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T03 stops at the goal without overshoot (0.04 m)",
+   "ok": true,
+   "detail": "0.04"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T03 0→90 % speed in 2.37 s ≈ v/a 2.34 s (±12 %)",
+   "ok": true,
+   "detail": "2.367"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T03 EMP speed ×0.70 → 9.10 m/s",
+   "ok": true,
+   "detail": "9.100"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H05 top speed 10.00 ≈ 10 m/s",
+   "ok": true,
+   "detail": "10.000000000001137"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H05 0→90 % in 4.53 s ≈ 4.50 s",
+   "ok": true,
+   "detail": "4.533333333333327"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H05 stops at the goal (0.0 m)",
+   "ok": true,
+   "detail": "0.027133589443565143"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H05 hull yaw 28.0°/s ≤ spec 28°/s and reaches ≥ 95 % at speed",
+   "ok": true,
+   "detail": "28.00"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H05 turns on an arc (min radius 14.3 m), never pivots in place",
+   "ok": true,
+   "detail": "14.3"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A05 top speed 9.00 ≈ 9 m/s",
+   "ok": true,
+   "detail": "9.000000000000341"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A05 0→90 % in 5.43 s ≈ 5.40 s",
+   "ok": true,
+   "detail": "5.433333333333324"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A05 stops at the goal (0.0 m)",
+   "ok": true,
+   "detail": "0.03944841373311192"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A05 hull yaw 18.0°/s ≤ spec 18°/s and reaches ≥ 95 % at speed",
+   "ok": true,
+   "detail": "18.00"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A05 turns on an arc (min radius 20.1 m), never pivots in place",
+   "ok": true,
+   "detail": "20.1"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T05 top speed 15.00 ≈ 15 m/s",
+   "ok": true,
+   "detail": "15"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T05 0→90 % in 3.87 s ≈ 3.86 s",
+   "ok": true,
+   "detail": "3.8666666666666627"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T05 stops at the goal (0.0 m)",
+   "ok": true,
+   "detail": "0.007990765582007953"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T05 hull yaw 45.0°/s ≤ spec 45°/s and reaches ≥ 95 % at speed",
+   "ok": true,
+   "detail": "45.00"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T05 turns on an arc (min radius 13.4 m), never pivots in place",
+   "ok": true,
+   "detail": "13.4"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 pivot yaw 55.0°/s = spec 55°/s (±2 %)",
+   "ok": true,
+   "detail": "55.00000000000014"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 tracks counter-rotate during the pivot (90 ticks)",
+   "ok": true,
+   "detail": "90"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 turret yaw 85.0°/s = spec 85°/s (±2 %)",
+   "ok": true,
+   "detail": "84.9999999999998"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H03 hull does not snap toward a target (hull yaw stayed 0.0°)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 pivot yaw 75.0°/s = spec 75°/s (±2 %)",
+   "ok": true,
+   "detail": "74.99999999999991"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 tracks counter-rotate during the pivot (67 ticks)",
+   "ok": true,
+   "detail": "67"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 turret yaw 110.0°/s = spec 110°/s (±2 %)",
+   "ok": true,
+   "detail": "110.00000000000028"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A03 hull does not snap toward a target (hull yaw stayed 0.0°)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H04 top speed 19.00 ≈ 19",
+   "ok": true,
+   "detail": "19.000000000000625"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H04 0→90 % in 2.47 s ≈ 2.44 s",
+   "ok": true,
+   "detail": "2.4666666666666677"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H04 holds 12 m above terrain (12.00–12.00)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "2 locomotion",
+   "name": "H04 stops at the goal (0.01 m)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T04 top speed 22.00 ≈ 22",
+   "ok": true,
+   "detail": "22.000000000000455"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T04 0→90 % in 1.67 s ≈ 1.65 s",
+   "ok": true,
+   "detail": "1.6666666666666685"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T04 holds 8 m above terrain (8.00–8.00)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "2 locomotion",
+   "name": "T04 stops at the goal (0.02 m)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A04 flies at 35.0 m/s (spec 35) and never slows to hover in flight (min 35.0)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A04 minimum turn radius 12.00 m ≥ spec 12 m (and within 5 %)",
+   "ok": true,
+   "detail": "11.999999999999988"
+  },
+  {
+   "group": "2 locomotion",
+   "name": "A04 cruise altitude 20.0 m ≈ 20 m",
+   "ok": true,
+   "detail": "22"
+  },
+  {
+   "group": "3 domains",
+   "name": "no foot off mask events over 600 s of random legs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "no veh off mask events over 600 s of random legs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "no hover off mask events over 600 s of random legs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "no ship off water events over 600 s of random legs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "no air low events over 600 s of random legs",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "Wisp crossed shallow water (314 s wet) and never deeper than 1.2 m (max 1.09 m)",
+   "ok": true,
+   "detail": "1.0873396049090398"
+  },
+  {
+   "group": "3 domains",
+   "name": "slopes driven: foot ≤ 35° (33.4), vehicles ≤ 25° (18.8), hover ≤ 25° (23.4)",
+   "ok": true,
+   "detail": "{\"foot\":33.355611364179055,\"veh\":18.77741386106523,\"hover\":23.43309397680279}"
+  },
+  {
+   "group": "3 domains",
+   "name": "every unit completed legs (H01:11 A01:12 T02:12 H03:15 A03:19 T03:32 H05:17 A05:19 T05:25 H04:47 T04:56)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "ships never had to back out of a tight spot (astern time: H05 0.0 s, A05 0.0 s, T05 0.0 s)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "Wisp sent to the deep sea stops on the shelf (depth 0.69 m ≤ 1.2, max 0.76)",
+   "ok": true,
+   "detail": "551,97"
+  },
+  {
+   "group": "3 domains",
+   "name": "tank sent into the lagoon stops on the bank (h 0.91 m)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "3 domains",
+   "name": "corvette sent into the shallow lagoon stops in the deep mouth (depth 7.3 m)",
+   "ok": true,
+   "detail": "501"
+  },
+  {
+   "group": "3 domains",
+   "name": "frigate sent onto land stays on deep water (depth 8.3 m)",
+   "ok": true,
+   "detail": "513"
+  },
+  {
+   "group": "3 domains",
+   "name": "tank crossed the ridge through the pass (crossed at y=124, pass 130,160)",
+   "ok": true,
+   "detail": "124.38022281424509"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle: roster row matches unit_specs (dmg 12, burst 1, cycle 0.8, range 18)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs infantry: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs infantry: 12.0 dmg/volley → 15.00 DPS ≈ roster 15 (±2 %)",
+   "ok": true,
+   "detail": "600 dmg in 50 volleys; want 12/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs light: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs light: 3.0 dmg/volley → 3.75 DPS ≈ roster 3.75 (±2 %)",
+   "ok": true,
+   "detail": "150 dmg in 50 volleys; want 3/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs heavy: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs heavy: 1.0 dmg/volley → 1.20 DPS ≈ roster 1.2 (±2 %)",
+   "ok": true,
+   "detail": "48 dmg in 50 volleys; want 0.96/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs building: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H01 Service rifle vs building: 2.4 dmg/volley → 3.00 DPS ≈ roster 3 (±2 %)",
+   "ok": true,
+   "detail": "120 dmg in 50 volleys; want 2.4000000000000004/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket: roster row matches unit_specs (dmg 90, burst 1, cycle 3, range 36)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs light: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs light: 90.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1530 dmg in 17 volleys; want 90/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs heavy: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs heavy: 90.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1530 dmg in 17 volleys; want 90/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs naval: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs naval: 72.0 dmg/volley → 24.00 DPS ≈ roster 24 (±2 %)",
+   "ok": true,
+   "detail": "1224 dmg in 17 volleys; want 72/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs building: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Anti-armour rocket vs building: 58.5 dmg/volley → 19.50 DPS ≈ roster 19.5 (±2 %)",
+   "ok": true,
+   "detail": "995 dmg in 17 volleys; want 58.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Air-defence rocket: roster row matches unit_specs (dmg 70, burst 1, cycle 2.5, range 45)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Air-defence rocket vs air: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H02 Air-defence rocket vs air: 70.0 dmg/volley → 28.00 DPS ≈ roster 28 (±2 %)",
+   "ok": true,
+   "detail": "1260 dmg in 18 volleys; want 70/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon: roster row matches unit_specs (dmg 100, burst 1, cycle 2.5, range 42)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs infantry: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs infantry: 25.0 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "ok": true,
+   "detail": "450 dmg in 18 volleys; want 25/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs light: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs light: 115.0 dmg/volley → 46.00 DPS ≈ roster 46 (±2 %)",
+   "ok": true,
+   "detail": "2070 dmg in 18 volleys; want 114.99999999999999/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs heavy: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs heavy: 100.0 dmg/volley → 40.00 DPS ≈ roster 40 (±2 %)",
+   "ok": true,
+   "detail": "1800 dmg in 18 volleys; want 100/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs naval: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs naval: 75.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1350 dmg in 18 volleys; want 75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs building: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H03 Heavy cannon vs building: 85.0 dmg/volley → 34.00 DPS ≈ roster 34 (±2 %)",
+   "ok": true,
+   "detail": "1530 dmg in 18 volleys; want 85/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets: roster row matches unit_specs (dmg 42, burst 2, cycle 2.8, range 45)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs light: mean cycle 2.800 s = 2.8 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 burst 2 with gap 0.167 s ≈ 0.15 s (±1 tick)",
+   "ok": true,
+   "detail": "0.16666666666666663"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs light: 84.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1428 dmg in 17 volleys; want 84/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs heavy: mean cycle 2.800 s = 2.8 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 burst 2 with gap 0.167 s ≈ 0.15 s (±1 tick)",
+   "ok": true,
+   "detail": "0.16666666666666663"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs heavy: 84.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1428 dmg in 17 volleys; want 84/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs naval: mean cycle 2.800 s = 2.8 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 burst 2 with gap 0.167 s ≈ 0.15 s (±1 tick)",
+   "ok": true,
+   "detail": "0.16666666666666663"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs naval: 71.4 dmg/volley → 25.50 DPS ≈ roster 25.5 (±2 %)",
+   "ok": true,
+   "detail": "1214 dmg in 17 volleys; want 71.39999999999999/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs building: mean cycle 2.800 s = 2.8 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 burst 2 with gap 0.167 s ≈ 0.15 s (±1 tick)",
+   "ok": true,
+   "detail": "0.16666666666666663"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H04 Twin attack rockets vs building: 58.8 dmg/volley → 21.00 DPS ≈ roster 21 (±2 %)",
+   "ok": true,
+   "detail": "1000 dmg in 17 volleys; want 58.8/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun: roster row matches unit_specs (dmg 110, burst 1, cycle 2.5, range 50)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs infantry: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs infantry: 27.5 dmg/volley → 11.00 DPS ≈ roster 11 (±2 %)",
+   "ok": true,
+   "detail": "495 dmg in 18 volleys; want 27.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs light: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs light: 110.0 dmg/volley → 44.00 DPS ≈ roster 44 (±2 %)",
+   "ok": true,
+   "detail": "1980 dmg in 18 volleys; want 110/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs heavy: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs heavy: 93.5 dmg/volley → 37.40 DPS ≈ roster 37.4 (±2 %)",
+   "ok": true,
+   "detail": "1683 dmg in 18 volleys; want 93.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs naval: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs naval: 110.0 dmg/volley → 44.00 DPS ≈ roster 44 (±2 %)",
+   "ok": true,
+   "detail": "1980 dmg in 18 volleys; want 110/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs building: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "H05 Naval assault gun vs building: 99.0 dmg/volley → 39.60 DPS ≈ roster 39.6 (±2 %)",
+   "ok": true,
+   "detail": "1782 dmg in 18 volleys; want 99/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile: roster row matches unit_specs (dmg 10, burst 1, cycle 0.8, range 18)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs infantry: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs infantry: 10.0 dmg/volley → 12.50 DPS ≈ roster 12.5 (±2 %)",
+   "ok": true,
+   "detail": "500 dmg in 50 volleys; want 10/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs light: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs light: 2.5 dmg/volley → 3.13 DPS ≈ roster 3.12 (±2 %)",
+   "ok": true,
+   "detail": "125 dmg in 50 volleys; want 2.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs heavy: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs heavy: 0.8 dmg/volley → 1.00 DPS ≈ roster 1 (±2 %)",
+   "ok": true,
+   "detail": "40 dmg in 50 volleys; want 0.8/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs building: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Carbine - mobile vs building: 1.8 dmg/volley → 2.25 DPS ≈ roster 2.25 (±2 %)",
+   "ok": true,
+   "detail": "90 dmg in 50 volleys; want 1.7999999999999998/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed: roster row matches unit_specs (dmg 15, burst 1, cycle 0.45, range 25)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs infantry: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "ok": true,
+   "detail": "89 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs infantry: 15.0 dmg/volley → 33.33 DPS ≈ roster 33.33 (±2 %)",
+   "ok": true,
+   "detail": "1335 dmg in 89 volleys; want 15/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs light: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "ok": true,
+   "detail": "89 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs light: 4.5 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "ok": true,
+   "detail": "401 dmg in 89 volleys; want 4.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs heavy: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "ok": true,
+   "detail": "89 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs heavy: 1.8 dmg/volley → 4.00 DPS ≈ roster 4 (±2 %)",
+   "ok": true,
+   "detail": "160 dmg in 89 volleys; want 1.7999999999999998/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs building: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "ok": true,
+   "detail": "89 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A01 Machine gun - deployed vs building: 3.8 dmg/volley → 8.33 DPS ≈ roster 8.33 (±2 %)",
+   "ok": true,
+   "detail": "334 dmg in 89 volleys; want 3.75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Air-intercept missile: roster row matches unit_specs (dmg 75, burst 1, cycle 2.5, range 48)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Air-intercept missile vs air: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Air-intercept missile vs air: 75.0 dmg/volley → 30.00 DPS ≈ roster 30 (±2 %)",
+   "ok": true,
+   "detail": "1350 dmg in 18 volleys; want 75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile: roster row matches unit_specs (dmg 110, burst 1, cycle 3, range 40)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs light: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs light: 110.0 dmg/volley → 36.67 DPS ≈ roster 36.67 (±2 %)",
+   "ok": true,
+   "detail": "1870 dmg in 17 volleys; want 110/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs heavy: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs heavy: 110.0 dmg/volley → 36.67 DPS ≈ roster 36.67 (±2 %)",
+   "ok": true,
+   "detail": "1870 dmg in 17 volleys; want 110/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs naval: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs naval: 82.5 dmg/volley → 27.50 DPS ≈ roster 27.5 (±2 %)",
+   "ok": true,
+   "detail": "1403 dmg in 17 volleys; want 82.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs building: mean cycle 3.000 s = 3 s (±1 %)",
+   "ok": true,
+   "detail": "17 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A02 Deployed anti-tank missile vs building: 66.0 dmg/volley → 22.00 DPS ≈ roster 22 (±2 %)",
+   "ok": true,
+   "detail": "1122 dmg in 17 volleys; want 66/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon: roster row matches unit_specs (dmg 80, burst 1, cycle 2.2, range 40)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs infantry: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs infantry: 20.0 dmg/volley → 9.09 DPS ≈ roster 9.09 (±2 %)",
+   "ok": true,
+   "detail": "380 dmg in 19 volleys; want 20/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs light: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs light: 92.0 dmg/volley → 41.82 DPS ≈ roster 41.82 (±2 %)",
+   "ok": true,
+   "detail": "1748 dmg in 19 volleys; want 92/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs heavy: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs heavy: 80.0 dmg/volley → 36.36 DPS ≈ roster 36.36 (±2 %)",
+   "ok": true,
+   "detail": "1520 dmg in 19 volleys; want 80/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs naval: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs naval: 52.0 dmg/volley → 23.64 DPS ≈ roster 23.64 (±2 %)",
+   "ok": true,
+   "detail": "988 dmg in 19 volleys; want 52/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs building: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A03 Precision cannon vs building: 60.0 dmg/volley → 27.27 DPS ≈ roster 27.27 (±2 %)",
+   "ok": true,
+   "detail": "1140 dmg in 19 volleys; want 60/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Anti-ship missile salvo: roster row matches unit_specs (dmg 90, burst 2, cycle 5, range 80)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Anti-ship missile salvo vs naval: mean cycle 5.000 s = 5 s (±1 %)",
+   "ok": true,
+   "detail": "16 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 burst 2 with gap 0.223 s ≈ 0.2 s (±1 tick)",
+   "ok": true,
+   "detail": "0.22291666666666093"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Anti-ship missile salvo vs naval: 180.0 dmg/volley → 36.00 DPS ≈ roster 36 (±2 %)",
+   "ok": true,
+   "detail": "2880 dmg in 16 volleys; want 180/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Defensive AA missile: roster row matches unit_specs (dmg 55, burst 1, cycle 1.8, range 50)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Defensive AA missile vs air: mean cycle 1.800 s = 1.8 s (±1 %)",
+   "ok": true,
+   "detail": "23 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "A05 Defensive AA missile vs air: 55.0 dmg/volley → 30.56 DPS ≈ roster 30.56 (±2 %)",
+   "ok": true,
+   "detail": "1265 dmg in 23 volleys; want 55/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine: roster row matches unit_specs (dmg 16, burst 1, cycle 0.8, range 23)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs infantry: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs infantry: 16.0 dmg/volley → 20.00 DPS ≈ roster 20 (±2 %)",
+   "ok": true,
+   "detail": "800 dmg in 50 volleys; want 16/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs light: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs light: 4.8 dmg/volley → 6.00 DPS ≈ roster 6 (±2 %)",
+   "ok": true,
+   "detail": "240 dmg in 50 volleys; want 4.8/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs heavy: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs heavy: 1.6 dmg/volley → 2.00 DPS ≈ roster 2 (±2 %)",
+   "ok": true,
+   "detail": "80 dmg in 50 volleys; want 1.6/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs building: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "ok": true,
+   "detail": "50 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T01 Pulse carbine vs building: 3.2 dmg/volley → 4.00 DPS ≈ roster 4 (±2 %)",
+   "ok": true,
+   "detail": "160 dmg in 50 volleys; want 3.2/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground: roster row matches unit_specs (dmg 50, burst 1, cycle 2, range 32)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs light: mean cycle 2.000 s = 2 s (±1 %)",
+   "ok": true,
+   "detail": "20 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs light: 50.0 dmg/volley → 25.00 DPS ≈ roster 25 (±2 %)",
+   "ok": true,
+   "detail": "1000 dmg in 20 volleys; want 50/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs heavy: mean cycle 2.000 s = 2 s (±1 %)",
+   "ok": true,
+   "detail": "20 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs heavy: 50.0 dmg/volley → 25.00 DPS ≈ roster 25 (±2 %)",
+   "ok": true,
+   "detail": "1000 dmg in 20 volleys; want 50/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs naval: mean cycle 2.000 s = 2 s (±1 %)",
+   "ok": true,
+   "detail": "20 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs naval: 37.5 dmg/volley → 18.75 DPS ≈ roster 18.75 (±2 %)",
+   "ok": true,
+   "detail": "750 dmg in 20 volleys; want 37.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs building: mean cycle 2.000 s = 2 s (±1 %)",
+   "ok": true,
+   "detail": "20 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - ground vs building: 20.0 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "ok": true,
+   "detail": "400 dmg in 20 volleys; want 20/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - air: roster row matches unit_specs (dmg 20, burst 1, cycle 2, range 38)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - air vs air: mean cycle 2.000 s = 2 s (±1 %)",
+   "ok": true,
+   "detail": "20 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T02 Disruption lance - air vs air: 20.0 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "ok": true,
+   "detail": "400 dmg in 20 volleys; want 20/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon: roster row matches unit_specs (dmg 95, burst 1, cycle 2.5, range 46)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs infantry: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs infantry: 19.0 dmg/volley → 7.60 DPS ≈ roster 7.6 (±2 %)",
+   "ok": true,
+   "detail": "342 dmg in 18 volleys; want 19/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs light: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs light: 95.0 dmg/volley → 38.00 DPS ≈ roster 38 (±2 %)",
+   "ok": true,
+   "detail": "1710 dmg in 18 volleys; want 95/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs heavy: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs heavy: 95.0 dmg/volley → 38.00 DPS ≈ roster 38 (±2 %)",
+   "ok": true,
+   "detail": "1710 dmg in 18 volleys; want 95/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs naval: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs naval: 61.8 dmg/volley → 24.70 DPS ≈ roster 24.7 (±2 %)",
+   "ok": true,
+   "detail": "1112 dmg in 18 volleys; want 61.75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs building: mean cycle 2.500 s = 2.5 s (±1 %)",
+   "ok": true,
+   "detail": "18 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T03 Accelerator cannon vs building: 61.8 dmg/volley → 24.70 DPS ≈ roster 24.7 (±2 %)",
+   "ok": true,
+   "detail": "1112 dmg in 18 volleys; want 61.75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T04 Light pulse emitter: roster row matches unit_specs (dmg 8, burst 1, cycle 0.4, range 26)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T04 Light pulse emitter vs infantry: mean cycle 0.400 s = 0.4 s (±1 %)",
+   "ok": true,
+   "detail": "100 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T04 Light pulse emitter vs infantry: 8.0 dmg/volley → 20.00 DPS ≈ roster 20 (±2 %)",
+   "ok": true,
+   "detail": "800 dmg in 100 volleys; want 8/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T04 Light pulse emitter vs light: mean cycle 0.400 s = 0.4 s (±1 %)",
+   "ok": true,
+   "detail": "100 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T04 Light pulse emitter vs light: 1.6 dmg/volley → 4.00 DPS ≈ roster 4 (±2 %)",
+   "ok": true,
+   "detail": "160 dmg in 100 volleys; want 1.6/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - sea: roster row matches unit_specs (dmg 75, burst 1, cycle 2.2, range 65)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - sea vs naval: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - sea vs naval: 75.0 dmg/volley → 34.09 DPS ≈ roster 34.09 (±2 %)",
+   "ok": true,
+   "detail": "1425 dmg in 19 volleys; want 75/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore: roster row matches unit_specs (dmg 75, burst 1, cycle 2.2, range 45)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs light: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs light: 67.5 dmg/volley → 30.68 DPS ≈ roster 30.68 (±2 %)",
+   "ok": true,
+   "detail": "1283 dmg in 19 volleys; want 67.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs heavy: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs heavy: 60.0 dmg/volley → 27.27 DPS ≈ roster 27.27 (±2 %)",
+   "ok": true,
+   "detail": "1140 dmg in 19 volleys; want 60/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs building: mean cycle 2.200 s = 2.2 s (±1 %)",
+   "ok": true,
+   "detail": "19 volleys"
+  },
+  {
+   "group": "4 weapons",
+   "name": "T05 Guided raider missile - shore vs building: 52.5 dmg/volley → 23.86 DPS ≈ roster 23.86 (±2 %)",
+   "ok": true,
+   "detail": "998 dmg in 19 volleys; want 52.5/volley"
+  },
+  {
+   "group": "4 weapons",
+   "name": "Hammer cannot target infantry (0 shots)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "4 weapons",
+   "name": "Mote has no damage against heavy armour (0 shots)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H01 never fires while moving (0) and fires after stopping",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H01 first shot 0.133 s after aim start ≥ wind-up 0.12 s",
+   "ok": true,
+   "detail": "0.13333333333333286"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "A01 never fires while moving (0) and fires after stopping",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "A01 first shot 0.133 s after aim start ≥ wind-up 0.12 s",
+   "ok": true,
+   "detail": "0.13333333333333286"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T01 never fires while moving (0) and fires after stopping",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T01 first shot 0.100 s after aim start ≥ wind-up 0.1 s",
+   "ok": true,
+   "detail": "0.09999999999999964"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T02 never fires while moving (0) and fires after stopping",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T02 first shot 0.200 s after aim start ≥ wind-up 0.2 s",
+   "ok": true,
+   "detail": "0.1999999999999993"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H02 never fires while moving (0) and fires after stopping",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H02 first shot 0.367 s after aim start ≥ wind-up 0.35 s",
+   "ok": true,
+   "detail": "0.36666666666666536"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H02 lock-on interrupted by a move order deals no damage (0 launches, hp full)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H03 fires while moving (4 shots at >1 m/s), worst turret error 3.25° ≤ 5°",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "A03 fires while moving (3 shots at >1 m/s), worst turret error 1.40° ≤ 4°",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T03 fires while moving (3 shots at >1 m/s), worst turret error 0.00° ≤ 4°",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T03 speed limited to 65 % during the 0.25 s charge (and 0.35 s recovery)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H04 fires only below 50% speed (18 shots, 0 too fast)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "H04 holds stand-off ≈ 36 m (mean 35.2 m)",
+   "ok": true,
+   "detail": "35.21775519620622"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T04 fires only below 60% speed (57 shots, 0 too fast)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T04 holds stand-off ≈ 21 m (mean 21.1 m)",
+   "ok": true,
+   "detail": "21.09249873402731"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "A05 holds anti-ship fire inside the 8 m minimum range (target at 5.6 m, 0 launches)",
+   "ok": true,
+   "detail": "5.575391434103504"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "T05 shore missiles (45 m) don't reach a tank at 53.7 m though sea range is 65 m",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "guided rocket turn rate ≤ 180°/s (worst 0.0)",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "group": "5 firing behaviour",
+   "name": "guided missile self-destructs when the target dies first (0 self-destructs, no retarget)",
+   "ok": true,
+   "detail": "1 launched"
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "takeoff → release → land → reload sequence present",
+   "ok": true,
+   "detail": "takeoff,attack_run,bomb,bomb,explosion,damage,explosion,damage,landing,landed,rearmed,takeoff"
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "release aligned within 10° (0.00°) at 28.4 m = 35 m/s × 0.8 s fall (28 m)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "two bombs 0.25 s apart (0.267 s)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "each bomb lands 0.8 s after its release (0.833 s)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "both bombs hit the fixed aim point: 180 + 180 = 2 × 180 on a stationary heavy target",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "landing takes 1.2 s (1.20 s) and reload 6 s (6.00 s)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "turn radius in flight never below 12 m (min 12.00 m)",
+   "ok": true,
+   "detail": "11.999999999999988"
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "re-sorties after rearming while the attack order stands (sortie cycle 25.9 s for a 240 m run; reference 14 s)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "6 Kestrel sortie",
+   "name": "splash: centre infantry takes 2×81 = 162.0; 4 m away takes 72.6 ≈ 72.6 (linear to ×0.25 at 5 m from the surface)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "A01 deploy takes 0.8 s (0.800) and fires only after setup",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "A01 deployed weapon is the machine gun (25 m, 0.45 s): fires at a target 21.4 m away beyond the 18 m carbine",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "A01 move while deployed: packs up for 0.6 s (0.600), then moves (queued order kept)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "A02 mobile ignores ground vehicles (0 launches); deployed (1.0 s) fires the AT missile (2 launches, weapon 1)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP wind-up 0.3 s (0.300) then applied",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP effect lasts 3 s (until 3.00) with immunity 6 s after (9.00 s from cast)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP cooldown 20 s from release (20.00)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP cannot target infantry",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP stretches the A03 cycle 2.2 s → 2.752 s (×1.25 = 2.75; sustained DPS −20 %)",
+   "ok": true,
+   "detail": "2.7518518518519364"
+  },
+  {
+   "group": "7 abilities",
+   "name": "EMP immunity: second cast at +4 s is not applied (applied=false)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "scan reveals a tank behind the ridge (seen before false, during true, after 8 s false); 0.25 s activation; cooldown 30 s",
+   "ok": true,
+   "detail": "drone→tank 58 m"
+  },
+  {
+   "group": "7 abilities",
+   "name": "Conscript enters in 1.0 s (1.000), Pulse Trooper in 0.9 s (0.900); Rocket Trooper cannot garrison",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "garrisoned units fire from ports (10 shots) and cannot be targeted",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "building destruction kills occupants (alive: false, false)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "7 abilities",
+   "name": "kill of a 900-credit tank promotes a 300-credit Rocket Trooper to Veteran (xp 900, rank 1) keeping HP % (50 %, max 121.00000000000001)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "group of 9 tanks + 12 infantry: final min surface gap 0.62 m (spacing rule ≥ 0.25 m, tolerance 0.05)",
+   "ok": true,
+   "detail": "0.6187984663132184"
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "no per-tick teleport (speed > spec + 2.6 m/s separation drift): 0",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "no heading snaps beyond the unit's yaw-rate limit: 0",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "all arrived (21/21)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "deterministic: identical state after 60 s of a 60-unit battle",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "8 collision & smoothness",
+   "name": "sim cost 0.459 ms per 30 Hz tick for 60 units in battle (budget 4 ms)",
+   "ok": true,
+   "detail": "826 ms / 1800 ticks; shots 406, kills 27"
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "pace.js and data/pace.json match the repo source (data/sync_pace.py)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "harvester top speed 12.50 m/s = 1.25 × Lancer 10 m/s, faster than both tracked tanks (H03 7.8, A03 10)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "near field: 2 full cycles (2)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "near field: simulated round trip 53.87 game s matches the pace model 53.97 s within 2%",
+   "ok": true,
+   "detail": "{\"out\":17.699999999999,\"load\":9.999999999999432,\"back\":14.966666666665816,\"dock\":9.699999999999449,\"unload\":1.4999999999999147}"
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "near field: loads 10.00 s and unloads 1.50 s (pace.json 10 / 1.5, ±1 tick)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "near field: stays out of the refinery walls (0 ticks inside) and unloads exactly on the grate (0 ticks off)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "far field: 2 full cycles (2)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "far field: simulated round trip 82.20 game s matches the pace model 81.77 s within 2%",
+   "ok": true,
+   "detail": "{\"out\":30.766666666664918,\"load\":9.999999999999432,\"back\":29.366666666668493,\"dock\":10.566666666675076,\"unload\":1.5000000000011937}"
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "far field: loads 10.00 s and unloads 1.50 s (pace.json 10 / 1.5, ±1 tick)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "group": "9 pace & harvester",
+   "name": "far field: stays out of the refinery walls (0 ticks inside) and unloads exactly on the grate (0 ticks off)",
+   "ok": true,
+   "detail": ""
+  }
+ ]
+}

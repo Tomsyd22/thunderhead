@@ -1,0 +1,3366 @@
+{
+ "generated": "2026-11-06T06:02:00.937Z",
+ "maps": {
+  "01": {
+   "name": "Emerald Strait",
+   "ms": 870,
+   "errors": [],
+   "file": {
+    "game_speed": 2.4,
+    "harvester_speed_ratio": 1.25,
+    "harvester": {
+     "capacity_bails": 20,
+     "load_s": 10,
+     "unload_s": 1.5,
+     "accel_mps2": 3,
+     "brake_mps2": 4.8,
+     "hull_turn_dps": 45,
+     "reverse_mps": 4,
+     "dock_reverse_m": 25.2,
+     "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+    }
+   },
+   "main": {
+    "map": "01",
+    "game_speed": 2.4,
+    "harvester_ratio": 1.25,
+    "harvester_mps": [
+     15,
+     8.75
+    ],
+    "harv": [
+     {
+      "dep": "R1-H2",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 24.805555555555596,
+      "game_s": 59.53333333333343,
+      "legs": {
+       "out": 17.933333333333383,
+       "load": 10,
+       "back": 18.2333333333334,
+       "dock": 11.866666666666644,
+       "unload": 1.5
+      },
+      "out_m": 123.62500556273596,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 11.996635742683104
+     },
+     {
+      "dep": "B1-H2",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.930555555555603,
+      "game_s": 59.83333333333344,
+      "legs": {
+       "out": 18.2333333333334,
+       "load": 10,
+       "back": 18.2333333333334,
+       "dock": 11.866666666666644,
+       "unload": 1.5
+      },
+      "out_m": 125.66009935146101,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 11.996635742683104
+     },
+     {
+      "dep": "R1-H1",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 25.763888888888978,
+      "game_s": 61.83333333333354,
+      "legs": {
+       "out": 19.066666666666773,
+       "load": 10,
+       "back": 19.400000000000123,
+       "dock": 11.866666666666644,
+       "unload": 1.5
+      },
+      "out_m": 123.25001659377186,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 11.539492885540247
+     },
+     {
+      "dep": "B1-H1",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 25.930555555555653,
+      "game_s": 62.23333333333357,
+      "legs": {
+       "out": 19.566666666666798,
+       "load": 10,
+       "back": 19.400000000000123,
+       "dock": 11.766666666666644,
+       "unload": 1.5
+      },
+      "out_m": 122.88121923813318,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 11.728847656910805
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 60.749999999999204,
+      "game_s": 145.79999999999808,
+      "legs": {
+       "out": 64.6999999999989,
+       "load": 10,
+       "back": 59.333333333332526,
+       "dock": 10.26666666666665,
+       "unload": 1.5
+      },
+      "out_m": 601.1914885786788,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 50.523111347336084
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 61.06944444444362,
+      "game_s": 146.56666666666467,
+      "legs": {
+       "out": 64.29999999999892,
+       "load": 10,
+       "back": 61.199999999999086,
+       "dock": 9.566666666666652,
+       "unload": 1.5
+      },
+      "out_m": 607.0217906517814,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 51.52124506645138
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 77.40277777777602,
+      "game_s": 185.76666666666245,
+      "legs": {
+       "out": 83.8999999999978,
+       "load": 10,
+       "back": 80.499999999998,
+       "dock": 9.866666666666651,
+       "unload": 1.5
+      },
+      "out_m": 981.3560684496539,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 71.61263105471704
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 77.95833333333154,
+      "game_s": 187.09999999999567,
+      "legs": {
+       "out": 84.59999999999776,
+       "load": 10,
+       "back": 81.53333333333127,
+       "dock": 9.466666666666653,
+       "unload": 1.5
+      },
+      "out_m": 1000.8100360903632,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 73.67341027107912
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 79.48611111110925,
+      "game_s": 190.7666666666622,
+      "legs": {
+       "out": 85.66666666666437,
+       "load": 10,
+       "back": 83.29999999999784,
+       "dock": 10.299999999999983,
+       "unload": 1.5
+      },
+      "out_m": 970.2784270004457,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 75.82462028710994
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 80.22222222222031,
+      "game_s": 192.53333333332873,
+      "legs": {
+       "out": 87.06666666666429,
+       "load": 10,
+       "back": 84.39999999999777,
+       "dock": 9.566666666666652,
+       "unload": 1.5
+      },
+      "out_m": 974.308929509835,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 76.2044512489567
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 96.11111111110829,
+      "game_s": 230.6666666666599,
+      "legs": {
+       "out": 105.7333333333299,
+       "load": 10,
+       "back": 103.46666666666336,
+       "dock": 9.96666666666665,
+       "unload": 1.5
+      },
+      "out_m": 1233.3613443882787,
+      "pivots": 7,
+      "timedOut": false,
+      "grid_out_s": 95.17741906118786
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 97.72222222221933,
+      "game_s": 234.53333333332637,
+      "legs": {
+       "out": 107.39999999999647,
+       "load": 10,
+       "back": 105.39999999999658,
+       "dock": 10.233333333333317,
+       "unload": 1.5
+      },
+      "out_m": 1242.9088606707796,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 94.62915548077692
+     }
+    ],
+    "b2b": [
+     {
+      "a": "B1",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 53.277777777775825,
+      "game_s": 127.86666666666197,
+      "grid_s": 130.884872391929,
+      "dist_m": 1332.7750722697124
+     }
+    ]
+   },
+   "sweep": {
+    "1.20": [
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 60.33333333333347
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 60.56666666666681
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 62.50000000000024
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 62.90000000000027
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 147.39999999999796
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 150.3999999999978
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 190.86666666666216
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 191.96666666666206
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 196.36666666666187
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 198.09999999999508
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 237.16666666665952
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 241.033333333326
+     }
+    ],
+    "1.25": [
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 59.53333333333343
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 59.83333333333344
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 61.83333333333354
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 62.23333333333357
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 145.79999999999808
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 146.56666666666467
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 185.76666666666245
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 187.09999999999567
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 190.7666666666622
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 192.53333333332873
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 230.6666666666599
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 234.53333333332637
+     }
+    ],
+    "1.30": [
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 58.800000000000054
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 59.200000000000074
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 61.20000000000017
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 61.63333333333353
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 142.29999999999822
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 143.86666666666483
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 181.33333333332936
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 182.7666666666626
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 185.53333333332915
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 187.39999999999569
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 224.59999999999357
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 228.49999999999338
+     }
+    ]
+   }
+  },
+  "02": {
+   "name": "Delta Grid",
+   "ms": 3752,
+   "errors": [],
+   "file": {
+    "game_speed": 2.4,
+    "harvester_speed_ratio": 1.25,
+    "harvester": {
+     "capacity_bails": 20,
+     "load_s": 10,
+     "unload_s": 1.5,
+     "accel_mps2": 3,
+     "brake_mps2": 4.8,
+     "hull_turn_dps": 45,
+     "reverse_mps": 4,
+     "dock_reverse_m": 25.2,
+     "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+    }
+   },
+   "main": {
+    "map": "02",
+    "game_speed": 2.4,
+    "harvester_ratio": 1.25,
+    "harvester_mps": [
+     15,
+     8.75
+    ],
+    "harv": [
+     {
+      "dep": "B2-H1",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.38888888888888,
+      "game_s": 56.133333333333304,
+      "legs": {
+       "out": 16.96666666666667,
+       "load": 10,
+       "back": 16.69999999999999,
+       "dock": 10.966666666666647,
+       "unload": 1.5
+      },
+      "out_m": 124.14417809039695,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.447602541870912
+     },
+     {
+      "dep": "B1-H1",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.45833333333332,
+      "game_s": 56.29999999999997,
+      "legs": {
+       "out": 16.96666666666667,
+       "load": 10,
+       "back": 16.733333333333324,
+       "dock": 11.09999999999998,
+       "unload": 1.5
+      },
+      "out_m": 126.4234109753132,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.715390627643211
+     },
+     {
+      "dep": "B1-H2",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 23.45833333333332,
+      "game_s": 56.29999999999997,
+      "legs": {
+       "out": 16.96666666666667,
+       "load": 10,
+       "back": 16.733333333333324,
+       "dock": 11.09999999999998,
+       "unload": 1.5
+      },
+      "out_m": 126.42840842267573,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.715390627643211
+     },
+     {
+      "dep": "R1-H1",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 23.58333333333333,
+      "game_s": 56.59999999999999,
+      "legs": {
+       "out": 17.23333333333335,
+       "load": 10,
+       "back": 16.76666666666666,
+       "dock": 11.09999999999998,
+       "unload": 1.5
+      },
+      "out_m": 126.50093438901376,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.715390627643211
+     },
+     {
+      "dep": "R2-H2",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.69444444444445,
+      "game_s": 56.86666666666668,
+      "legs": {
+       "out": 17.43333333333336,
+       "load": 10,
+       "back": 17.000000000000004,
+       "dock": 10.933333333333314,
+       "unload": 1.5
+      },
+      "out_m": 127.28994350854786,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 11.90474539901377
+     },
+     {
+      "dep": "R1-H2",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.805555555555564,
+      "game_s": 57.133333333333354,
+      "legs": {
+       "out": 17.533333333333363,
+       "load": 10,
+       "back": 17.03333333333334,
+       "dock": 11.066666666666647,
+       "unload": 1.5
+      },
+      "out_m": 129.11719118975222,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.90474539901377
+     },
+     {
+      "dep": "B2-H2",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.486111111111153,
+      "game_s": 58.766666666666765,
+      "legs": {
+       "out": 18.333333333333403,
+       "load": 10,
+       "back": 18.03333333333339,
+       "dock": 10.89999999999998,
+       "unload": 1.5
+      },
+      "out_m": 135.78069957149884,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 13.008385884670043
+     },
+     {
+      "dep": "R2-H1",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.833333333333396,
+      "game_s": 59.60000000000015,
+      "legs": {
+       "out": 18.833333333333428,
+       "load": 10,
+       "back": 18.366666666666738,
+       "dock": 10.89999999999998,
+       "unload": 1.5
+      },
+      "out_m": 139.13423029467384,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 13.4655287418129
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 57.29166666666605,
+      "game_s": 137.49999999999852,
+      "legs": {
+       "out": 59.03333333333254,
+       "load": 10,
+       "back": 56.533333333332685,
+       "dock": 10.433333333333316,
+       "unload": 1.5
+      },
+      "out_m": 485.4650813404876,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 49.54802307403543
+     },
+     {
+      "dep": "E4",
+      "kind": "expansion",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 57.69444444444381,
+      "game_s": 138.46666666666513,
+      "legs": {
+       "out": 59.766666666665834,
+       "load": 10,
+       "back": 56.799999999999336,
+       "dock": 10.399999999999983,
+       "unload": 1.5
+      },
+      "out_m": 485.842158039382,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 49.89470898121212
+     },
+     {
+      "dep": "E3",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 58.90277777777706,
+      "game_s": 141.36666666666494,
+      "legs": {
+       "out": 61.33333333333241,
+       "load": 10,
+       "back": 58.6666666666659,
+       "dock": 9.866666666666651,
+       "unload": 1.5
+      },
+      "out_m": 490.1178069276874,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 52.96847246696506
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 58.93055555555484,
+      "game_s": 141.4333333333316,
+      "legs": {
+       "out": 61.23333333333242,
+       "load": 10,
+       "back": 58.833333333332554,
+       "dock": 9.866666666666651,
+       "unload": 1.5
+      },
+      "out_m": 489.8083486939078,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 53.04737028836946
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 86.9999999999977,
+      "game_s": 208.79999999999447,
+      "legs": {
+       "out": 96.13333333333044,
+       "load": 10,
+       "back": 91.56666666666403,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1008.3363545339439,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 84.62283511899665
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 88.22222222221987,
+      "game_s": 211.73333333332766,
+      "legs": {
+       "out": 96.56666666666375,
+       "load": 10,
+       "back": 93.2333333333306,
+       "dock": 10.433333333333316,
+       "unload": 1.5
+      },
+      "out_m": 1028.6100595275718,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 86.08758740350353
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 95.9999999999972,
+      "game_s": 230.39999999999327,
+      "legs": {
+       "out": 105.79999999999656,
+       "load": 10,
+       "back": 102.6666666666634,
+       "dock": 10.433333333333316,
+       "unload": 1.5
+      },
+      "out_m": 1129.4911852230387,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 95.26324463923115
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 97.74999999999709,
+      "game_s": 234.599999999993,
+      "legs": {
+       "out": 111.33333333332958,
+       "load": 10,
+       "back": 102.16666666666343,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1113.010190633709,
+      "pivots": 7,
+      "timedOut": false,
+      "grid_out_s": 94.35959590070084
+     },
+     {
+      "dep": "E4",
+      "kind": "expansion",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 132.11111111110628,
+      "game_s": 317.06666666665507,
+      "legs": {
+       "out": 149.56666666666075,
+       "load": 10,
+       "back": 145.56666666666098,
+       "dock": 10.433333333333316,
+       "unload": 1.5
+      },
+      "out_m": 1783.6981022089392,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 135.73802508866532
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 132.9166666666618,
+      "game_s": 318.9999999999883,
+      "legs": {
+       "out": 150.23333333332738,
+       "load": 10,
+       "back": 146.83333333332757,
+       "dock": 10.433333333333316,
+       "unload": 1.5
+      },
+      "out_m": 1784.732086608947,
+      "pivots": 9,
+      "timedOut": false,
+      "grid_out_s": 136.00581317443766
+     },
+     {
+      "dep": "E3",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 134.1527777777728,
+      "game_s": 321.9666666666547,
+      "legs": {
+       "out": 152.56666666666058,
+       "load": 10,
+       "back": 148.29999999999416,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1790.4880494119031,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 140.859960078716
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 134.9722222222172,
+      "game_s": 323.9333333333213,
+      "legs": {
+       "out": 153.69999999999385,
+       "load": 10,
+       "back": 149.13333333332744,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1793.4044809268075,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 140.5132741715393
+     }
+    ],
+    "b2b": [
+     {
+      "a": "B1",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 69.55555555555269,
+      "game_s": 166.93333333332643,
+      "grid_s": 168.5255685173307,
+      "dist_m": 1770.6906193702182
+     },
+     {
+      "a": "B1",
+      "b": "R2",
+      "cls": "tank",
+      "found": true,
+      "real_s": 87.66666666666276,
+      "game_s": 210.39999999999063,
+      "grid_s": 212.17343148977838,
+      "dist_m": 2285.6294591902406
+     },
+     {
+      "a": "B2",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 87.80555555555165,
+      "game_s": 210.73333333332394,
+      "grid_s": 212.36671122801857,
+      "dist_m": 2292.215613270003
+     },
+     {
+      "a": "B2",
+      "b": "R2",
+      "cls": "tank",
+      "found": true,
+      "real_s": 72.4583333333303,
+      "game_s": 173.8999999999927,
+      "grid_s": 176.18208263944535,
+      "dist_m": 1853.6666789459887
+     }
+    ]
+   },
+   "sweep": {
+    "1.20": [
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 56.966666666666676
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 57.20000000000002
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 57.23333333333335
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 57.433333333333366
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 57.76666666666672
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 58.00000000000006
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 59.73333333333348
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 60.53333333333353
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 141.13333333333165
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 142.0333333333316
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 145.33333333333138
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 145.3666666666647
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 215.23333333332744
+     },
+     {
+      "dep": "C2",
+      "base": "R2",
+      "kind": "contested",
+      "game_s": 218.0333333333273
+     },
+     {
+      "dep": "C2",
+      "base": "B2",
+      "kind": "contested",
+      "game_s": 237.36666666665954
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 240.76666666665932
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 327.13333333332116
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 328.7666666666544
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 332.46666666665413
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 334.19999999998737
+     }
+    ],
+    "1.25": [
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 56.133333333333304
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 56.29999999999997
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 56.29999999999997
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 56.59999999999999
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 56.86666666666668
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 57.133333333333354
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 58.766666666666765
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 59.60000000000015
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 137.49999999999852
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 138.46666666666513
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 141.36666666666494
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 141.4333333333316
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 208.79999999999447
+     },
+     {
+      "dep": "C2",
+      "base": "R2",
+      "kind": "contested",
+      "game_s": 211.73333333332766
+     },
+     {
+      "dep": "C2",
+      "base": "B2",
+      "kind": "contested",
+      "game_s": 230.39999999999327
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 234.599999999993
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 317.06666666665507
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 318.9999999999883
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 321.9666666666547
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 323.9333333333213
+     }
+    ],
+    "1.30": [
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 55.366666666666596
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.49999999999993
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.53333333333327
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 55.79999999999995
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 56.06666666666664
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 56.366666666666646
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 57.86666666666673
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 58.7000000000001
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 134.09999999999872
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 135.23333333333198
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 137.66666666666515
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 137.86666666666514
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 202.96666666666147
+     },
+     {
+      "dep": "C2",
+      "base": "R2",
+      "kind": "contested",
+      "game_s": 205.96666666666133
+     },
+     {
+      "dep": "C2",
+      "base": "B2",
+      "kind": "contested",
+      "game_s": 223.89999999999364
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 228.3333333333267
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 307.8666666666556
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 310.06666666665546
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 312.46666666665527
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 314.49999999998846
+     }
+    ]
+   }
+  },
+  "03": {
+   "name": "Granite Fjord",
+   "ms": 1051,
+   "errors": [],
+   "file": {
+    "game_speed": 2.4,
+    "harvester_speed_ratio": 1.25,
+    "harvester": {
+     "capacity_bails": 20,
+     "load_s": 10,
+     "unload_s": 1.5,
+     "accel_mps2": 3,
+     "brake_mps2": 4.8,
+     "hull_turn_dps": 45,
+     "reverse_mps": 4,
+     "dock_reverse_m": 25.2,
+     "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+    }
+   },
+   "main": {
+    "map": "03",
+    "game_speed": 2.4,
+    "harvester_ratio": 1.25,
+    "harvester_mps": [
+     15,
+     8.75
+    ],
+    "harv": [
+     {
+      "dep": "B1-H1",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 22.54166666666662,
+      "game_s": 54.09999999999989,
+      "legs": {
+       "out": 15.43333333333329,
+       "load": 10,
+       "back": 15.666666666666622,
+       "dock": 11.499999999999979,
+       "unload": 1.5
+      },
+      "out_m": 109.51605933575776,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 10.200552456678748
+     },
+     {
+      "dep": "R1-H2",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 22.888888888888843,
+      "game_s": 54.93333333333322,
+      "legs": {
+       "out": 15.799999999999955,
+       "load": 10,
+       "back": 16.066666666666624,
+       "dock": 11.566666666666645,
+       "unload": 1.5
+      },
+      "out_m": 112.01510316400457,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 10.468340542451047
+     },
+     {
+      "dep": "B1-H2",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 22.93055555555551,
+      "game_s": 55.033333333333225,
+      "legs": {
+       "out": 15.833333333333288,
+       "load": 10,
+       "back": 16.09999999999996,
+       "dock": 11.599999999999978,
+       "unload": 1.5
+      },
+      "out_m": 112.01707353484024,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 10.468340542451047
+     },
+     {
+      "dep": "R1-H1",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 23.11111111111107,
+      "game_s": 55.46666666666657,
+      "legs": {
+       "out": 16.133333333333294,
+       "load": 10,
+       "back": 16.199999999999964,
+       "dock": 11.633333333333312,
+       "unload": 1.5
+      },
+      "out_m": 111.47599289418959,
+      "pivots": 5,
+      "timedOut": false,
+      "grid_out_s": 10.278985771080489
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 52.99999999999961,
+      "game_s": 127.19999999999906,
+      "legs": {
+       "out": 54.79999999999945,
+       "load": 10,
+       "back": 51.29999999999965,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 521.2731027807727,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 46.14440180459506
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 53.652777777777345,
+      "game_s": 128.76666666666563,
+      "legs": {
+       "out": 55.33333333333275,
+       "load": 10,
+       "back": 52.366666666666255,
+       "dock": 9.566666666666652,
+       "unload": 1.5
+      },
+      "out_m": 527.4084224296103,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 46.3310492307517
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 65.45833333333226,
+      "game_s": 157.0999999999974,
+      "legs": {
+       "out": 69.73333333333194,
+       "load": 10,
+       "back": 66.26666666666547,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 716.8031907538608,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 60.70517689452008
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 65.56944444444336,
+      "game_s": 157.36666666666406,
+      "legs": {
+       "out": 69.7999999999986,
+       "load": 10,
+       "back": 66.46666666666546,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 717.0755586496825,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 60.705176894520086
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 79.84722222222032,
+      "game_s": 191.63333333332878,
+      "legs": {
+       "out": 85.49999999999771,
+       "load": 10,
+       "back": 84.73333333333109,
+       "dock": 9.899999999999984,
+       "unload": 1.5
+      },
+      "out_m": 932.4364010926013,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 75.33629627470128
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 80.1249999999981,
+      "game_s": 192.2999999999954,
+      "legs": {
+       "out": 86.26666666666434,
+       "load": 10,
+       "back": 84.6333333333311,
+       "dock": 9.899999999999984,
+       "unload": 1.5
+      },
+      "out_m": 943.2141977228799,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 76.59614647705806
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 125.04166666666221,
+      "game_s": 300.0999999999893,
+      "legs": {
+       "out": 140.83333333332791,
+       "load": 10,
+       "back": 138.1666666666614,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1670.1334603547953,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 127.57941997705456
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 125.43055555555107,
+      "game_s": 301.03333333332256,
+      "legs": {
+       "out": 141.96666666666118,
+       "load": 10,
+       "back": 137.9666666666614,
+       "dock": 9.599999999999985,
+       "unload": 1.5
+      },
+      "out_m": 1692.7112893045137,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 129.4830604627108
+     }
+    ],
+    "b2b": [
+     {
+      "a": "B1",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 40.70833333333209,
+      "game_s": 97.69999999999702,
+      "grid_s": 101.15412969054552,
+      "dist_m": 1037.2643432696536
+     }
+    ]
+   },
+   "sweep": {
+    "1.20": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 54.76666666666656
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 55.666666666666586
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.69999999999992
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 56.0666666666666
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 130.4999999999989
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 132.03333333333214
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 161.46666666666383
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 161.63333333333048
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 197.0666666666618
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 197.96666666666175
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 308.69999999998885
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 309.8666666666554
+     }
+    ],
+    "1.25": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 54.09999999999989
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 54.93333333333322
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.033333333333225
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 55.46666666666657
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 127.19999999999906
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 128.76666666666563
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 157.0999999999974
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 157.36666666666406
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 191.63333333332878
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 192.2999999999954
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 300.0999999999893
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 301.03333333332256
+     }
+    ],
+    "1.30": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 53.49999999999989
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 54.39999999999989
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 54.43333333333322
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 54.86666666666655
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 124.13333333333259
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 125.96666666666582
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 153.13333333333097
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 153.4999999999976
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 186.9999999999957
+     },
+     {
+      "dep": "E2",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 187.06666666666237
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 292.3999999999897
+     },
+     {
+      "dep": "E2",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 292.96666666665635
+     }
+    ]
+   }
+  },
+  "04": {
+   "name": "Sunbreak Atoll",
+   "ms": 1447,
+   "errors": [],
+   "file": {
+    "game_speed": 2.4,
+    "harvester_speed_ratio": 1.25,
+    "harvester": {
+     "capacity_bails": 20,
+     "load_s": 10,
+     "unload_s": 1.5,
+     "accel_mps2": 3,
+     "brake_mps2": 4.8,
+     "hull_turn_dps": 45,
+     "reverse_mps": 4,
+     "dock_reverse_m": 25.2,
+     "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+    }
+   },
+   "main": {
+    "map": "04",
+    "game_speed": 2.4,
+    "harvester_ratio": 1.25,
+    "harvester_mps": [
+     15,
+     8.75
+    ],
+    "harv": [
+     {
+      "dep": "R2-H2",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 27.166666666666842,
+      "game_s": 65.20000000000041,
+      "legs": {
+       "out": 21.066666666666872,
+       "load": 10,
+       "back": 21.500000000000227,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 162.3808774141136,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.508662113009418
+     },
+     {
+      "dep": "R1-H2",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 27.277777777777956,
+      "game_s": 65.4666666666671,
+      "legs": {
+       "out": 21.300000000000217,
+       "load": 10,
+       "back": 21.533333333333562,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 164.383639607278,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.508662113009418
+     },
+     {
+      "dep": "B2-H1",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 27.291666666666845,
+      "game_s": 65.50000000000043,
+      "legs": {
+       "out": 21.300000000000217,
+       "load": 10,
+       "back": 21.566666666666897,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 162.42685976653954,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.508662113009418
+     },
+     {
+      "dep": "B1-H1",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 27.375000000000185,
+      "game_s": 65.70000000000044,
+      "legs": {
+       "out": 21.533333333333562,
+       "load": 10,
+       "back": 21.533333333333562,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 164.4409054149574,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.508662113009418
+     },
+     {
+      "dep": "R1-H1",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 27.527777777777967,
+      "game_s": 66.06666666666712,
+      "legs": {
+       "out": 21.600000000000232,
+       "load": 10,
+       "back": 21.833333333333577,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 166.9410444911471,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.698016884379975
+     },
+     {
+      "dep": "B1-H2",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 27.625000000000195,
+      "game_s": 66.30000000000047,
+      "legs": {
+       "out": 21.833333333333577,
+       "load": 10,
+       "back": 21.833333333333577,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 167.00292455921638,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 16.698016884379975
+     },
+     {
+      "dep": "R2-H1",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 27.708333333333535,
+      "game_s": 66.50000000000048,
+      "legs": {
+       "out": 21.700000000000237,
+       "load": 10,
+       "back": 22.166666666666927,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 167.9877645001609,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 17.15515974152283
+     },
+     {
+      "dep": "B2-H2",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 27.83333333333354,
+      "game_s": 66.8000000000005,
+      "legs": {
+       "out": 21.966666666666917,
+       "load": 10,
+       "back": 22.200000000000262,
+       "dock": 11.133333333333313,
+       "unload": 1.5
+      },
+      "out_m": 168.06431178761554,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 17.15515974152283
+     },
+     {
+      "dep": "E1",
+      "kind": "contested-expansion",
+      "base": "–",
+      "unreachable": true,
+      "team": "B",
+      "dock": "A",
+      "found": false,
+      "real_s": null,
+      "game_s": null,
+      "legs": null,
+      "out_m": null,
+      "pivots": null,
+      "timedOut": null,
+      "grid_out_s": null
+     },
+     {
+      "dep": "E2",
+      "kind": "contested-expansion",
+      "base": "–",
+      "unreachable": true,
+      "team": "B",
+      "dock": "A",
+      "found": false,
+      "real_s": null,
+      "game_s": null,
+      "legs": null,
+      "out_m": null,
+      "pivots": null,
+      "timedOut": null,
+      "grid_out_s": null
+     },
+     {
+      "dep": "E3",
+      "kind": "contested-expansion",
+      "base": "–",
+      "unreachable": true,
+      "team": "B",
+      "dock": "A",
+      "found": false,
+      "real_s": null,
+      "game_s": null,
+      "legs": null,
+      "out_m": null,
+      "pivots": null,
+      "timedOut": null,
+      "grid_out_s": null
+     },
+     {
+      "dep": "E4",
+      "kind": "contested-expansion",
+      "base": "–",
+      "unreachable": true,
+      "team": "B",
+      "dock": "A",
+      "found": false,
+      "real_s": null,
+      "game_s": null,
+      "legs": null,
+      "out_m": null,
+      "pivots": null,
+      "timedOut": null,
+      "grid_out_s": null
+     }
+    ],
+    "b2b": [
+     {
+      "a": "B1",
+      "b": "R1",
+      "cls": "amphibious",
+      "found": true,
+      "real_s": 92.51388888888471,
+      "game_s": 222.0333333333233,
+      "grid_s": 218.40218365212314,
+      "dist_m": 1558.7270615443695
+     },
+     {
+      "a": "B1",
+      "b": "R2",
+      "cls": "amphibious",
+      "found": true,
+      "real_s": 140.19444444446614,
+      "game_s": 336.4666666667187,
+      "grid_s": 331.6691870277137,
+      "dist_m": 2703.992810313691
+     },
+     {
+      "a": "B2",
+      "b": "R1",
+      "cls": "amphibious",
+      "found": true,
+      "real_s": 137.86111111113095,
+      "game_s": 330.86666666671425,
+      "grid_s": 331.28779182350047,
+      "dist_m": 2012.2401715074107
+     },
+     {
+      "a": "B2",
+      "b": "R2",
+      "cls": "amphibious",
+      "found": true,
+      "real_s": 92.40277777777361,
+      "game_s": 221.76666666665665,
+      "grid_s": 218.25544964367134,
+      "dist_m": 1556.528191563584
+     }
+    ]
+   },
+   "sweep": {
+    "1.20": [
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 66.46666666666714
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 66.73333333333382
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 66.73333333333383
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 66.96666666666717
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 67.30000000000052
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 67.5666666666672
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 67.86666666666721
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 68.10000000000056
+     },
+     {
+      "dep": "E1",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E2",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E3",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E4",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     }
+    ],
+    "1.25": [
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 65.20000000000041
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 65.4666666666671
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 65.50000000000043
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 65.70000000000044
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 66.06666666666712
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 66.30000000000047
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 66.50000000000048
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 66.8000000000005
+     },
+     {
+      "dep": "E1",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E2",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E3",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E4",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     }
+    ],
+    "1.30": [
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 64.06666666666702
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 64.3333333333337
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 64.40000000000038
+     },
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 64.56666666666705
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 64.83333333333373
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 65.16666666666708
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 65.36666666666709
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 65.6666666666671
+     },
+     {
+      "dep": "E1",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E2",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E3",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     },
+     {
+      "dep": "E4",
+      "base": "–",
+      "kind": "contested-expansion",
+      "game_s": null
+     }
+    ]
+   }
+  },
+  "05": {
+   "name": "Copperhead Bay",
+   "ms": 4777,
+   "errors": [],
+   "file": {
+    "game_speed": 2.4,
+    "harvester_speed_ratio": 1.25,
+    "harvester": {
+     "capacity_bails": 20,
+     "load_s": 10,
+     "unload_s": 1.5,
+     "accel_mps2": 3,
+     "brake_mps2": 4.8,
+     "hull_turn_dps": 45,
+     "reverse_mps": 4,
+     "dock_reverse_m": 25.2,
+     "_note": "load 0.5 s per bail x 20 bails and unload 1.5 s are the existing rules.js values. Six-wheel skid steer, so it pivots in place like the tracked units. It docks RA2-style: stops at the refinery bay's approach point, pivots to face the deposits and reverses 25.2 m onto the unloading grate, so every outbound trip starts facing the field."
+    }
+   },
+   "main": {
+    "map": "05",
+    "game_speed": 2.4,
+    "harvester_ratio": 1.25,
+    "harvester_mps": [
+     15,
+     8.75
+    ],
+    "harv": [
+     {
+      "dep": "B1-H1",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.23611111111109,
+      "game_s": 55.766666666666616,
+      "legs": {
+       "out": 16.83333333333333,
+       "load": 10,
+       "back": 16.36666666666664,
+       "dock": 11.066666666666647,
+       "unload": 1.5
+      },
+      "out_m": 123.44183296167371,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.258247770500354
+     },
+     {
+      "dep": "B2-H1",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.38888888888888,
+      "game_s": 56.133333333333304,
+      "legs": {
+       "out": 16.96666666666667,
+       "load": 10,
+       "back": 16.69999999999999,
+       "dock": 10.966666666666647,
+       "unload": 1.5
+      },
+      "out_m": 124.1479570970128,
+      "pivots": 3,
+      "timedOut": false,
+      "grid_out_s": 11.447602541870912
+     },
+     {
+      "dep": "R1-H2",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.499999999999993,
+      "game_s": 56.39999999999998,
+      "legs": {
+       "out": 17.200000000000014,
+       "load": 10,
+       "back": 16.666666666666654,
+       "dock": 11.033333333333314,
+       "unload": 1.5
+      },
+      "out_m": 126.19113514760025,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 11.447602541870912
+     },
+     {
+      "dep": "R2-H2",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 23.69444444444445,
+      "game_s": 56.86666666666668,
+      "legs": {
+       "out": 17.43333333333336,
+       "load": 10,
+       "back": 17.000000000000004,
+       "dock": 10.933333333333314,
+       "unload": 1.5
+      },
+      "out_m": 127.30433927739142,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 11.90474539901377
+     },
+     {
+      "dep": "B1-H2",
+      "kind": "home",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.33333333333337,
+      "game_s": 58.40000000000009,
+      "legs": {
+       "out": 18.300000000000068,
+       "load": 10,
+       "back": 17.733333333333373,
+       "dock": 10.866666666666648,
+       "unload": 1.5
+      },
+      "out_m": 135.29848018046832,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 12.819031113299484
+     },
+     {
+      "dep": "R1-H1",
+      "kind": "home",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.388888888888932,
+      "game_s": 58.53333333333343,
+      "legs": {
+       "out": 18.433333333333408,
+       "load": 10,
+       "back": 17.733333333333373,
+       "dock": 10.866666666666648,
+       "unload": 1.5
+      },
+      "out_m": 135.51385993015657,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 12.819031113299484
+     },
+     {
+      "dep": "B2-H2",
+      "kind": "home",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.486111111111153,
+      "game_s": 58.766666666666765,
+      "legs": {
+       "out": 18.333333333333403,
+       "load": 10,
+       "back": 18.03333333333339,
+       "dock": 10.89999999999998,
+       "unload": 1.5
+      },
+      "out_m": 135.77844225660584,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 13.008385884670043
+     },
+     {
+      "dep": "R2-H1",
+      "kind": "home",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 24.54166666666671,
+      "game_s": 58.900000000000105,
+      "legs": {
+       "out": 18.466666666666743,
+       "load": 10,
+       "back": 18.03333333333339,
+       "dock": 10.89999999999998,
+       "unload": 1.5
+      },
+      "out_m": 136.00111208524567,
+      "pivots": 4,
+      "timedOut": false,
+      "grid_out_s": 13.008385884670043
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 53.56944444444403,
+      "game_s": 128.56666666666567,
+      "legs": {
+       "out": 55.133333333332764,
+       "load": 10,
+       "back": 52.03333333333294,
+       "dock": 9.899999999999984,
+       "unload": 1.5
+      },
+      "out_m": 471.0706181752356,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 42.68504086786312
+     },
+     {
+      "dep": "E3",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 54.37499999999954,
+      "game_s": 130.4999999999989,
+      "legs": {
+       "out": 56.333333333332696,
+       "load": 10,
+       "back": 52.76666666666623,
+       "dock": 9.899999999999984,
+       "unload": 1.5
+      },
+      "out_m": 474.9657977297142,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 42.950586115424144
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 61.90277777777691,
+      "game_s": 148.5666666666646,
+      "legs": {
+       "out": 64.36666666666558,
+       "load": 10,
+       "back": 62.36666666666569,
+       "dock": 10.333333333333316,
+       "unload": 1.5
+      },
+      "out_m": 661.037087739337,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 54.94633269250286
+     },
+     {
+      "dep": "E4",
+      "kind": "expansion",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "A",
+      "found": true,
+      "real_s": 62.66666666666576,
+      "game_s": 150.39999999999782,
+      "legs": {
+       "out": 65.19999999999887,
+       "load": 10,
+       "back": 63.36666666666563,
+       "dock": 10.333333333333316,
+       "unload": 1.5
+      },
+      "out_m": 678.5398564850558,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 57.39893351907404
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 93.88888888888619,
+      "game_s": 225.33333333332683,
+      "legs": {
+       "out": 103.3999999999967,
+       "load": 10,
+       "back": 100.93333333333017,
+       "dock": 9.499999999999986,
+       "unload": 1.5
+      },
+      "out_m": 858.4956157171533,
+      "pivots": 8,
+      "timedOut": false,
+      "grid_out_s": 86.86466150289212
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 95.04166666666391,
+      "game_s": 228.09999999999337,
+      "legs": {
+       "out": 105.83333333332989,
+       "load": 10,
+       "back": 101.26666666666348,
+       "dock": 9.499999999999986,
+       "unload": 1.5
+      },
+      "out_m": 863.6912171015352,
+      "pivots": 11,
+      "timedOut": false,
+      "grid_out_s": 87.01704245527309
+     },
+     {
+      "dep": "C2",
+      "kind": "contested",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 117.31944444444045,
+      "game_s": 281.56666666665706,
+      "legs": {
+       "out": 131.43333333332845,
+       "load": 10,
+       "back": 128.7333333333286,
+       "dock": 9.899999999999984,
+       "unload": 1.5
+      },
+      "out_m": 1519.0358816646517,
+      "pivots": 12,
+      "timedOut": false,
+      "grid_out_s": 114.69142442069702
+     },
+     {
+      "dep": "C1",
+      "kind": "contested",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 118.30555555555149,
+      "game_s": 283.93333333332356,
+      "legs": {
+       "out": 132.93333333332836,
+       "load": 10,
+       "back": 129.76666666666188,
+       "dock": 9.733333333333318,
+       "unload": 1.5
+      },
+      "out_m": 1521.8143241253442,
+      "pivots": 10,
+      "timedOut": false,
+      "grid_out_s": 114.88708304809973
+     },
+     {
+      "dep": "E1",
+      "kind": "expansion",
+      "base": "R1",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 122.65277777777348,
+      "game_s": 294.36666666665633,
+      "legs": {
+       "out": 135.16666666666157,
+       "load": 10,
+       "back": 138.0666666666614,
+       "dock": 9.633333333333319,
+       "unload": 1.5
+      },
+      "out_m": 1758.6735555525236,
+      "pivots": 9,
+      "timedOut": false,
+      "grid_out_s": 124.23731736481967
+     },
+     {
+      "dep": "E3",
+      "kind": "expansion",
+      "base": "B1",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 123.04166666666234,
+      "game_s": 295.2999999999896,
+      "legs": {
+       "out": 135.99999999999486,
+       "load": 10,
+       "back": 138.1666666666614,
+       "dock": 9.633333333333319,
+       "unload": 1.5
+      },
+      "out_m": 1755.436227978643,
+      "pivots": 9,
+      "timedOut": false,
+      "grid_out_s": 124.27475569081194
+     },
+     {
+      "dep": "E4",
+      "kind": "expansion",
+      "base": "B2",
+      "unreachable": false,
+      "team": "B",
+      "dock": "B",
+      "found": true,
+      "real_s": 133.8194444444395,
+      "game_s": 321.1666666666548,
+      "legs": {
+       "out": 150.16666666666072,
+       "load": 10,
+       "back": 149.16666666666077,
+       "dock": 10.333333333333316,
+       "unload": 1.5
+      },
+      "out_m": 1953.1095867961358,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 141.6921294340754
+     },
+     {
+      "dep": "E2",
+      "kind": "expansion",
+      "base": "R2",
+      "unreachable": false,
+      "team": "R",
+      "dock": "B",
+      "found": true,
+      "real_s": 134.374999999995,
+      "game_s": 322.499999999988,
+      "legs": {
+       "out": 151.23333333332732,
+       "load": 10,
+       "back": 149.53333333332742,
+       "dock": 10.233333333333317,
+       "unload": 1.5
+      },
+      "out_m": 1953.4093467985533,
+      "pivots": 6,
+      "timedOut": false,
+      "grid_out_s": 141.69212943407544
+     }
+    ],
+    "b2b": [
+     {
+      "a": "B1",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 62.36111111110865,
+      "game_s": 149.66666666666075,
+      "grid_s": 151.57675389621045,
+      "dist_m": 1660.1623007458418
+     },
+     {
+      "a": "B1",
+      "b": "R2",
+      "cls": "tank",
+      "found": true,
+      "real_s": 99.09722222221767,
+      "game_s": 237.8333333333224,
+      "grid_s": 240.82689301162347,
+      "dist_m": 2641.422919674108
+     },
+     {
+      "a": "B2",
+      "b": "R1",
+      "cls": "tank",
+      "found": true,
+      "real_s": 99.22222222221767,
+      "game_s": 238.13333333332238,
+      "grid_s": 241.05851020356056,
+      "dist_m": 2639.9591630409905
+     },
+     {
+      "a": "B2",
+      "b": "R2",
+      "cls": "tank",
+      "found": true,
+      "real_s": 90.0694444444404,
+      "game_s": 216.16666666665697,
+      "grid_s": 218.56341641214712,
+      "dist_m": 2376.3316786982673
+     }
+    ]
+   },
+   "sweep": {
+    "1.20": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 56.566666666666656
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 56.966666666666676
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 57.300000000000026
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 57.70000000000005
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 59.30000000000013
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 59.46666666666681
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 59.73333333333348
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 59.86666666666683
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 131.23333333333218
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 132.99999999999875
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 152.26666666666438
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 154.43333333333092
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 231.16666666665986
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 233.83333333332638
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 289.33333333332325
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 291.5999999999898
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 303.29999999998915
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 304.6666666666557
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 332.3333333333208
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 333.53333333332074
+     }
+    ],
+    "1.25": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.766666666666616
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 56.133333333333304
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 56.39999999999998
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 56.86666666666668
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 58.40000000000009
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 58.53333333333343
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 58.766666666666765
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 58.900000000000105
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 128.56666666666567
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 130.4999999999989
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 148.5666666666646
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 150.39999999999782
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 225.33333333332683
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 228.09999999999337
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 281.56666666665706
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 283.93333333332356
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 294.36666666665633
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 295.2999999999896
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 321.1666666666548
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 322.499999999988
+     }
+    ],
+    "1.30": [
+     {
+      "dep": "B1-H1",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 55.033333333333246
+     },
+     {
+      "dep": "B2-H1",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 55.333333333333265
+     },
+     {
+      "dep": "R1-H2",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 55.63333333333328
+     },
+     {
+      "dep": "R2-H2",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 56.06666666666664
+     },
+     {
+      "dep": "B1-H2",
+      "base": "B1",
+      "kind": "home",
+      "game_s": 57.533333333333374
+     },
+     {
+      "dep": "R1-H1",
+      "base": "R1",
+      "kind": "home",
+      "game_s": 57.63333333333338
+     },
+     {
+      "dep": "B2-H2",
+      "base": "B2",
+      "kind": "home",
+      "game_s": 57.90000000000006
+     },
+     {
+      "dep": "R2-H1",
+      "base": "R2",
+      "kind": "home",
+      "game_s": 58.00000000000007
+     },
+     {
+      "dep": "E1",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 125.86666666666585
+     },
+     {
+      "dep": "E3",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 128.03333333333237
+     },
+     {
+      "dep": "E2",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 145.03333333333143
+     },
+     {
+      "dep": "E4",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 146.66666666666467
+     },
+     {
+      "dep": "C1",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 219.9999999999938
+     },
+     {
+      "dep": "C2",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 223.033333333327
+     },
+     {
+      "dep": "C2",
+      "base": "B1",
+      "kind": "contested",
+      "game_s": 274.09999999999076
+     },
+     {
+      "dep": "C1",
+      "base": "R1",
+      "kind": "contested",
+      "game_s": 276.73333333332397
+     },
+     {
+      "dep": "E1",
+      "base": "R1",
+      "kind": "expansion",
+      "game_s": 286.13333333332343
+     },
+     {
+      "dep": "E3",
+      "base": "B1",
+      "kind": "expansion",
+      "game_s": 287.1333333333234
+     },
+     {
+      "dep": "E4",
+      "base": "B2",
+      "kind": "expansion",
+      "game_s": 310.9666666666554
+     },
+     {
+      "dep": "E2",
+      "base": "R2",
+      "kind": "expansion",
+      "game_s": 312.36666666665525
+     }
+    ]
+   }
+  }
+ }
+}

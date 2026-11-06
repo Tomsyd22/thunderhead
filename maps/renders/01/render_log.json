@@ -1,0 +1,62 @@
+{
+ "stats": {
+  "terrain_chunks": 225,
+  "terrain_tris": 1283970,
+  "asset_types": 35,
+  "instances": 4601,
+  "demo_instances": 38,
+  "missing_assets": [],
+  "collision_boxes": 377,
+  "grass_clumps": 61272,
+  "build_s": 10.7
+ },
+ "renders": [
+  {
+   "file": "preset_1_overview.png",
+   "preset": "overview",
+   "seconds": 51.9,
+   "samples": 24,
+   "device": "GPU \u00b7 METAL \u00b7 Apple M1 (GPU - 7 cores)",
+   "gpu_warmup_s": 157.5,
+   "blender": "5.2.3 LTS",
+   "date": "2026-11-06 23:47",
+   "previous": {
+    "seconds": 375.4,
+    "samples": 24,
+    "device": "CPU (cloud VM, 2 vCPU)",
+    "blender": "4.5.15 LTS"
+   }
+  },
+  {
+   "file": "preset_2_gameplay.png",
+   "preset": "gameplay",
+   "seconds": 30.2,
+   "samples": 24,
+   "device": "GPU \u00b7 METAL \u00b7 Apple M1 (GPU - 7 cores)",
+   "gpu_warmup_s": 157.5,
+   "blender": "5.2.3 LTS",
+   "date": "2026-11-06 23:47",
+   "previous": {
+    "seconds": 392.3,
+    "samples": 24,
+    "device": "CPU (cloud VM, 2 vCPU)",
+    "blender": "4.5.15 LTS"
+   }
+  },
+  {
+   "file": "preset_3_base.png",
+   "preset": "base",
+   "seconds": 229.0
+  },
+  {
+   "file": "preset_4_harbor.png",
+   "preset": "harbor",
+   "seconds": 204.4
+  },
+  {
+   "file": "preset_5_detail.png",
+   "preset": "detail",
+   "seconds": 341.4
+  }
+ ]
+}

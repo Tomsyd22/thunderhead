@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map View Test</title>
+<meta name="description" content="Loads a Map Lab map through play/mapdata.js and play/maprender.js and renders it with a game-style camera.">
+<style>
+:root { --bg: #0a0d10; --panel: rgba(13, 17, 21, 0.9); --line: #2d3842; --text: #d3dae0; --muted: #8794a0; color-scheme: dark; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font: 12px/1.45 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+canvas#view { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; }
+#hud { position: fixed; left: 12px; top: 12px; max-width: min(420px, calc(100vw - 24px)); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-family: ui-monospace, Menlo, monospace; font-size: 11px; white-space: pre-wrap; }
+#hud.hidden { display: none; }
+#mm { position: fixed; right: 12px; bottom: 12px; width: min(220px, 40vw); aspect-ratio: 1; border: 1px solid var(--line); border-radius: 4px; background: #000; }
+#views { position: fixed; right: 12px; top: 12px; display: flex; gap: 4px; }
+#views button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px; cursor: pointer; font: inherit; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="view"></canvas>
+<canvas id="mm" width="440" height="440"></canvas>
+<div id="views"><button data-v="overview">Overview</button><button data-v="base">Blue base</button></div>
+<div id="hud">Loading…</div>
+<script type="module">
+// Test harness for play/mapdata.js + play/maprender.js. URL parameters:
+//   map=01  quality=low|medium|high  exclude=game|none (game: drop team base-kit items and unit_* demo units)
+//   manual=1 (no animation loop; frames are driven by window.__mt.renderFrames)  aa=0|1  hud=0
+import * as THREE from 'three';
+import { MapControls } from 'three/addons/controls/MapControls.js';
+import { loadMapData } from './mapdata.js';
+import { buildMapView, addMapLighting, MAP_QUALITY } from './maprender.js';
+
+const Q = new URLSearchParams(location.search);
+const MAP = Q.get('map') || '01', QUALITY = MAP_QUALITY[Q.get('quality')] ? Q.get('quality') : 'medium';
+const EXCLUDE = Q.get('exclude') || 'game', MANUAL = Q.get('manual') === '1';
+const $ = (s) => document.querySelector(s);
+const mt = window.__mt = { ready: false, errors: [], timings: {}, map: MAP, quality: QUALITY, exclude: EXCLUDE };
+addEventListener('error', (e) => mt.errors.push(String(e.message || e)));
+addEventListener('unhandledrejection', (e) => mt.errors.push(String((e.reason && e.reason.message) || e.reason)));
+if (Q.get('hud') === '0') $('#hud').classList.add('hidden');
+
+// ── renderer (owned by the game; these are the settings the Map Lab look assumes) ──
+const canvas = $('#view');
+const aa = Q.get('aa') ? Q.get('aa') === '1' : true;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: aa, powerPreference: 'high-performance' });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.5, 40000);
+const controls = new MapControls(camera, canvas);
+controls.enableDamping = !MANUAL; controls.dampingFactor = 0.14; controls.screenSpacePanning = false;
+controls.maxPolarAngle = THREE.MathUtils.degToRad(88); controls.minDistance = 2; controls.maxDistance = 9000;
+function applyRendererQuality(q) {
+  const Qp = MAP_QUALITY[q];
+  renderer.setPixelRatio(Qp.pixelRatio(devicePixelRatio)); renderer.setSize(innerWidth, innerHeight, false);
+  renderer.shadowMap.enabled = Qp.shadows;
+}
+applyRendererQuality(QUALITY);
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight, false); });
+
+// ── load ──
+let T, view, light;
+const exclude = EXCLUDE === 'none' ? null : (name, row) => name.startsWith('unit_') || (row[5] || 0) !== 0;
+try {
+  const t0 = performance.now();
+  T = await loadMapData(`maps/${MAP}/`);
+  mt.timings.mapDataMs = Math.round(performance.now() - t0);
+  light = addMapLighting(THREE, scene, renderer, T, { quality: QUALITY });
+  const t1 = performance.now();
+  view = await buildMapView({ THREE, scene, renderer, T, assetBase: 'assets/map/', exclude, quality: QUALITY,
+    onProgress: (stage, f) => { $('#hud').textContent = `Loading ${T.name}: ${stage} ${Math.round(f * 100)}%`; } });
+  mt.timings.mapViewMs = Math.round(performance.now() - t1);
+  mt.timings.totalMs = Math.round(performance.now() - t0);
+} catch (e) {
+  mt.errors.push('load: ' + (e.stack || e.message || e)); $('#hud').textContent = 'Load failed: ' + (e.message || e); throw e;
+}
+mt.T = T; mt.view = view; mt.THREE = THREE; mt.scene = scene; mt.camera = camera; mt.renderer = renderer;
+
+// ── camera views ──
+const w2t = (x, y, z) => new THREE.Vector3(x, z, -y);
+function setCam(pos, tgt) { camera.position.copy(pos); controls.target.copy(tgt); camera.lookAt(tgt); const d = controls.enableDamping; controls.enableDamping = false; controls.update(); controls.enableDamping = d; }
+const VIEWS = {
+  // whole map, top-down, height fitted to the viewport (lab.js applyPreset 'overview' fit)
+  overview() {
+    const fy = (innerHeight / 2) / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), half = Math.min(innerWidth, innerHeight) / 2;
+    const h = (T.S / 2) * 1.05 * fy / Math.max(half, 50) + Math.max(T.hmax, 0);
+    setCam(w2t(T.S / 2, T.S / 2 - 0.5, h), w2t(T.S / 2, T.S / 2, 0));
+  },
+  // RTS gameplay angle on the blue base: the Lab's gameplay preset offset (−70, −140, +150 m: ~215 m range, ~46° from vertical)
+  base() {
+    const pad = (T.meta.pads || []).find((p) => p.team === 'B') || { center: [450, 1404] };
+    const [x, y] = pad.center, z = T.height(x, y);
+    setCam(w2t(x - 70, y - 140, z + 150), w2t(x, y, z));
+  },
+  // same RTS angle over the densest 100 m cell of trees (vegetation LOD / culling worst case)
+  forest() {
+    const cnt = new Map(); let best = null;
+    for (const [name, rows] of Object.entries(T.instances)) if (/^veg_(oak|pine|palm|poplar|mangrove|broadleaf|jungle|scots)/.test(name)) for (const r of rows) {
+      const k = `${Math.floor(r[0] / 100)},${Math.floor(r[1] / 100)}`, c = (cnt.get(k) || 0) + 1; cnt.set(k, c); if (!best || c > best[1]) best = [k, c];
+    }
+    const [i, j] = best ? best[0].split(',').map(Number) : [T.S / 200, T.S / 200], x = i * 100 + 50, y = j * 100 + 50, z = T.height(x, y);
+    setCam(w2t(x - 70, y - 140, z + 150), w2t(x, y, z));
+  },
+};
+mt.setView = (k) => { VIEWS[k](); mt.viewName = k; };
+mt.look = (pos, tgt) => { setCam(w2t(...pos), w2t(...tgt)); mt.viewName = 'custom'; };   // sim coordinates [x, y, z]
+for (const b of document.querySelectorAll('#views button')) b.onclick = () => mt.setView(b.dataset.v);
+mt.setView('overview');
+
+// adaptive near plane (lab.js updateCamPlanes): keeps depth precision for roads / decks at every zoom
+function updateCamPlanes() {
+  const wx = camera.position.x, wy = -camera.position.z;
+  const ground = wx >= 0 && wy >= 0 && wx <= T.S && wy <= T.S ? T.surface(wx, wy) : 0;
+  const near = Math.min(Math.max((camera.position.y - ground) * 0.2, 0.15), 30);
+  if (Math.abs(near - camera.near) / camera.near > 0.08) { camera.near = near; camera.updateProjectionMatrix(); }
+}
+
+// ── minimap: base image + camera footprint ──
+const mm = $('#mm'), mctx = mm.getContext('2d'), _ray = new THREE.Raycaster(), _plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), _hit = new THREE.Vector3();
+function drawMinimap() {
+  const W = mm.width, tp = (x, y) => [x / T.S * W, (1 - y / T.S) * W];
+  mctx.drawImage(view.minimapCanvas, 0, 0, W, W);
+  _plane.constant = -controls.target.y;
+  const fp = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => { _ray.setFromCamera({ x: u, y: v }, camera); const p = _ray.ray.intersectPlane(_plane, _hit) ? _hit : _ray.ray.at(6000, _hit); return tp(p.x, -p.z); });
+  mctx.save(); mctx.beginPath(); mctx.rect(0, 0, W, W); mctx.clip();
+  mctx.fillStyle = 'rgba(255,255,255,0.10)'; mctx.strokeStyle = 'rgba(255,255,255,0.95)'; mctx.lineWidth = Math.max(1.2, W / 140);
+  mctx.beginPath(); fp.forEach(([a, b], k) => (k ? mctx.lineTo(a, b) : mctx.moveTo(a, b))); mctx.closePath(); mctx.fill(); mctx.stroke();
+  mctx.restore();
+}
+
+// ── frame ──
+let last = performance.now(), hudT = 0;
+function frame(dt) {
+  controls.update();
+  updateCamPlanes();
+  light.update(camera, controls.target);
+  const u0 = performance.now(); view.update(camera, dt); mt.updateMs = performance.now() - u0;
+  const r0 = performance.now(); renderer.render(scene, camera); mt.renderMs = performance.now() - r0;
+  drawMinimap();
+}
+function hud() {
+  const s = view.stats();
+  $('#hud').textContent = `${T.name} · ${QUALITY} · exclude=${EXCLUDE}\n` +
+    `draw calls ${s.lastRender.drawCalls} · tris ${(s.lastRender.triangles / 1e6).toFixed(2)} M\n` +
+    `instances ${s.instances.drawn} / ${s.instances.total} drawn · LOD1 ${s.instances.lod1} · excluded ${s.instances.excluded}\n` +
+    `load ${mt.timings.totalMs} ms (data ${mt.timings.mapDataMs}, view ${mt.timings.mapViewMs}, GLBs ${s.assets.assetsMs})`;
+}
+if (!MANUAL) {
+  renderer.setAnimationLoop((now) => {
+    const dt = Math.min((now - last) / 1000, 0.25); last = now;
+    try { frame(dt); } catch (e) { if (mt.errors.length < 5) mt.errors.push('frame: ' + (e.message || e)); }
+    if (now - hudT > 500) { hudT = now; hud(); }
+  });
+}
+mt.renderFrames = (k = 1, dt = 1 / 60) => { for (let i = 0; i < k; i++) frame(dt); hud(); return view.stats(); };
+
+// ── checks ──
+// Rendered ground vs T: vertical rays against the LOD0 terrain meshes (what is drawn at gameplay range).
+mt.heightCheck = ({ count = 300, stress = 100, e = 1.0, seed = 7 } = {}) => {
+  scene.updateMatrixWorld(true);
+  const lod0 = []; view.terrainMesh.traverse((o) => { if (o.isMesh && o.userData.lodStep === 1) lod0.push(o); });
+  const rc = new THREE.Raycaster(); rc.far = 5000;
+  const meshY = (x, y) => { rc.set(new THREE.Vector3(x, 2000, -y), new THREE.Vector3(0, -1, 0)); const h = rc.intersectObjects(lod0, false); return h.length ? h[0].point.y : null; };
+  let s = seed; const rnd = () => ((s = (s * 1103515245 + 12345) >>> 0) / 4294967296);
+  const pts = [];
+  for (let k = 0; k < count; k++) pts.push([10 + rnd() * (T.S - 20), 10 + rnd() * (T.S - 20), 'random']);
+  // stress points: inside the most non-planar quads, where bilinear and the drawn triangles differ most
+  const n = T.n, H = T.h, quads = [];
+  for (let j = 0; j < n - 1; j++) for (let i = 0; i < n - 1; i++) { const k = j * n + i; quads.push([Math.abs(H[k] + H[k + n + 1] - H[k + 1] - H[k + n]) / 4, i, j]); }
+  quads.sort((a, b) => b[0] - a[0]);
+  for (let q = 0; q < stress; q++) { const [, i, j] = quads[q * 3]; pts.push([(i + 0.25 + 0.5 * rnd()) * T.g, (j + 0.25 + 0.5 * rnd()) * T.g, 'nonplanar']); }
+  const res = { points: 0, skippedDeck: 0, missed: 0, maxDh: 0, meanDh: 0, maxDhBilinear: 0, maxNormalDeg: 0, meanNormalDeg: 0, worst: null, worstNormal: null };
+  let sDh = 0, sNd = 0;
+  for (const [x, y, kind] of pts) {
+    if ([[0, 0], [e, 0], [-e, 0], [0, e], [0, -e]].some(([a, b]) => T.deckAt(x + a, y + b) !== null)) { res.skippedDeck++; continue; }
+    const m = meshY(x, y); if (m === null) { res.missed++; continue; }
+    const dh = Math.abs(T.height(x, y) - m), db = Math.abs(T.terrainBilinear(x, y) - m);
+    // normal of the drawn surface by the same central differences T.normal uses
+    const hx1 = meshY(x + e, y), hx0 = meshY(x - e, y), hy1 = meshY(x, y + e), hy0 = meshY(x, y - e);
+    const dx = (hx1 - hx0) / (2 * e), dy = (hy1 - hy0) / (2 * e), l = Math.hypot(dx, dy, 1), nm = [-dx / l, -dy / l, 1 / l], nt = T.normal(x, y, e);
+    const ang = Math.acos(Math.min(1, nm[0] * nt[0] + nm[1] * nt[1] + nm[2] * nt[2])) * 180 / Math.PI;
+    res.points++; sDh += dh; sNd += ang;
+    if (dh > res.maxDh) { res.maxDh = dh; res.worst = { x: +x.toFixed(2), y: +y.toFixed(2), kind, T: +T.height(x, y).toFixed(4), mesh: +m.toFixed(4) }; }
+    if (db > res.maxDhBilinear) res.maxDhBilinear = db;
+    if (ang > res.maxNormalDeg) { res.maxNormalDeg = ang; res.worstNormal = { x: +x.toFixed(2), y: +y.toFixed(2), kind }; }
+  }
+  res.meanDh = sDh / Math.max(res.points, 1); res.meanNormalDeg = sNd / Math.max(res.points, 1);
+  res.pass = res.points > 0 && res.maxDh <= 0.05 && res.maxNormalDeg <= 0.5;
+  return res;
+};
+// Decks: T.height on deck cells vs the drawn deck surface (trestle ribbons, bridge decks; dock GLB when not excluded).
+mt.deckCheck = () => {
+  scene.updateMatrixWorld(true);
+  const targets = []; view.group.traverse((o) => { if (o.isMesh && !o.userData.terrain && o !== view.water) targets.push(o); });
+  const rc = new THREE.Raycaster(); const out = { cells: 0, hit: 0, maxDh: 0, meanDh: 0, samples: [] }; let sum = 0;
+  for (let c = 0; c < T.nn * T.nn; c++) {
+    if (!T.deckMask[c]) continue; out.cells++;
+    const [x, y] = T.cellCenter(c);
+    rc.set(new THREE.Vector3(x, 500, -y), new THREE.Vector3(0, -1, 0));
+    const h = rc.intersectObjects(targets, false).find((q) => q.point.y > T.terrain(x, y) + 0.05);
+    if (!h) continue;
+    const dh = T.height(x, y) - h.point.y; out.hit++; sum += Math.abs(dh);
+    if (Math.abs(dh) > Math.abs(out.maxDh)) out.maxDh = dh;
+    if (out.samples.length < 6 && c % 7 === 0) out.samples.push({ x: +x.toFixed(1), y: +y.toFixed(1), T: +T.height(x, y).toFixed(3), drawn: +h.point.y.toFixed(3), what: h.object.name || h.object.type });
+  }
+  out.meanDh = sum / Math.max(out.hit, 1);
+  return out;
+};
+mt.minimapPNG = () => view.minimapCanvas.toDataURL('image/png');
+mt.measure = async (ms = 2000) => {
+  const times = []; let lastT = null; const t0 = performance.now();
+  await new Promise((res) => { const f = (t) => { if (lastT !== null) times.push(t - lastT); lastT = t; if (t - t0 < ms || times.length < 3) requestAnimationFrame(f); else res(); }; requestAnimationFrame(f); });
+  const avg = times.reduce((a, b) => a + b, 0) / times.length; return { frames: times.length, frameMsAvg: avg, fps: 1000 / avg };
+};
+
+mt.renderFrames(2);
+mt.ready = true;
+</script>
+</body>
+</html>
