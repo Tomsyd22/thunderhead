@@ -6,7 +6,11 @@ import * as THREE from 'three';
 import { STRUCTURES, ITEM_KEYS, TAB_KEYS, RULES } from './rules.js';
 
 const V3 = THREE.Vector3;
-const COL = { move: 0x7cf29a, attack: 0xff5a5a, amove: 0xffb35a, guard: 0x6fb8ff, rally: 0xf2e86d, harvest: 0xd8c27a };
+const COL = { move: 0x7cf29a, attack: 0xff5a5a, amove: 0xffb35a, guard: 0x6fb8ff, rally: 0xf2e86d, harvest: 0xd8c27a, repair: 0xf2c230 };
+
+// wrench cursor (repair mode, or engineers over a damaged friendly structure); hotspot at the jaw
+const WRENCH_CURSOR = `url("data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><g transform="rotate(-40 14 14)" fill="none" stroke-linecap="round"><g stroke="#15181b" stroke-width="6.5"><path d="M14 12v13"/><path d="M18.6 4.2a6 6 0 1 1-9.2 0"/></g><g stroke="#f2c230" stroke-width="3.6"><path d="M14 12v13"/><path d="M18.6 4.2a6 6 0 1 1-9.2 0"/></g></g></svg>')}") 8 6, pointer`;
+const MIN_PICK_R = 22;   // px radius: 44 px target (Apple HIG 44 pt / Material 48 dp)
 
 export class Input {
   constructor(C) {
@@ -33,8 +37,9 @@ export class Input {
   unitAt(cx, cy, pred = () => true) {
     let best = null, bd = 1e9;
     for (const [, v] of this.C.P.views) { const u = v.u; if (!u.alive || u.hidden || !v.group.visible || !pred(u)) continue;
-      const c = v.group.position.clone().add(new V3(0, Math.min(u.sp.dimensions_m.height * 0.5, 3), 0)); const p = this.proj(c); if (!p) continue;
-      const r = Math.max(12, Math.max(u.sp.dimensions_m.length, u.sp.dimensions_m.width) * 0.55 * this.pxPerM(c)); const d = Math.hypot(p[0] - cx, p[1] - cy); if (d < r && d < bd) { bd = d; best = u; } }
+      const vs = v.vs || 1, c = v.group.position.clone().add(new V3(0, Math.min(u.sp.dimensions_m.height * 0.5 * vs, 3 * vs), 0)); const p = this.proj(c); if (!p) continue;
+      // hit area follows the drawn (scaled) model and is never smaller than a 44 px circle (touch-target minimum)
+      const r = Math.max(MIN_PICK_R, Math.max(u.sp.dimensions_m.length, u.sp.dimensions_m.width, u.kind === 'foot' ? 1.4 : 0) * 0.55 * vs * this.pxPerM(c)); const d = Math.hypot(p[0] - cx, p[1] - cy); if (d < r && d < bd) { bd = d; best = u; } }
     return best;
   }
   structAt(cx, cy, g = null) {
@@ -72,6 +77,7 @@ export class Input {
   leftClick(cx, cy, d) {
     const C = this.C;
     if (this.place) { this.tryPlace(); return; }
+    if (this.mode === 'repair') { this.repairClick(cx, cy); return; }   // stays on until K, Esc or right-click (RA2)
     if (this.mode) { this.order(cx, cy, d.shift, this.mode); if (!d.shift) this.setMode(null); return; }
     const u = this.unitAt(cx, cy), now = performance.now();
     if (u) {
@@ -98,11 +104,21 @@ export class Input {
   }
   select(ids, voice) {
     const C = this.C; C.sel = new Set(ids.filter((id) => { const o = C.world.byId.get(id); return o && o.alive; }));
-    if (this.mode && !this.selUnits().length) this.setMode(null);
+    if (this.mode && this.mode !== 'repair' && !this.selUnits().length) this.setMode(null);
     const us = this.selUnits(); if (voice && us.length && C.audio) { try { C.audio.sfx('select'); C.audio.unitVoice(us[0].uid, 'select', C.p.faction); } catch (e) { /* optional */ } }
     C.ui.selChanged();
   }
   setMode(m) { this.mode = m; this.C.ui.modeChanged(m); }
+  toggleRepairMode() { const C = this.C; if (this.place) this.cancelPlace(true); this.setMode(this.mode === 'repair' ? null : 'repair'); if (C.audio) C.audio.sfx('ui_click'); }
+  /** repair mode: a click on one of your structures starts or stops its repair */
+  repairClick(cx, cy) {
+    const C = this.C, b = this.structAt(cx, cy);
+    if (!b || b.team !== C.p.team) { if (C.audio) C.audio.sfx('ui_error'); return; }
+    const r = C.game.toggleRepair(C.p, b);
+    if (r === null) { if (C.audio) C.audio.sfx('ui_error'); C.ui.toast('Already at full health'); return; }
+    if (C.audio) C.audio.sfx('ui_click'); this.marker(b.x, b.y, r ? COL.repair : COL.move, Math.max(b.w, b.d) * 0.45);
+  }
+  repairable(b) { return b && b.alive && b.isBuilding && b.team === this.C.p.team && b.hp < b.maxHp - 0.5; }
 
   // ───────── orders ─────────
   rightClick(cx, cy, d) {
@@ -123,8 +139,14 @@ export class Input {
       if (did) { if (tu) this.marker(tu.x, tu.y, 0x6fe6d4, 3); else if (g) this.marker(g.x, g.y, 0x6fe6d4); this.ack(units[0], 'attack', g); } else if (C.audio) C.audio.sfx('ui_error'); return;
     }
     if (kind === 'guard') { if (!g) return; const o = { type: 'guard', x: g.x, y: g.y }; for (const u of units) queue ? W.queueOrder(u, o) : W.order(u, o); this.marker(g.x, g.y, COL.guard); this.ack(units[0], 'move', g); return; }
+    const eng = units.filter((u) => u.m.engineer);
+    if (eng.length && kind === 'smart' && tb && tb.team === C.p.team) {
+      if (!this.repairable(tb)) { if (C.audio) C.audio.sfx('ui_error'); C.ui.toast('Already at full health'); return; }
+      const e0 = eng.sort((a, b) => Math.hypot(a.x - tb.x, a.y - tb.y) - Math.hypot(b.x - tb.x, b.y - tb.y))[0];   // one engineer restores it fully
+      W.order(e0, { type: 'enter', building: tb.id }); this.marker(tb.x, tb.y, COL.repair, Math.max(tb.w, tb.d) * 0.45); this.ack(e0, 'move', g); return;
+    }
     if (enemy && kind !== 'attackMove') {
-      for (const u of units) { const o = { type: 'attack', target: enemy.id }; if (u.uid === 'HV') continue; queue ? W.queueOrder(u, o) : W.order(u, o); }
+      for (const u of units) { const o = { type: 'attack', target: enemy.id }; if (u.uid === 'HV' || u.m.engineer) continue; queue ? W.queueOrder(u, o) : W.order(u, o); }
       this.marker(enemy.x, enemy.y, COL.attack, enemy.isBuilding ? Math.max(enemy.w, enemy.d) * 0.6 : 3); this.ack(units.find((u) => u.uid !== 'HV') || units[0], 'attack', g); return;
     }
     // harvesters: right-click a refinery to unload there, or an ore field to work it
@@ -166,14 +188,27 @@ export class Input {
     else { g = new THREE.Mesh(new THREE.BoxGeometry(S.size[0], S.h, S.size[1]).translate(0, S.h / 2, 0), this.ghostMats.ok); }
     const root = new THREE.Group(); root.add(g);
     const fp = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x6cff9a, transparent: true, opacity: 0.22, depthWrite: false })); fp.renderOrder = 5; root.add(fp);
-    C.scene.add(root); this.place = { key, root, model: g, fp, ok: false, c: null };
+    // keep-clear lanes in front of doors / the refinery dock, drawn with the ghost (they turn with it)
+    const lanes = new THREE.Group(); const laneMat = new THREE.MeshBasicMaterial({ color: 0x6cff9a, transparent: true, opacity: 0.28, depthWrite: false }); root.add(lanes);
+    for (const L of S.lanes || []) { const len = Math.abs(L.y1 - L.y0), sg = Math.sign(L.y1 - L.y0);
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(L.w, len).rotateX(-Math.PI / 2), laneMat); m.position.set(L.x, 0.45, -(L.y0 + L.y1) / 2); m.renderOrder = 5; lanes.add(m);
+      for (let k = 0; k < 2; k++) { const ch = new THREE.Mesh(new THREE.ShapeGeometry(new THREE.Shape([new THREE.Vector2(-L.w * 0.3, 0), new THREE.Vector2(0, L.w * 0.3), new THREE.Vector2(L.w * 0.3, 0), new THREE.Vector2(L.w * 0.3, -1.2), new THREE.Vector2(0, L.w * 0.3 - 1.2), new THREE.Vector2(-L.w * 0.3, -1.2)])).rotateX(-Math.PI / 2), laneMat);
+        ch.rotation.y = sg > 0 ? 0 : Math.PI; ch.position.set(L.x, 0.5, -(L.y0 + sg * (len * (0.35 + 0.35 * k)))); ch.renderOrder = 5; lanes.add(ch); } }
+    C.scene.add(root); this.place = { key, root, model: g, fp, lanes, laneMat, ok: false, c: null, rot: null };
     this.radius = this.buildRadius(); C.scene.add(this.radius); C.ui.modeChanged('place');
+  }
+  /** turn the structure being placed by 90° (dir +1 = clockwise on screen from above); from then on the player's angle
+   * holds instead of the automatic one. Naval yards keep their dock site's frame. */
+  rotatePlace(dir = 1) {
+    const C = this.C, P = this.place; if (!P) return; if (STRUCTURES[P.key].naval) { C.ui.toast('Naval yards face the open water of their dock site'); return; }
+    const cur = P.rot != null ? P.rot : P.c ? P.c.rot : C.game.autoRot(C.p, P.key, 0, 0); P.rot = Math.round((cur - dir * Math.PI / 2) / (Math.PI / 2)) * (Math.PI / 2);
+    if (C.audio) C.audio.sfx('ui_click'); this.updateGhost(); C.ui.modeChanged('place');
   }
   cancelPlace(silent) { const C = this.C; if (!this.place) return; C.scene.remove(this.place.root); if (this.radius) { C.scene.remove(this.radius); this.radius.traverse((o) => o.geometry && o.geometry.dispose()); this.radius = null; } this.place = null; if (!silent) C.ui.modeChanged(null); }
   tryPlace() {
     const C = this.C, P = this.place; if (!P || !P.c) return;
     if (!P.c.ok) { if (C.audio) { C.audio.sfx('ui_error'); C.audio.announce('cannot_place'); } C.ui.toast(P.c.reason); return; }
-    const r = C.game.place(C.p, P.c.x, P.c.y); if (r.ok) { C.acks.push({ t: performance.now(), frame: this.frameNo, kind: 'place', key: P.key }); this.cancelPlace(); }
+    const r = C.game.place(C.p, P.c.x, P.c.y, P.rot); if (r.ok) { C.acks.push({ t: performance.now(), frame: this.frameNo, kind: 'place', key: P.key }); this.cancelPlace(); }
   }
   /** outline of everywhere a new structure may touch: each structure's footprint grown by the build gap, draped on the ground */
   buildRadius() {
@@ -190,9 +225,9 @@ export class Input {
   }
   updateGhost() {
     const C = this.C, P = this.place; if (!P) return; const g = this.groundAt(this.mouse.x, this.mouse.y); if (!g) { P.root.visible = false; P.c = null; return; }
-    const c = C.game.canPlace(C.p, P.key, g.x, g.y); P.c = c; P.root.visible = true;
+    const c = C.game.canPlace(C.p, P.key, g.x, g.y, P.rot); P.c = c; P.root.visible = true;
     const S = STRUCTURES[P.key]; const z = S.naval ? 3 : Math.max(C.T.height(c.x, c.y), 0);
-    P.root.position.set(c.x, z, -c.y); P.model.rotation.y = c.rot; P.fp.scale.set(c.rect.w, 1, c.rect.d); P.fp.position.y = 0.35;
+    P.root.position.set(c.x, z, -c.y); P.model.rotation.y = c.rot; P.lanes.rotation.y = c.rot; P.laneMat.color.setHex(c.ok ? 0x6cff9a : 0xff5a4a); P.fp.scale.set(c.rect.w, 1, c.rect.d); P.fp.position.y = 0.35;
     const m = c.ok ? this.ghostMats.ok : this.ghostMats.bad; P.model.traverse((o) => { if (o.isMesh) o.material = m; }); P.fp.material.color.setHex(c.ok ? 0x6cff9a : 0xff5a4a);
   }
 
@@ -200,6 +235,7 @@ export class Input {
   onKey(e) {
     const C = this.C; if (!C.started) return; const k = e.key, kl = k.length === 1 ? k.toLowerCase() : k;
     if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName) && k !== 'Escape') return;
+    if (this.place && (k === 'ArrowLeft' || k === 'ArrowRight' || kl === 'r' || k === ',' || k === '.')) { e.preventDefault(); this.rotatePlace(k === 'ArrowLeft' || k === ',' ? -1 : 1); return; }
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(k)) { C.rcam.keys[k] = true; e.preventDefault(); return; }
     if (k === 'Escape') { if (this.place) this.cancelPlace(); else if (this.mode) this.setMode(null); else this.select([], false); C.ui.closePanels(); return; }
     if (/^Digit[1-9]$/.test(e.code)) { this.groupKey(+e.code.slice(5), e.ctrlKey || e.metaKey, e.shiftKey); e.preventDefault(); return; }
@@ -214,6 +250,7 @@ export class Input {
     if (kl === 'g') { if (this.mode === 'guard') { this.immediate('guardHere'); this.setMode(null); } else if (this.selUnits().length) this.setMode('guard'); return; }
     if (kl === 'd') { this.immediate('deploy'); return; }
     if (kl === 'f') { if (this.selUnits().some((u) => u.m.emp || u.m.scan)) this.setMode('ability'); else if (C.audio) C.audio.sfx('ui_error'); return; }
+    if (kl === 'k') { this.toggleRepairMode(); return; }
     if (kl === 'h') { const y = C.world.byId.get(C.p.yard) || C.game.structures(C.p)[0]; if (y) { C.rcam.flyTo(y.x, y.y, 0.3); this.select([y.id], false); } return; }
     if (kl === 'i') { C.ui.cycleIdle('harv'); return; }
     if (kl === 'o') { C.ui.cycleIdle('units'); return; }
@@ -234,7 +271,9 @@ export class Input {
     if (this.frameNo % 3 === 0 && !this.down) {   // hover feedback: cursor shape and the hovered unit's health bar
       const C = this.C, u = this.unitAt(this.mouse.x, this.mouse.y); this.hover = u ? u.id : null;
       let cur = 'default'; const sel = this.selUnits().length;
-      if (this.place) cur = 'crosshair'; else if (this.mode === 'attackMove' || this.mode === 'ability') cur = 'crosshair'; else if (this.mode === 'guard') cur = 'cell';
+      const eng = this.selUnits().some((q) => q.m.engineer);
+      if (this.mode === 'repair' || (eng && !u)) { const b = u ? null : this.structAt(this.mouse.x, this.mouse.y); cur = this.repairable(b) ? WRENCH_CURSOR : this.mode === 'repair' ? 'not-allowed' : 'default'; }
+      else if (this.place) cur = 'crosshair'; else if (this.mode === 'attackMove' || this.mode === 'ability') cur = 'crosshair'; else if (this.mode === 'guard') cur = 'cell';
       else if (u && u.team !== C.p.team && sel) cur = 'crosshair'; else if (u) cur = 'pointer'; else if (sel) cur = 'default';
       if (this.cv.style.cursor !== cur) this.cv.style.cursor = cur;
     }

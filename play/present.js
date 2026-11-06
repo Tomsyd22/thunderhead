@@ -38,7 +38,7 @@ const DEBRIS_MAT = { metal: new THREE.MeshStandardMaterial({ color: 0x2c2e30, me
 export class Presenter {
   constructor({ scene, camera, T, world, game, protos, bprotos, playerTeam = 0, audio = null }) {
     Object.assign(this, { scene, camera, T, world, game, protos, bprotos, playerTeam, audio });
-    this.fx = new FX(scene, T); this.views = new Map(); this.snap = new Map(); this.projV = new Map(); this.structs = new Map();
+    this.fx = new FX(scene, T); this.views = new Map(); this.unitScale = 1; this.snap = new Map(); this.projV = new Map(); this.structs = new Map();
     this.debris = []; this.decals = []; this.simTime = 0; this.frustum = new THREE.Frustum(); this.noLod = false; this.ikErr = null; this.forceLod = null;
     this.trauma = 0; this.shakeOff = new V3(); this.lodStats = [0, 0, 0]; this.lodSwitches = 0; this.errors = [];
     this.stats = { hitReactions: 0, debris: 0, tossed: 0, flashes: 0, shakes: 0, structsBuilt: 0, sfx: 0 };
@@ -61,9 +61,10 @@ export class Presenter {
   }
   addUnitView(u) {
     if (this.views.has(u.id)) return; const proto = this.protos[u.uid]; if (!proto) return;
-    const v = makeView(this, u, proto); this.views.set(u.id, v); const s = snapshot(u); this.snap.set(u.id, { prev: s, cur: s });
+    const v = makeView(this, u, proto); this.views.set(u.id, v); v.setVisualScale(visScale(u, this.unitScale)); const s = snapshot(u); this.snap.set(u.id, { prev: s, cur: s });
     v.hit = null; v.flash = 0; v.flashMats = v.allMats.filter((m) => m.emissive && !/^(GLOW|DISC)/.test(m.name || '')); for (const m of v.flashMats) m.userData.e0 = m.emissive.clone();
   }
+  setUnitScale(s) { this.unitScale = s; for (const v of this.views.values()) v.setVisualScale(visScale(v.u, s)); }
   makeProj(p) {
     const cyan = p.uid && p.uid[0] === 'T'; const k = p.kind === 'bomb' ? 'bomb' : p.kind === 'shell' ? 'shell' : 'missile'; const bolt = p.uid === 'T02';
     const mat = bolt ? PROJ_MAT.cyan : k === 'shell' ? (cyan ? PROJ_MAT.cyan : PROJ_MAT.shell) : PROJ_MAT[k];
@@ -226,6 +227,7 @@ export class Presenter {
       const S = interp(s.prev, s.cur, alpha);
       v.update(S, rdt); this.reaction(v, rdt);
     }
+    this.repairFx(rdt);
     for (const [, v] of this.projV) {
       const a = v.prev, b = v.cur; const x = lerp(a[0], b[0], alpha), y = lerp(a[1], b[1], alpha), z = lerp(a[2], b[2], alpha);
       const pos = new V3(x, z, -y); const age = this.simTime - v.born; if (v.off && age < 0.15 && age > 0) pos.add(v.off.clone().multiplyScalar(1 - age / 0.15));
@@ -302,6 +304,15 @@ export class Presenter {
     }
     this.debris = keep;
   }
+  /** structures under repair: welding sparks on the roof and a tool clank about once a second (paused while out of funds) */
+  repairFx(dt) {
+    if (!(dt > 0)) return;
+    for (const [, sv] of this.structs) { const b = sv.b; if (!b.alive || !b.repairing || b.repairStalled) continue; if (!this.world.visible(this.playerTeam, b) && b.team !== this.playerTeam) continue;
+      sv.repAcc = (sv.repAcc || 0) + dt * 5; sv.clank = (sv.clank || 0) + dt;
+      while (sv.repAcc > 1) { sv.repAcc -= 1; const x = b.x + (Math.random() - 0.5) * b.w * 0.7, y = b.y + (Math.random() - 0.5) * b.d * 0.7, z = b.z + sv.h * (0.55 + Math.random() * 0.4);
+        for (let k = 0; k < 5; k++) this.fx.spark(x, z, -y, { vx: (Math.random() - 0.5) * 4, vy: 1 + Math.random() * 3, vz: (Math.random() - 0.5) * 4, life: 0.25 + Math.random() * 0.25, s0: 0.35, s1: 0.05, g: 9.8, c0: [1, 0.85, 0.5] }); }
+      if (sv.clank > 1.1) { sv.clank = 0; this.sfx('impact_metal', b.x, b.y, { vol: 0.35, pitch: 1.3 }); } }
+  }
   // distant-view level by on-screen size (pixels the unit's largest dimension covers), ±12 % hysteresis
   lodUpdate() {
     const cam = this.camera, k = innerHeight / (2 * Math.tan(cam.fov * Math.PI / 360)), st = this.lodStats = [0, 0, 0]; let sw = 0; const LP = [110, 36];
@@ -316,6 +327,14 @@ export class Presenter {
   }
 }
 
+/** drawn size for a unit at the readability setting s. Infantry get the full factor; vehicles and aircraft 70 % of it
+ * (1.75 → 1.53×) so parked columns don't merge, tapering off between 8 m and 20 m long so ships and other big hulls
+ * stay near true size (they read well already and would crowd the docks) */
+export function visScale(u, s) {
+  if (u.kind === 'foot') return s;
+  const L = Math.max(u.sp.dimensions_m.length, u.sp.dimensions_m.width); const k = 0.7 * Math.max(0, Math.min(1, (20 - L) / 12));
+  return 1 + (s - 1) * k;
+}
 export function muzzleNames(u, e) {
   if (u.uid === 'H04') return [e.muzzle === 0 ? 'muzzle_L' : 'muzzle_R', 'muzzle'];
   if (u.uid === 'A05') return e.sys === 1 ? ['muzzle_aa'] : ['muzzle_cell_' + e.muzzle, 'muzzle_cell_0'];

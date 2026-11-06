@@ -20,6 +20,7 @@ for f in ['unit_specs.json', 'sockets.json']:
     shutil.copy(SB / 'data' / f, HERE / 'data' / f)
 shutil.copy(ROOT / 'data' / 'pace.json', HERE / 'data' / 'pace.json')
 shutil.copy(ROOT / 'data' / 'combat.json', HERE / 'data' / 'combat.json')
+shutil.copy(ROOT / 'data' / 'economy.json', HERE / 'data' / 'economy.json')
 shutil.copy(ROOT / 'units' / 'data' / 'faction_mapping.json', HERE / 'data' / 'faction_mapping.json')
 
 n = 0

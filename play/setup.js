@@ -5,8 +5,9 @@ import { harvesterSandboxSpeed } from './engine/pace.js';
 import { makeMapNav } from './mapnav.js';
 import { Game } from './game.js';
 import { AI } from './ai.js';
-import { FACTIONS } from './rules.js';
+import { FACTIONS, RULES } from './rules.js';
 import { applyCombat } from './combat.js';
+import { OreFields, oreHooks } from './ore.js';
 
 // The pack has no harvester: it drives the maps' unit_harvester model with the pace settings (data/pace.json)
 export const HV_SPEC = (speed) => ({
@@ -14,6 +15,18 @@ export const HV_SPEC = (speed) => ({
   dimensions_m: { length: 10, width: 4, height: 4 }, health: 1200, armor: 'heavy', cost: 1400, speed_mps: speed, sight_m: 30,
   collision_radius_m: 2.0, collision_shape: { type: 'horizontal_capsule', radius_m: 2.0, total_length_m: 10, ground_blocking: true }, weapons: [],
 });
+
+/** engineers (round 1): unarmed infantry on the faction's rifleman frame; enter a friendly structure to repair it fully */
+export const ENGINEERS = { HE: { base: 'H01', faction: 'H', name: 'Field Engineer' }, AE: { base: 'A01', faction: 'A', name: 'Systems Engineer' }, TE: { base: 'T01', faction: 'T', name: 'Repair Technician' } };
+export function addEngineers(spec) {
+  for (const [id, E] of Object.entries(ENGINEERS)) {
+    if (spec.units.some((u) => u.id === id)) continue; const b = spec.units.find((u) => u.id === E.base); if (!b) continue;
+    const e = structuredClone(b); for (const k of ['silhouette', 'views', 'wear', 'weapon_visual', 'projectile_visual', 'ability', 'movement', 'animations', 'pack_name']) delete e[k];
+    spec.units.push(Object.assign(e, { id, name: E.name, role: 'Enters a friendly structure and repairs it to full health (used up). Unarmed.',
+      health: 75, cost: RULES.engineerCost, build_seconds: 10, speed_mps: b.speed_mps * 0.9, sight_m: 24, weapons: [] }));
+  }
+  return spec;
+}
 
 /** display names and faction labels from the approved mapping (game names win clashes: Lancer → Arbiter, ...) */
 export function applyMapping(spec, mapping) {
@@ -26,8 +39,9 @@ export function applyMapping(spec, mapping) {
  * T: map terrain (mapdata.js); spec: parsed unit_specs.json (+ mapping applied); pace: data/pace.json (live object, sliders
  * write to it); players: [{ faction, isAI, pad: 'B1' | 'R1', name }]; opts.startUnits: extra starting squad.
  */
-export function createMatch({ T, spec, geom = {}, pace, players, startUnits = true, combat = null }) {
-  spec = structuredClone(spec);
+export function createMatch({ T, spec, geom = {}, pace, players, startUnits = true, combat = null, economy = null }) {
+  spec = addEngineers(structuredClone(spec));
+  geom = { ...geom }; for (const [id, E] of Object.entries(ENGINEERS)) if (geom[E.base] && !geom[id]) geom[id] = geom[E.base];   // same frame, same sockets
   spec.units = spec.units.filter((u) => u.id !== 'HV'); spec.units.push(HV_SPEC(harvesterSandboxSpeed(pace)));
   MECH.HV.accel = pace.harvester.accel_mps2; MECH.HV.hullTurn = pace.harvester.hull_turn_dps;
   const nav = makeMapNav(T);
@@ -36,6 +50,10 @@ export function createMatch({ T, spec, geom = {}, pace, players, startUnits = tr
   const pads = T.meta.pads;
   const setup = players.map((p) => ({ ...p, start: Object.assign({ x: 0, y: 0 }, (() => { const pd = pads.find((q) => q.id === p.pad); return { x: pd.center[0], y: pd.center[1], pad: pd }; })()) }));
   const game = new Game({ world, T, players: setup, deposits: T.meta.deposits, dockSites: T.meta.docks || [], pace });
+  if (economy) {   // ore fields around the extraction rigs; harvesters work patch by patch (engine patch mode)
+    game.ore = new OreFields(T, nav, game.deposits, economy, ((T.instances || {}).bld_extraction_rig || []).map((r) => [r[0], r[1], r[3]]));
+    Object.assign(world.hooks, oreHooks(game.ore));
+  }
   const kits = nav.kits;
   const ais = [];
   game.players.forEach((p, i) => {

@@ -1,7 +1,7 @@
 // Stage 2 browser tests: the real client in headless Chromium (software GL), driven through window.__game with a manual
 // clock so results don't depend on the software rasteriser's speed.
 //   node play/test_game.js [--only=name,name] [--shots] [--port=8793]
-// Suites: boot, acks (order acknowledgement within 2 frames), controls, movement, building, camera, info, combat, smooth, match.
+// Suites: boot, acks (order acknowledgement within 2 frames), controls, movement, building, repair, rotate, camera, info, combat, smooth, match.
 import fs from 'fs'; import path from 'path'; import http from 'http'; import { spawn } from 'child_process'; import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url); const { chromium } = require('playwright');
@@ -116,6 +116,68 @@ const want = (s) => !ONLY || ONLY.includes(s);
       await shot(page, 'base');
     }
 
+    if (want('repair')) {   // round 1: RA2 wrench repair over time for credits; engineers repair fully and are used up
+      const rq = await ev(page, () => { const C = window.__game, G = C.game, p = C.p; const b = G.structures(p).find((x) => x.kind === 'power') || G.structures(p).find((x) => x.kind === 'yard');
+        b.hp = 0.4 * b.maxHp; b.repairing = false; p.credits = 5000; C.input.setMode(null); C.lookAt(b.x, b.y, 150); C.advance(0.05); const sv = C.P.structs.get(b.id);
+        return { id: b.id, at: C.screenOf(b.x, b.y, b.z + sv.h * 0.6), kind: b.kind }; });
+      await page.keyboard.press('k'); await page.mouse.click(rq.at[0], rq.at[1]);
+      const r1 = await ev(page, (id) => { const C = window.__game, G = C.game, p = C.p, b = C.world.byId.get(id), R = { mode: C.input.mode, on: !!b.repairing };
+        const h0 = b.hp, c0 = p.credits, gs = C.pace.game_speed; C.advance(10 / gs, 30, 0); R.gain = b.hp - h0; R.spent = c0 - p.credits; R.wantGain = b.maxHp / 60 * 10; R.wantCost = b.cost * 0.25 * R.gain / b.maxHp;
+        C.advance(40 / gs, 30, 0); R.full = b.hp >= b.maxHp - 1e-6 && !b.repairing; R.total = 5000 - p.credits; R.fullCost = b.cost * 0.25 * 0.6;
+        b.hp = 0.5 * b.maxHp; b.repairing = true; p.credits = 0; const h1 = b.hp; C.advance(5 / gs, 30, 0); R.stalled = b.repairStalled && Math.abs(b.hp - h1) < 1e-6;
+        p.credits = 1000; C.advance(3 / gs, 30, 0); R.resumed = b.hp > h1; b.repairing = false; b.hp = b.maxHp; return R; }, rq.id);
+      await page.keyboard.press('k'); const m2 = await ev(page, () => window.__game.input.mode);
+      check('repair: K turns on repair mode and a click starts the wrench on the structure', r1.mode === 'repair' && r1.on && m2 === null, `mode ${r1.mode} → ${m2}, ${rq.kind} repairing ${r1.on}`);
+      check('repair: health returns over time and is paid for as it comes (60 game s and 25 % of the price for a full repair)', Math.abs(r1.gain - r1.wantGain) / r1.wantGain < 0.03 && Math.abs(r1.spent - r1.wantCost) < 1 && r1.full && Math.abs(r1.total - r1.fullCost) < 2,
+        `+${r1.gain.toFixed(0)} HP in 10 game s for $${r1.spent.toFixed(0)}; 40 %→100 % cost $${r1.total.toFixed(0)} (expected $${r1.fullCost.toFixed(0)})`);
+      check('repair: pauses with no credits and resumes when money comes in', r1.stalled && r1.resumed);
+      // engineers
+      const en = await ev(page, () => { const C = window.__game, G = C.game, W = C.world, p = C.p, y = W.byId.get(p.yard), id = { compact: 'HE', lattice: 'TE', helix: 'AE' }[p.faction];
+        const q = W.nav.nearestOk('foot', y.x + 30, y.y - 30, 0.4, 60); const u = W.spawn(id, p.team, q[0], q[1], {}); u.owner = p.id; C.P.afterStep(); W.events.length = 0;
+        y.hp = 0.3 * y.maxHp; C.lookAt(y.x, y.y, 160); C.input.select([u.id], false); C.advance(0.05); const sv = C.P.structs.get(y.id);
+        return { id, uid: u.id, yard: y.id, at: C.screenOf(y.x, y.y, y.z + sv.h * 0.6), menu: G.options(p, 'infantry').includes(id), cameo: !!(C.cameos && C.cameos[id]), cost: G.costOf('infantry', id), lost0: p.stats.lostUnits }; });
+      await page.mouse.click(en.at[0], en.at[1], { button: 'right' });
+      const e1 = await ev(page, (en) => { const C = window.__game, W = C.world, u = W.byId.get(en.uid), y = W.byId.get(en.yard); const ord = u.order.type; const seq0 = C.game.seq || 0;
+        let t = 0; while (u.alive && t < 90) { C.advance(0.5, 30, 0); t += 0.5 * C.pace.game_speed; }
+        const evs = C.game.since(seq0).map((e) => e.type); return { ord, t, gone: !u.alive, view: C.P.views.has(en.uid), full: y.hp >= y.maxHp - 1e-6, evs, lost: C.p.stats.lostUnits - en.lost0 }; }, en);
+      check('engineer: in each build menu, with a portrait', en.menu && en.cameo, `${en.id} $${en.cost}`);
+      check('engineer: right-click a damaged structure; it walks in and repairs it fully, used up (not a loss)', e1.ord === 'enter' && e1.gone && !e1.view && e1.full && e1.evs.includes('engineer_repair') && e1.lost === 0, `order ${e1.ord}, in after ${e1.t.toFixed(0)} game s, structure full ${e1.full}, events ${[...new Set(e1.evs)].join(' ')}`);
+      const e2 = await ev(page, (en) => { const C = window.__game, W = C.world, p = C.p, y = W.byId.get(en.yard); const q = W.nav.nearestOk('foot', y.x + 30, y.y - 30, 0.4, 60); const u = W.spawn(en.id, p.team, q[0], q[1], {}); u.owner = p.id; C.P.afterStep(); W.events.length = 0; C.input.select([u.id], false); C.advance(0.05); return u.id; }, en);
+      await page.mouse.click(en.at[0], en.at[1], { button: 'right' });
+      const e3 = await ev(page, (uid) => { const C = window.__game, u = C.world.byId.get(uid); C.advance(2, 30, 0); return { ord: u.order.type, alive: u.alive }; }, e2);
+      check('engineer: a structure at full health is refused (the engineer is not wasted)', e3.ord !== 'enter' && e3.alive, `order ${e3.ord}`);
+      await shot(page, 'repair');
+    }
+
+    if (want('rotate')) {   // round 1: rotate structures in 90° steps while placing; doors and docks stay reachable
+      const r0 = await ev(page, () => { const C = window.__game, G = C.game, p = C.p; p.credits = 20000; for (const k of ['power', 'refinery']) if (!G.has(p, k)) C.testBuild(k);
+        p.queues.structure.length = 0; p.ready = null; G.enqueue(p, 'structure', 'factory'); const it = p.queues.structure[0]; it.spent = it.cost; p.ready = it; C.input.startPlace('factory');
+        const y = C.world.byId.get(p.yard); let spot = null; for (let r = 50; r < 240 && !spot; r += 4) for (let a = 0; a < 24 && !spot; a++) { const x = y.x + Math.cos(a / 24 * 6.283) * r, yy = y.y + Math.sin(a / 24 * 6.283) * r;
+          if ([0, 1, 2, 3].every((k) => [[0, 0], [4, 0], [-4, 0], [0, 4], [0, -4]].every(([ox, oy]) => G.canPlace(p, 'factory', x + ox, yy + oy, k * Math.PI / 2).ok))) spot = [x, yy]; }   // room to spare: the mouse ray may land a few metres off
+        if (!spot) return { err: 'no spot where all four rotations fit' }; C.lookAt(spot[0], spot[1], 170); C.advance(0.05); return { at: C.screenOf(spot[0], spot[1]), spot }; });
+      if (r0.err) check('rotate: R and the arrow keys turn the ghost in 90° steps', false, r0.err); else {
+        await page.mouse.move(r0.at[0], r0.at[1]); const rots = []; const read = () => ev(page, () => { const C = window.__game; C.advance(1 / 60); const P = C.input.place; return { rot: P.c.rot, model: P.model.rotation.y, w: P.c.rect.w, d: P.c.rect.d, btn: !document.querySelector('#btnRotate').hidden }; });
+        rots.push(await read()); await page.keyboard.press('r'); rots.push(await read()); await page.keyboard.press('ArrowRight'); rots.push(await read()); await page.keyboard.press('ArrowLeft'); rots.push(await read());
+        const bb = await page.$('#btnRotate'); if (bb) await bb.click(); rots.push(await read());
+        const n90 = (a) => Math.round(a / (Math.PI / 2)), steps = rots.map((r) => n90(r.rot)); const turns = steps.slice(1).map((v, i) => ((v - steps[i]) % 4 + 4) % 4);
+        check('rotate: R, the arrow keys and the Rotate button turn the ghost in 90° steps', turns.join(',') === '3,3,1,3' && rots.every((r) => Math.abs(r.model - r.rot) < 1e-6) && rots[0].w === rots[2].w && rots[0].w === rots[1].d && rots[4].btn,
+          `steps ${steps.join(' → ')} (×90°), footprint ${rots.map((r) => r.w + '×' + r.d).join(' / ')}, button ${rots[4].btn}`);
+        await page.mouse.click(r0.at[0], r0.at[1]);
+        const r1 = await ev(page, ([want, at]) => { const C = window.__game, G = C.game, W = C.world, p = C.p; C.advance(2.5, 30, 0); const b = G.structures(p).filter((x) => x.kind === 'factory').pop(); if (!b) { const P = C.input.place, el = document.elementFromPoint(at[0], at[1]); return { err: `not placed: ${P && P.c ? (P.c.ok ? 'ghost ok' : P.c.reason) : 'ghost gone'}, under the pointer: ${el ? el.id || el.tagName : 'nothing'}, mode ${C.input.mode}` }; }
+          const u = G.spawnFrom(b, { compact: 'H03', lattice: 'T03', helix: 'A03' }[p.faction]); let t = 0; while ((u.rollOut || u.path) && t < 60) { C.advance(0.5, 30, 0); t += 0.5 * C.pace.game_speed; }
+          const inside = W.buildings.some((q) => q.alive && Math.abs(u.x - q.x) < q.w / 2 && Math.abs(u.y - q.y) < q.d / 2);
+          return { rot: Math.round(b.rot / (Math.PI / 2)), want: Math.round(want / (Math.PI / 2)), out: !u.rollOut, t, inside, moved: Math.hypot(u.x - b.x, u.y - b.y) }; }, [rots[4].rot, r0.at]);
+        check('rotate: the structure keeps the chosen angle and its door works', !r1.err && ((r1.rot - r1.want) % 4 + 4) % 4 === 0 && r1.out && !r1.inside, r1.err || `${r1.rot * 90}°, tank rolled out and reached the rally point in ${r1.t.toFixed(0)} game s, ${r1.moved.toFixed(0)} m from the factory`);
+        const r2 = await ev(page, () => { const C = window.__game, G = C.game, p = C.p, b = G.structures(p).filter((x) => x.kind === 'factory').pop();
+          if (!b) return { res: ['no factory'], dockRefused: 0, okAll: 0 }; const [lane] = G.lanesOf('factory', b.x, b.y, b.rot); const res = []; for (let k = 0; k < 4; k++) res.push(G.canPlace(p, 'power', lane.end[0], lane.end[1], k * Math.PI / 2).reason);
+          // a refinery turned so its dock lane points into the yard is refused at every spot that would otherwise be fine
+          const y = C.world.byId.get(p.yard); let dockRefused = 0, okAll = 0, conn = 0; for (let a = 0; a < 24; a++) for (let r = 40; r < 90; r += 6) for (let k = 0; k < 4; k++) { const c = G.canPlace(p, 'refinery', y.x + Math.cos(a / 24 * 6.283) * r, y.y + Math.sin(a / 24 * 6.283) * r, k * Math.PI / 2); if (c.ok) okAll++; else if (/[Dd]ock/.test(c.reason)) dockRefused++; }
+          return { res, dockRefused, okAll }; });
+        check('rotate: nothing may be built on a door or dock lane, or turn a dock lane into a wall', r2.res.every((r) => /door|Blocks/.test(r || '')) && r2.dockRefused > 0 && r2.okAll > 0, `power plant in front of the factory: "${r2.res[0]}"; refinery: ${r2.dockRefused} spots × angles refused for the dock, ${r2.okAll} fine`);
+      }
+      await shot(page, 'rotate');
+    }
+
     if (want('camera')) {
       const c0 = await ev(page, () => { const C = window.__game; C.lookAt(900, 900, 200); return [C.rcam.fx, C.rcam.fy]; });
       await page.mouse.move(3, 430); const c1 = await ev(page, () => { const C = window.__game; C.advance(0.5, 60, 0); return [C.rcam.fx, C.rcam.fy]; });
@@ -156,7 +218,7 @@ const want = (s) => !ONLY || ONLY.includes(s);
     }
 
     if (want('combat')) {
-      const cb = await ev(page, () => { const C = window.__game, W = C.world, y = C.world.byId.get(C.p.yard); const x = y.x + 120, yy = y.y - 160; const us = [];
+      const cb = await ev(page, () => { const C = window.__game, W = C.world, y = C.world.byId.get(C.p.yard); const o = W.nav.nearestOk('veh', y.x + 120, y.y - 160, 24, 300), x = o[0], yy = o[1]; const us = [];   // open ground (earlier suites may have built there)
         for (let k = 0; k < 4; k++) { const u = W.spawn('H03', 0, x - 50 + k * 10, yy, { hdg: 0 }); u.owner = 0; us.push(u); } for (let k = 0; k < 4; k++) { const u = W.spawn('T03', 1, x + 30 + k * 9, yy + 8, { hdg: Math.PI }); u.owner = 1; us.push(u); }
         for (let k = 0; k < 6; k++) { const u = W.spawn('T01', 1, x + 25 + k * 2, yy - 10, {}); u.owner = 1; } C.P.afterStep(); W.events.length = 0;
         for (const u of us) W.order(u, { type: 'attackMove', x: u.team ? x - 50 : x + 40, y: yy }); C.lookAt(x, yy, 90); C.advance(0.05);
@@ -170,7 +232,7 @@ const want = (s) => !ONLY || ONLY.includes(s);
     }
 
     if (want('movement')) {
-      const mv = await ev(page, () => { const C = window.__game, W = C.world, y = C.world.byId.get(C.p.yard); const x0 = y.x + 60, y0 = y.y - 60; const g = [];
+      const mv = await ev(page, () => { const C = window.__game, W = C.world, y = C.world.byId.get(C.p.yard); const o = W.nav.nearestOk('veh', y.x + 60, y.y - 60, 14, 300), x0 = o[0], y0 = o[1]; const g = [];   // open ground (earlier suites build around the yard)
         for (let k = 0; k < 6; k++) { const u = W.spawn('H01', 0, x0 + (k % 3) * 2, y0 + Math.floor(k / 3) * 2, {}); g.push(u); } for (let k = 0; k < 3; k++) g.push(W.spawn('H03', 0, x0 - 12 - k * 9, y0 + 6, { hdg: 0 }));
         C.P.afterStep(); W.events.length = 0; W.orderGroup(g, { type: 'move', x: x0 + 130, y: y0 - 150 }); let vT = 0, t = 0;
         while (t < 90 && g.some((u) => u.path)) { C.advance(1 / 3, 30, 0); t += 1 / 3 * C.pace.game_speed; for (const u of g) if (u.kind === 'tracked') vT = Math.max(vT, u.v); }

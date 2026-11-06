@@ -111,6 +111,13 @@ const t0 = Date.now();
   check('AI armies are produced', G.players.every((p) => G.unitsOf(p).filter((u) => u.uid !== 'HV').length + p.stats.lostUnits >= 10), G.players.map((p) => `${G.unitsOf(p).length} alive, ${p.stats.lostUnits} lost`).join(' | '));
   check('AI waves are launched and reach the enemy base', waves >= 1 && !!contact, `${waves} waves, first contact ${contact || 'none'}`);
   check('no ground unit stuck on a path for 20 s', stuckMax < 20, stuckMax ? `worst ${stuckMax.toFixed(0)} s: ${stuckWho}` : '');
+  { // round 1: every door and refinery dock the AIs built still opens onto ground connected to their yard's door
+    let n = 0, bad = []; const nav = W.nav;
+    const lab = (dom, pt) => { const L = nav.labels(dom); let k = nav.cellOf(pt[0], pt[1]); if (!L[k]) { const q = nav.nearestOk(dom, pt[0], pt[1], 0.5, 12); if (!q) return 0; k = nav.cellOf(q[0], q[1]); } return L[k]; };
+    for (const p of G.players) { const y = G.structures(p).find((b) => b.kind === 'yard'); if (!y) continue; const ref = G.lanesOf('yard', y.x, y.y, y.rot)[0].end;
+      for (const b of G.structures(p)) if (b !== y) for (const L of G.lanesOf(b.kind, b.x, b.y, b.rot)) { n++; if (!lab(L.dom, L.end) || lab(L.dom, L.end) !== lab(L.dom, ref)) bad.push(`${p.faction} ${b.kind}`); } }
+    check('doors and refinery docks of AI-built bases stay reachable', n > 0 && !bad.length, `${n} lanes checked${bad.length ? ', cut off: ' + bad.join(', ') : ''}`);
+  }
   check('engine counters', W.stats.shots > 0, `shots ${W.stats.shots}, hits ${W.stats.hits}, kills ${W.stats.kills}`);
 }
 

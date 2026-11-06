@@ -14,6 +14,14 @@ const CLASS = { infantry: 'infantry', light: 'light vehicles', heavy: 'tanks', a
 const TABS = [['structure', 'Base'], ['infantry', 'Troops'], ['vehicle', 'Armor'], ['air', 'Air'], ['naval', 'Naval']];
 const hex = (c) => '#' + c.getHexString();
 
+/** RA2-style wrench badge over a structure under repair; rocks while it works */
+function drawWrench(g, x, y, col, t) {
+  g.save(); g.translate(x, y); g.rotate(-0.6 + (t ? Math.sin(t * 6) * 0.35 : 0)); g.lineCap = 'round';
+  const shape = () => { g.beginPath(); g.moveTo(0, 2); g.lineTo(0, 13); g.moveTo(Math.cos(-0.15 * Math.PI) * 6, -3 + Math.sin(-0.15 * Math.PI) * 6); g.arc(0, -3, 6, -0.15 * Math.PI, 1.15 * Math.PI, false); g.stroke(); };
+  g.strokeStyle = 'rgba(0,0,0,0.75)'; g.lineWidth = 6.5; shape(); g.strokeStyle = col; g.lineWidth = 3.5; shape();
+  g.restore();
+}
+
 export class UI {
   constructor(C) {
     this.C = C; this.tab = 'structure'; this.fc = 0; this.lastCredits = C.p.credits; this.flashT = 0; this.subQ = []; this.pings = []; this.idleIdx = { harv: 0, units: 0 };
@@ -33,6 +41,8 @@ export class UI {
     this.mm.addEventListener('contextmenu', (e) => e.preventDefault());
     // idle buttons, settings, pause
     $('#idleHarv').onclick = () => this.cycleIdle('harv'); $('#idleUnits').onclick = () => this.cycleIdle('units');
+    $('#btnRepair').onclick = () => C.input.toggleRepairMode();
+    $('#btnRotate').onclick = () => C.input.rotatePlace(1);
     $('#btnSettings').onclick = () => this.toggleSettings(); $('#btnPause').onclick = () => { C.paused = !C.paused; this.pauseChanged(); };
     this.settingsUI();
     if (C.audio && C.audio.onSubtitle) { C.audio.onSubtitle((text) => this.subtitle(text)); this.subHooked = true; }
@@ -46,7 +56,7 @@ export class UI {
     try { const t = C.audio.announce(key); if (t && !this.subHooked) this.subtitle(t); } catch (e) { if (fallback) this.subtitle(fallback); }
   }
   ping(x, y, color = '#ff4a3d') { this.pings.push({ x, y, t: performance.now(), color }); if (this.pings.length > 12) this.pings.shift(); }
-  modeChanged(m) { $('#mode').textContent = m === 'attackMove' ? 'Attack-move: click a destination' : m === 'guard' ? 'Guard: click a point (G again guards here)' : m === 'ability' ? 'Ability: click a target' : m === 'place' ? 'Place structure: left-click to build, right-click to cancel' : ''; $('#mode').hidden = !m; }
+  modeChanged(m) { $('#mode').textContent = m === 'attackMove' ? 'Attack-move: click a destination' : m === 'guard' ? 'Guard: click a point (G again guards here)' : m === 'ability' ? 'Ability: click a target' : m === 'place' ? 'Place structure: left-click to build · R or ← → to rotate · right-click to cancel' : m === 'repair' ? 'Repair: click your structures to start or stop (K or right-click to finish)' : ''; $('#mode').hidden = !m; $('#btnRepair').classList.toggle('on', m === 'repair'); $('#btnRotate').hidden = m !== 'place'; }
   pauseChanged() { $('#btnPause').textContent = this.C.paused ? 'Resume' : 'Pause'; $('#paused').hidden = !this.C.paused; }
   closePanels() { $('#settings').hidden = true; }
   toggleSettings() { $('#settings').hidden = !$('#settings').hidden; }
@@ -156,8 +166,9 @@ export class UI {
     const C = this.C, P = C.pace, gs = $('#setGs'), hr = $('#setHr');
     gs.min = P.game_speed_range[0]; gs.max = P.game_speed_range[1]; gs.step = 0.1; gs.value = P.game_speed; hr.min = P.harvester_ratio_range[0]; hr.max = P.harvester_ratio_range[1]; hr.step = 0.01; hr.value = P.harvester_speed_ratio;
     gs.oninput = () => C.setPace({ game_speed: +gs.value }); hr.oninput = () => C.setPace({ harvester_speed_ratio: +hr.value });
+    const us = $('#setUs'); us.value = C.unitScale; us.oninput = () => C.setPace({ unit_scale: +us.value });
     const tk = $('#setTtk'); tk.value = C.combat ? C.combat.ttk_scale : 1; tk.oninput = () => C.setPace({ ttk: +tk.value });
-    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1 }); gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
+    $('#setReset').onclick = () => { C.setPace({ game_speed: C.paceFile.game_speed, harvester_speed_ratio: C.paceFile.harvester_speed_ratio, ttk: 1, unit_scale: 1.75 }); $('#setUs').value = 1.75; gs.value = C.pace.game_speed; hr.value = C.pace.harvester_speed_ratio; $('#setTtk').value = 1; };
     for (const [id, bus] of [['setVol', 'master'], ['setVoice', 'voice']]) { const s = $('#' + id); s.oninput = () => { if (C.audio) try { C.audio.setVolume(bus, +s.value); if (bus === 'voice') C.audio.setVolume('announcer', +s.value); } catch (e) { /* optional */ } }; }
     $('#setEdge').onchange = (e) => { C.rcam.edge = e.target.checked; };
     $('#setQuality').value = C.quality; $('#setQuality').onchange = (e) => { C.quality = e.target.value; try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, quality: C.quality })); } catch (err) { /* ignore */ } this.toast('Graphics quality applies after a reload'); };
@@ -166,7 +177,7 @@ export class UI {
   }
   paceChanged() {
     const C = this.C, P = C.pace; if (!$('#setGsV')) return; const v = harvesterSandboxSpeed(P);
-    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; if (C.combat) $('#setTtkV').textContent = `${C.combat.ttk_scale.toFixed(1)}× (fights ${C.combat.ttk_scale >= 1 ? 'longer' : 'shorter'})`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
+    $('#setGsV').textContent = `${P.game_speed.toFixed(1)}×`; $('#setHrV').textContent = `${P.harvester_speed_ratio.toFixed(2)}× tank`; $('#setUsV').textContent = `${C.unitScale.toFixed(2)}× (map and sim stay true scale)`; if (C.combat) $('#setTtkV').textContent = `${C.combat.ttk_scale.toFixed(1)}× (fights ${C.combat.ttk_scale >= 1 ? 'longer' : 'shorter'})`; $('#spd').textContent = `${P.game_speed.toFixed(1)}×`;
     $('#setNote').textContent = `Everything runs ${P.game_speed.toFixed(1)}× faster than real time: movement, turning, reloads, harvesting and building. Map and model sizes stay true. Harvester ${v.toFixed(1)} m/s.`;
     const gs = $('#setGs'); if (gs && +gs.value !== P.game_speed) gs.value = P.game_speed;
   }
@@ -203,6 +214,7 @@ export class UI {
       case 'unit_lost': this.announce('unit_lost', 'Unit lost'); break;
       case 'structure_lost': this.announce('structure_lost', 'Structure lost'); alert(e.x, e.y, '#ff4a3d'); break;
       case 'cannot_place': this.toast(e.reason || 'Cannot deploy here'); break;
+      case 'engineer_repair': { const b = C.world.byId.get(e.id); this.toast(`${b ? b.name : 'Structure'} repaired by engineer`); this.ping(e.x, e.y, '#f2c230'); if (C.audio) C.audio.sfx('ui_ready'); break; }
       case 'built': if (C.input.place == null) this.refreshGrid(true); break;
       default: break;
     }
@@ -228,14 +240,15 @@ export class UI {
       const u = v.u; if (!u.alive || u.hidden || !v.group.visible) continue; const sel = C.sel.has(id), hov = I.hover === id;
       const dmg = u.hp < u.maxHp - 0.5; if (!sel && !hov && !dmg) continue;
       const pos = v.group.position, ppm = I.pxPerM(pos); if (!sel && ppm < 0.9 && !hov) continue;
-      const top = I.proj(pos.clone().add(new THREE.Vector3(0, u.sp.dimensions_m.height + (u.kind === 'foot' ? 0.4 : 1.0), 0))); if (!top) continue;
-      const bw = Math.max(16, Math.min(56, Math.max(u.sp.dimensions_m.length, 2.5) * ppm * 0.9)), f = u.hp / u.maxHp, segs = Math.max(4, Math.min(10, Math.round(bw / 6)));
-      if (sel) { const b = I.proj(pos); if (b) { const r = Math.max(7, (u.kind === 'foot' ? 0.8 : u.sp.dimensions_m.length * 0.55) * ppm); g.strokeStyle = u.team === C.p.team ? 'rgba(140,255,170,0.95)' : 'rgba(255,120,110,0.95)'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(b[0], b[1], r, r * 0.55, 0, 0, 6.283); g.stroke(); } }
+      const vs = v.vs || 1, top = I.proj(pos.clone().add(new THREE.Vector3(0, u.sp.dimensions_m.height * vs + (u.kind === 'foot' ? 0.4 : 1.0), 0))); if (!top) continue;
+      // bars and rings follow the drawn size; bars never shrink below 28 px so the pips stay countable when zoomed out
+      const bw = Math.max(u.kind === 'foot' ? 22 : 30, Math.min(64, Math.max(u.sp.dimensions_m.length, 2.5) * vs * ppm * 0.9)), f = u.hp / u.maxHp, segs = Math.max(4, Math.min(10, Math.round(bw / 6)));
+      if (sel) { const b = I.proj(pos); if (b) { const r = Math.max(10, (u.kind === 'foot' ? 0.8 : u.sp.dimensions_m.length * 0.55) * vs * ppm); g.strokeStyle = u.team === C.p.team ? 'rgba(140,255,170,0.95)' : 'rgba(255,120,110,0.95)'; g.lineWidth = 2; g.beginPath(); g.ellipse(b[0], b[1], r, r * 0.55, 0, 0, 6.283); g.stroke(); } }
       if (sel || dmg || hov) {   // segmented health bar (RA2 pips)
-        g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(top[0] - bw / 2 - 1, top[1] - 1, bw + 2, 5);
+        g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(top[0] - bw / 2 - 1, top[1] - 1, bw + 2, 6);
         const col = f > 0.6 ? '#62d48a' : f > 0.3 ? '#f2c14e' : '#ff6b5e', sw = bw / segs; g.fillStyle = col;
-        for (let s = 0; s < segs; s++) { const fill = Math.max(0, Math.min(1, f * segs - s)); if (fill > 0) g.fillRect(top[0] - bw / 2 + s * sw, top[1], sw * fill - (fill === 1 ? 1 : 0), 3); }
-        g.fillStyle = team(u.team); g.fillRect(top[0] - bw / 2 - 4, top[1] - 1, 3, 5);
+        for (let s = 0; s < segs; s++) { const fill = Math.max(0, Math.min(1, f * segs - s)); if (fill > 0) g.fillRect(top[0] - bw / 2 + s * sw, top[1], sw * fill - (fill === 1 ? 1 : 0), 4); }
+        g.fillStyle = team(u.team); g.fillRect(top[0] - bw / 2 - 4, top[1] - 1, 3, 6);
         if (u.rank) { g.fillStyle = '#f2c14e'; g.font = '700 10px "Barlow Condensed", sans-serif'; g.fillText(u.rank === 2 ? '◆◆' : '◆', top[0] + bw / 2 + 3, top[1] + 5); }
         if (sel) { for (const [n, ids] of Object.entries(C.groups)) if (ids.includes(id)) { g.fillStyle = '#e8eef3'; g.font = '700 10px "Barlow Condensed", sans-serif'; g.fillText(n, top[0] - bw / 2 - 12, top[1] + 5); break; } }
         if (u.emp) { g.fillStyle = '#6fe6d4'; g.font = '700 10px "Barlow Condensed", sans-serif'; g.fillText('EMP', top[0] + bw / 2 + 3, top[1] - 3); }
@@ -247,9 +260,10 @@ export class UI {
     }
     // structures: health when damaged or selected, rally line when selected
     for (const [, sv] of C.P.structs) {
-      const b = sv.b; if (!b.alive) continue; const sel = C.sel.has(b.id); if (!sel && b.hp >= b.maxHp) continue;
+      const b = sv.b; if (!b.alive) continue; const sel = C.sel.has(b.id); if (!sel && b.hp >= b.maxHp && !b.repairing) continue;
       const top = I.proj(new THREE.Vector3(b.x, b.z + sv.h + 3, -b.y)); if (!top) continue; const bw = 64, f = b.hp / b.maxHp;
       g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillRect(top[0] - bw / 2 - 1, top[1] - 1, bw + 2, 6); g.fillStyle = f > 0.6 ? '#62d48a' : f > 0.3 ? '#f2c14e' : '#ff6b5e'; g.fillRect(top[0] - bw / 2, top[1], bw * f, 4);
+      if (b.repairing && b.team === C.p.team) drawWrench(g, top[0], top[1] - 16, b.repairStalled ? '#ff6b5e' : '#f2c230', b.repairStalled ? 0 : performance.now() / 1000);
       if (sel) { const c = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([sx, sy]) => I.proj(new THREE.Vector3(b.x + sx * b.w / 2, b.z + 0.5, -(b.y + sy * b.d / 2)))); g.strokeStyle = b.team === C.p.team ? 'rgba(140,255,170,0.95)' : 'rgba(255,120,110,0.95)'; g.lineWidth = 1.5;
         for (const q of c) if (q) { g.beginPath(); g.arc(q[0], q[1], 3, 0, 6.283); g.stroke(); }
         if (b.rally && b.team === C.p.team) { const a = I.proj(new THREE.Vector3(b.x, b.z + 2, -b.y)), r = I.proj(new THREE.Vector3(b.rally[0], Math.max(C.T.surface(b.rally[0], b.rally[1]), 0) + 0.5, -b.rally[1])); if (a && r) { g.strokeStyle = 'rgba(242,232,109,0.85)'; g.setLineDash([6, 4]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(r[0], r[1]); g.stroke(); g.setLineDash([]); g.fillStyle = '#f2e86d'; g.fillRect(r[0] - 1, r[1] - 14, 2, 14); g.fillRect(r[0] + 1, r[1] - 14, 8, 5); } } }

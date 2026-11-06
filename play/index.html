@@ -31,7 +31,9 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 #side { position: fixed; top: 0; right: 0; bottom: 0; width: 268px; background: linear-gradient(180deg, var(--panel), #12171b); border-left: 1px solid var(--line);
   display: flex; flex-direction: column; gap: 8px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) 10px; box-sizing: border-box; z-index: 10; }
 #side::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--fac); opacity: 0.85; }
-.money { display: flex; align-items: baseline; justify-content: space-between; padding: 2px 2px 0; }
+.money { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 2px 2px 0; }
+#btnRepair { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 9px 3px 24px; min-height: 26px; background: var(--panel2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg transform='rotate(-35 7 7)' fill='none' stroke='%23f2c230' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 6.5v6'/%3E%3Cpath d='M4.3 2.2a3.3 3.3 0 1 0 5.4 0'/%3E%3C/g%3E%3C/svg%3E") 7px 50% no-repeat; border: 1px solid var(--line); }
+#btnRepair.on { border-color: #f2c230; color: #f2c230; box-shadow: inset 0 0 0 1px rgba(242,194,48,0.35); }
 #credits { font-family: var(--mono); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; color: #f3e6b0; }
 #credits.up { animation: up 0.6s ease-out; } @keyframes up { from { color: var(--ok); } to { color: #f3e6b0; } }
 #powerTxt { font-family: var(--mono); font-size: 11px; color: var(--muted); } #powerTxt.low { color: var(--bad); }
@@ -77,6 +79,8 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 #topbar { position: fixed; top: calc(10px + env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); display: flex; gap: 6px; align-items: center; z-index: 10; }
 #topbar .chip { background: rgba(13, 16, 19, 0.82); border: 1px solid var(--line); padding: 4px 9px; font-family: var(--mono); font-size: 12px; backdrop-filter: blur(3px); }
 #topbar button { background: rgba(13, 16, 19, 0.82); border: 1px solid var(--line); padding: 4px 10px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; }
+#btnRotate { position: fixed; top: 88px; left: 50%; transform: translateX(calc(-50% - 134px)); z-index: 11; min-width: 56px; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 6px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; background: rgba(13, 16, 19, 0.88); border: 1px solid var(--fac); color: #e8eef3; }
+#btnRotate:active { transform: translateX(calc(-50% - 134px)) scale(0.96); }
 #mode { position: fixed; top: 52px; left: 50%; transform: translateX(calc(-50% - 134px)); background: rgba(13, 16, 19, 0.85); border: 1px solid var(--fac); padding: 5px 12px; font-family: var(--display); font-size: 14px; letter-spacing: 0.04em; z-index: 10; pointer-events: none; }
 #paused { position: fixed; top: 40%; left: calc(50% - 134px); transform: translate(-50%, -50%); font-family: var(--display); font-weight: 800; font-size: 54px; letter-spacing: 0.3em; color: rgba(255,255,255,0.85); text-shadow: 0 2px 20px #000; pointer-events: none; z-index: 9; }
 #toast { position: fixed; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); left: calc(50% - 134px); transform: translateX(-50%); background: rgba(13, 16, 19, 0.88); border: 1px solid var(--line2); padding: 6px 14px; font-size: 13px; z-index: 12; pointer-events: none; }
@@ -150,7 +154,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 </div>
 
 <aside id="side" hidden>
-  <div class="money"><div id="credits">$10,000</div><div id="powerTxt">0 / 0</div></div>
+  <div class="money"><div id="credits">$10,000</div><button id="btnRepair" title="Repair (K): click your structures to repair them over time for credits">Repair</button><div id="powerTxt">0 / 0</div></div>
   <div id="mmWrap"><canvas id="minimap" width="496" height="496"></canvas></div>
   <div id="tabs"></div>
   <div class="buildrow"><div id="power" title="Power: the white line is demand, the bar is supply"><div id="powerMade"></div><div id="powerUsed"></div></div><div id="grid"></div></div>
@@ -160,6 +164,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
 <div id="topbar" hidden><span class="chip" id="clock">0:00</span><span class="chip" id="spd">2.4×</span><button id="btnSettings">Settings</button><button id="btnPause">Pause</button></div>
 <div id="mode" hidden></div>
+<button id="btnRotate" hidden title="Rotate the structure 90° (R, ← →)" aria-label="Rotate structure 90 degrees"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 9.5A8.5 8.5 0 1 0 21.5 15"/><path d="M21 3.5v6.2h-6.2"/></svg><span>Rotate</span></button>
 <div id="paused" hidden>PAUSED</div>
 <div id="toast" hidden></div>
 <div id="subtitle"></div>
@@ -169,6 +174,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
   <h3>Settings</h3>
   <label for="setGs"><span>Game speed <b id="setGsV">2.4×</b></span><input id="setGs" type="range"></label>
   <label for="setHr"><span>Harvester speed <b id="setHrV">1.25×</b></span><input id="setHr" type="range"></label>
+  <label for="setUs"><span>Unit size <b id="setUsV">1.75×</b></span><input id="setUs" type="range" min="1" max="2.5" step="0.05" value="1.75"></label>
   <label for="setTtk"><span>Time to kill <b id="setTtkV">1.0×</b></span><input id="setTtk" type="range" min="0.5" max="3" step="0.1" value="1"></label>
   <p id="setNote"></p>
   <label for="setVol"><span>Volume</span><input id="setVol" type="range" min="0" max="1" step="0.05" value="0.8"></label>

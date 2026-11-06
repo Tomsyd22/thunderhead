@@ -21,7 +21,16 @@ export class AI {
   think() {
     const g = this.g, p = this.p; if (p.lost || g.over) return;
     if (p.ready) this.placeReady();
-    this.buildStructures(); this.produce(); this.army();
+    this.buildStructures(); this.produce(); this.repair(); this.army();
+  }
+  // ── upkeep: wrench on damaged structures while it can afford it; an engineer for a badly damaged one ──
+  repair() {
+    const g = this.g, p = this.p, W = g.world;
+    for (const b of this.structs) { const f = b.hp / b.maxHp; if (!b.repairing && f < 0.75 && p.credits > 1500) g.toggleRepair(p, b); else if (b.repairing && p.credits < 400 && f > 0.5) g.toggleRepair(p, b); }
+    const eng = g.unitsOf(p).filter((u) => u.m.engineer), worst = this.structs.filter((b) => b.hp / b.maxHp < 0.4).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+    const F = FACTIONS[p.faction], eid = F.infantry.find((k) => W.spec[k] && !W.spec[k].weapons.length);
+    if (worst && !eng.length && eid && g.has(p, 'barracks') && !p.queues.infantry.some((i) => i.key === eid) && p.credits > 800) { g.enqueue(p, 'infantry', eid); const q = p.queues.infantry; q.unshift(q.pop()); }
+    for (const u of eng) if (u.order.type !== 'enter' && worst && !u.rollOut) W.order(u, { type: 'enter', building: worst.id });
   }
   // ── structures ──
   wantStructure() {
@@ -51,21 +60,21 @@ export class AI {
   }
   // ── production ──
   produce() {
-    const g = this.g, p = this.p, F = FACTIONS[p.faction], harv = g.unitsOf(p).filter((u) => u.uid === 'HV').length, refs = this.structs.filter((b) => b.kind === 'refinery').length;
+    const g = this.g, p = this.p, W = g.world, F = FACTIONS[p.faction], harv = g.unitsOf(p).filter((u) => u.uid === 'HV').length, refs = this.structs.filter((b) => b.kind === 'refinery').length;
     const vq = p.queues.vehicle, hvq = vq.filter((i) => i.key === 'HV').length, wantHv = Math.min(5, refs * 2);
     // economy first: a harvester is always in the queue while short of two per refinery (production pays as it goes)
     if (g.has(p, 'factory') && harv + hvq < wantHv && hvq < 1) { g.enqueue(p, 'vehicle', 'HV'); const q = p.queues.vehicle, i = q.findIndex((x) => x.key === 'HV'); if (i > 0) q.unshift(q.splice(i, 1)[0]); }
     if (harv + hvq < wantHv && p.credits < 1200) return;   // save up rather than starve the harvester
-    const army = g.unitsOf(p).filter((u) => u.uid !== 'HV').length; if (army > 40) return;
+    const army = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer).length; if (army > 40) return;
     const sq = p.queues.structure[0]; if (sq && !p.ready && p.credits < Math.min(1500, sq.cost - sq.spent)) return;   // the base comes first
     const keep = (cat, list, max) => { if (!g.has(p, { infantry: 'barracks', vehicle: 'factory', air: 'airpad', naval: 'naval' }[cat])) return; if (p.queues[cat].length >= max) return; const k = list[(this.next++) % list.length]; if (p.credits > g.costOf(cat, k) + 300) g.enqueue(p, cat, k); };
-    keep('infantry', F.infantry, 1); keep('vehicle', F.vehicle.filter((u) => u !== 'HV'), 1);
+    keep('infantry', F.infantry.filter((k) => W.spec[k] && W.spec[k].weapons.length), 1); keep('vehicle', F.vehicle.filter((u) => u !== 'HV'), 1);
     if (army > 8) keep('air', F.air, 1); if (army > 10) keep('naval', F.naval, 1);
   }
   // ── army ──
   army() {
     const g = this.g, W = g.world, p = this.p;
-    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.rollOut);
+    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer && !u.rollOut);
     const free = units.filter((u) => !this.wave.has(u.id) && (u.order.type === 'idle' || u.order.type === 'attackMove' && Math.hypot(u.x - this.stage[0], u.y - this.stage[1]) < 60));
     // defend: anything hitting our structures or harvesters near the base draws the free units
     const threat = g.events.filter((e) => e.type === 'under_attack' && e.player === p.id && g.t - e.t < 3 && this.nearMe([e.x, e.y], 450)).pop();

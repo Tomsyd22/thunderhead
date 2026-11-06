@@ -20,6 +20,10 @@ export const MECH = {
          deploy: { setup: 0.8, pack: 0.6, mobile: [0], deployed: [1], hitZ: 0.72 } },
   A02: { kind: 'foot', aim: 0.30, lockLOS: true, run: 0.9, death: 0.9, fade: 6, airOnlyMobile: true,
          deploy: { setup: 1.0, pack: 0.7, mobile: [0], deployed: [0, 1], hitZ: 0.72 } },
+  // engineers (game client, round 1): unarmed; walk into a friendly structure and are used up repairing it fully (RA2)
+  HE: { kind: 'foot', aim: 0.12, run: 0.8, idle: 2.4, death: 0.8, fade: 6, garrison: 1.0, engineer: true },
+  AE: { kind: 'foot', aim: 0.12, run: 0.8, idle: 2.4, death: 0.8, fade: 6, garrison: 1.0, engineer: true },
+  TE: { kind: 'foot', aim: 0.10, run: 0.7, idle: 2.2, death: 0.75, fade: 6, garrison: 0.9, engineer: true },
   T01: { kind: 'foot', aim: 0.10, run: 0.7, idle: 2.2, fire: 0.8, death: 0.75, fade: 6, garrison: 0.9, exit: 0.8, garrisonable: true },
   T02: { kind: 'foot', aim: 0.20, precharge: 0.2, run: 0.8, idle: 2.5, death: 0.8, fade: 6,
          emp: { range: 30, wind: 0.3, dur: 3, cd: 20, immune: 6, speed: 0.70, cycle: 1.25 } },
@@ -158,6 +162,10 @@ export class World {
         const b = this.byId.get(o.building); if (!b || !u.m.garrisonable || b.slots <= 0) return;
         u.order = { type: 'garrison', building: b.id }; u.target = null; this._plan(u, b.x, b.y, 0); break;
       }
+      case 'enter': {   // engineer into a friendly structure
+        const b = this.byId.get(o.building); if (!b || !b.isBuilding || !u.m.engineer || b.team !== u.team) return;
+        u.order = { type: 'enter', building: b.id }; u.target = null; u.enterT = 0; this._plan(u, b.x, b.y, 0); break;
+      }
       case 'ungarrison': if (u.garrisonIn) { u.order = { type: 'exiting' }; u.enterT = this.t; this.emit('garrison_exit', { id: u.id, b: u.garrisonIn }); } break;
       case 'return': if (u.kind === 'jet') { u.order = { type: 'idle' }; this._jetReturn(u); } break;
     }
@@ -224,20 +232,34 @@ export class World {
   // ───────────── harvesters: grate → field → grate, the same cycle data/pace.js harvestCycle() predicts ─────────────
   /** Start a harvester on a deposit. dep: deposit object or id (sandbox econ layout); dock: refinery dock { grate, approach, face }.
    *  Docks and deposits are reserved (busy = harvester id) so harvesters queue instead of piling into a bay or a chute.
-   *  Hooks (game): this.hooks.harvestDock(u) picks the refinery dock after loading; this.hooks.harvestDepleted(u) picks a new field. */
+   *  Hooks (game): this.hooks.harvestDock(u) picks the refinery dock after loading; this.hooks.harvestDepleted(u) picks a new field.
+   *  Patch mode (game ore fields, hooks.harvestPatch present): a field is a scatter of patches; the harvester loads from one
+   *  patch at a time (harvestTake), hops to the next patch when it runs dry (harvestPatch), and goes to the next field when
+   *  the whole field is empty — with partial cargo it heads home if that field is far. */
   harvest(u, dep, dock) {
     const E = this.econ || {};
     if (dep == null || typeof dep === 'string') dep = (E.deposits || []).find((d) => d.id === dep) || (E.deposits || [])[0];
     dock = dock || (u.harv && u.harv.dock) || E.dock; if (!dep || !dock) return;
     this._harvRelease(u);
     const keep = u.harv ? { history: u.harv.history } : { history: [] };
-    u.harv = Object.assign(keep, { dock, dep, state: 'out', legT: this.t, cycleStart: this.t, legs: {}, last: null, cycles: 0, cargo: 0 });
+    const cargo = u.harv ? u.harv.cargo || 0 : 0;
+    u.harv = Object.assign(keep, { dock, dep, state: 'out', legT: this.t, cycleStart: this.t, legs: {}, last: null, cycles: 0, cargo, patch: null });
     u.order = { type: 'harvest' }; u.scripted = false; u.loading = false;
-    const atGrate = Math.hypot(u.x - dock.grate[0], u.y - dock.grate[1]) < 3;
-    this._harvPlan(u, atGrate ? dock.approach : [u.x, u.y], dep.svc, atGrate);
+    const atGrate = Math.hypot(u.x - dock.grate[0], u.y - dock.grate[1]) < 3, from = atGrate ? dock.approach : [u.x, u.y];
+    if (this._patchMode()) { if (!this._nextPatch(u, from)) { u.harv.state = 'idle'; u.order = { type: 'idle' }; return; } }
+    this._harvPlan(u, from, this._harvGoal(u), atGrate);
+  }
+  _patchMode() { return !!(this.hooks && this.hooks.harvestPatch); }
+  _harvGoal(u) { const H = u.harv; return H.patch ? [H.patch.x, H.patch.y] : H.dep.svc; }
+  /** patch mode: hold the nearest patch with ore in the current field (or the next field); false when there is none */
+  _nextPatch(u, from) {
+    const H = u.harv; if (H.patch) { this.hooks.harvestRelease(u, H.patch); H.patch = null; }
+    let p = this.hooks.harvestPatch(u, H.dep, from);
+    if (!p) { const nd = this.hooks.harvestDepleted && this.hooks.harvestDepleted(u); if (nd && nd !== H.dep) { H.dep = nd; p = this.hooks.harvestPatch(u, nd, from); } }
+    H.patch = p || null; return !!p;
   }
   setHarvesterSpeed(v) { for (const sp of Object.values(this.spec)) if (sp.id === 'HV') sp.speed_mps = v; }
-  _harvRelease(u) { const H = u.harv; if (!H) return; if (H.dock && H.dock.busy === u.id) H.dock.busy = null; if (H.dep && H.dep.busy === u.id) H.dep.busy = null; }
+  _harvRelease(u) { const H = u.harv; if (!H) return; if (H.dock && H.dock.busy === u.id) H.dock.busy = null; if (H.dep && H.dep.busy === u.id) H.dep.busy = null; if (H.patch && this.hooks && this.hooks.harvestRelease) { this.hooks.harvestRelease(u, H.patch); H.patch = null; } }
   _harvPlan(u, from, to, viaFrom) { // plan from a fixed point (the bay approach), so the start never depends on the bay's narrow clearance
     const P = this.nav.path('veh', from[0], from[1], to[0], to[1], this._navR(u), u.r + 1.5);
     u.path = (viaFrom ? [from.slice()] : []).concat(P.pts); if (!u.path.length) u.path = [to.slice()];
@@ -250,6 +272,7 @@ export class World {
   }
   _harvestThink(u, dt) {
     const H = u.harv; if (!H || u.order.type !== 'harvest') return; const P = this.pace.harvester, t = this.t, near = (p, r = 3) => Math.hypot(u.x - p[0], u.y - p[1]) < r;
+    if (this._patchMode() && (H.state === 'out' || H.state === 'load')) return this._patchThink(u, dt, P, near);
     if (H.state === 'out') {
       if (H.dep.ore != null && H.dep.ore <= 0) { const nd = this.hooks && this.hooks.harvestDepleted && this.hooks.harvestDepleted(u); if (nd) { H.dep = nd; this._harvPlan(u, [u.x, u.y], nd.svc, false); } else { this._harvRelease(u); u.order = { type: 'idle' }; u.path = null; u.harv.state = 'idle'; return; } }
       if (H.dep.busy && H.dep.busy !== u.id && near(H.dep.svc, 22)) { u.path = null; H.state = 'waitField'; }   // another harvester at the chute: wait clear of it
@@ -279,14 +302,36 @@ export class World {
       H.cycleStart = t; H.legs = {}; H.legT = t;
       // game maps: the bay is narrower than a nav cell, so the drive out of it is scripted (straight along the bay axis)
       if (!this.nav.lineOk('veh', H.dock.grate[0], H.dock.grate[1], H.dock.approach[0], H.dock.approach[1], u.r * 0.6)) { H.state = 'exit'; u.scripted = true; return; }
-      u.scripted = false; H.state = 'out'; this._harvPlan(u, H.dock.approach, H.dep.svc, true);
+      u.scripted = false; H.state = 'out'; if (this._patchMode() && !this._nextPatch(u, H.dock.approach)) { this._harvIdle(u); return; } this._harvPlan(u, H.dock.approach, this._harvGoal(u), true);
       if (H.next) { const n = H.next; H.next = null; this.harvest(u, n); }
     } else if (H.state === 'exit') { // drive forward out of the bay to the approach point, then on to the field
       const [ax, ay] = H.dock.approach, c = Math.cos(u.hdg), sn = Math.sin(u.hdg), rem = Math.max(0, (ax - u.x) * c + (ay - u.y) * sn);
       const vMax = this.spec.HV ? this.spec.HV.speed_mps : 8, vDes = Math.min(vMax, Math.sqrt(2 * P.brake_mps2 * rem) + 2.5);
       u.v = approach(u.v, vDes, (vDes > u.v ? P.accel_mps2 : P.brake_mps2) * dt);
       u.x += u.v * c * dt; u.y += u.v * sn * dt; u.trackL += u.v * dt; u.trackR += u.v * dt; u.vx = u.v * c; u.vy = u.v * sn; u.z = this.T.height(u.x, u.y);
-      if (rem <= u.v * dt + 0.05) { u.scripted = false; H.state = 'out'; this._harvPlan(u, [u.x, u.y], H.dep.svc, false); if (H.next) { const n = H.next; H.next = null; this.harvest(u, n); } }
+      if (rem <= u.v * dt + 0.05) { u.scripted = false; H.state = 'out'; if (this._patchMode() && !H.patch && !this._nextPatch(u, [u.x, u.y])) { this._harvIdle(u); return; } this._harvPlan(u, [u.x, u.y], this._harvGoal(u), false); if (H.next) { const n = H.next; H.next = null; this.harvest(u, n); } }
+    }
+  }
+  _harvIdle(u) { this._harvRelease(u); u.order = { type: 'idle' }; u.path = null; u.loading = false; u.scripted = false; u.harv.state = 'idle'; u.harv.noOre = true; this.emit('harvest_idle', { id: u.id, team: u.team }); }
+  /** patch mode: drive to the held patch, load from it at the loading rate, hop to the next patch when it runs dry */
+  _patchThink(u, dt, P, near) {
+    const H = u.harv, t = this.t, cap = P.capacity_bails * (P.bail_value || 25);
+    if (H.state === 'out') {
+      if (!H.patch || H.patch.cell && H.patch.cell.amt <= 0) { if (!this._nextPatch(u, [u.x, u.y])) { if (H.cargo > 0) { H.legT = t; this._harvToDock(u); } else this._harvIdle(u); return; } this._harvPlan(u, [u.x, u.y], this._harvGoal(u), false); }
+      const g = this._harvGoal(u);
+      if (!u.path && near(g, 3.2)) { if (H.legs.out == null) H.legs.out = t - H.legT; H.state = 'load'; H.loadT = H.loadT || t; u.loading = true; u.v = 0; u.vx = u.vy = 0; this.emit('harvest_load', { id: u.id, dur: (cap - H.cargo) / (cap / P.load_s) }); }
+      else if (!u.path) this._harvPlan(u, [u.x, u.y], g, false);
+      return;
+    }
+    // load: take ore from the patch at the loading rate
+    const want = Math.min(cap / P.load_s * dt, cap - H.cargo), got = this.hooks.harvestTake(u, H.patch, want); H.cargo += got;
+    if (H.cargo >= cap - 1e-6) { H.legs.load = t - (H.loadT || t); H.loadT = null; u.loading = false; this.hooks.harvestRelease(u, H.patch); H.patch = null; H.legT = t; this._harvToDock(u); return; }
+    if (got < want - 1e-9) {   // this patch ran dry: on to the next one (another field if this one is empty)
+      u.loading = false; const dep0 = H.dep;
+      if (!this._nextPatch(u, [u.x, u.y])) { H.legs.load = t - (H.loadT || t); H.loadT = null; if (H.cargo > 0) { H.legT = t; this._harvToDock(u); } else this._harvIdle(u); return; }
+      const far = Math.hypot(H.patch.x - u.x, H.patch.y - u.y);
+      if (H.dep !== dep0 && far > 150 && H.cargo >= cap * 0.5) { this.hooks.harvestRelease(u, H.patch); H.patch = null; H.legs.load = t - (H.loadT || t); H.loadT = null; H.legT = t; this._harvToDock(u); return; }   // half full and the next field is far: unload first
+      H.state = 'out'; this._harvPlan(u, [u.x, u.y], [H.patch.x, H.patch.y], false); this.emit('harvest_hop', { id: u.id, d: far });
     }
   }
 
@@ -367,6 +412,15 @@ export class World {
         if (this.t - u.enterT >= m.garrison - EPS) { u.garrisonIn = b.id; u.hidden = true; u.port = b.occupants.length; b.occupants.push(u.id); { const pp = b.ports[u.port % b.ports.length]; u.x = b.x + pp[0]; u.y = b.y + pp[1]; u.v = 0; u.vx = u.vy = 0; } u.order = { type: 'idle' }; u.enterT = 0; this.emit('garrisoned', { id: u.id, b: b.id }); }
       } else if (!u.path) this._plan(u, b.x, b.y, 0);
     }
+    // engineer entry: same step-in as a garrison; then the unit is used up and the game layer applies the repair
+    if (u.order.type === 'enter') {
+      const b = this.byId.get(u.order.building);
+      if (!b || !b.alive || (!u.enterT && b.hp >= b.maxHp - 0.5)) { u.order = { type: 'idle' }; u.path = null; u.enterT = 0; }   // nothing left to repair: stay out
+      else if (u.enterT || this.surfDist(u, b) <= 2.0 || (!u.path && this.surfDist(u, b) <= 6)) {   // at the wall, or as close as the 4 m nav grid allows
+        if (!u.enterT) { u.enterT = this.t; u.path = null; u.v = 0; u.vx = u.vy = 0; this.emit('garrison_enter', { id: u.id, b: b.id, dur: m.garrison }); }
+        if (this.t - u.enterT >= m.garrison - EPS) { u.alive = false; u.removed = true; u.hidden = true; u.deathT = this.t; this.emit('engineer_enter', { id: u.id, b: b.id, team: u.team }); this.emit('remove', { id: u.id }); }
+      } else if (!u.path) this._plan(u, b.x, b.y, 0);
+    }
     if (u.order.type === 'exiting' && this.t - u.enterT >= m.exit - EPS) {
       const b = this.byId.get(u.garrisonIn); b.occupants = b.occupants.filter((i) => i !== u.id);
       const p = this.nav.nearestOk('foot', b.x, b.y - b.d / 2 - 2, u.r) || [b.x, b.y - b.d / 2 - 2];
@@ -401,6 +455,7 @@ export class World {
       }
     }
     if (u.kind === 'jet') return this._jetThink(u, dt);
+    if (!u.sys.length) u.target = null;   // unarmed (engineers): never hold a target
     // target maintenance: invalid/out of leash → drop (manual targets persist while valid and visible)
     if (u.target != null) {
       const tg = this.byId.get(u.target);
@@ -409,7 +464,7 @@ export class World {
     }
     // auto-acquire: idle, guarding and attack-moving units; plain move orders ignore enemies
     // scan for targets every 0.2 s (staggered per unit) rather than every tick
-    if (u.target == null && (this.tick + u.id) % 6 === 0 && u.order.type !== 'move' && u.order.type !== 'garrison' && u.order.type !== 'emp' && u.order.type !== 'scan' && !(u.deploy && u.deploy !== 'mobile' && u.deploy !== 'deployed')) {
+    if (u.target == null && u.sys.length && (this.tick + u.id) % 6 === 0 && u.order.type !== 'move' && u.order.type !== 'garrison' && u.order.type !== 'emp' && u.order.type !== 'scan' && !(u.deploy && u.deploy !== 'mobile' && u.deploy !== 'deployed')) {
       const tg = this._acquire(u, u.sys[0]); if (tg) u.target = tg.id;
     }
     // pursuit for manual attack / leash for auto targets
@@ -515,7 +570,7 @@ export class World {
   }
   _move(u, dt) {
     if (u.hidden || u.scripted) return;
-    const busy = u.order.type === 'garrison' && u.enterT || u.order.type === 'exiting' || (u.deploy && u.deploy !== 'mobile');
+    const busy = (u.order.type === 'garrison' || u.order.type === 'enter') && u.enterT || u.order.type === 'exiting' || (u.deploy && u.deploy !== 'mobile');
     const kind = u.kind;
     if (kind === 'jet') return this._jetMove(u, dt);
     const D = busy ? null : this._desired(u);
@@ -549,7 +604,7 @@ export class World {
     if (u.path) { if (moved < 0.15 * dt && Math.abs(u.w) < 0.02) u.stuckT += dt; else u.stuckT = Math.max(0, u.stuckT - dt); if (u.stuckT > 2.5 && u.goal) { u.stuckT = 0; if (kind === 'ship') u.astern = this.t + 4; this._plan(u, u.goal.x, u.goal.y, u.goal.stop); } }
   }
   _footMove(u, D, dt) {
-    const s = u.sys[0]; const firing = s.wind || this.t - s.lastFire < 0.25;
+    const s = u.sys[0]; const firing = !!s && (s.wind || this.t - s.lastFire < 0.25);
     let vDes = 0, hDes = u.hdg;
     if (D) { hDes = Math.atan2(D[1] - u.y, D[0] - u.x); const e = Math.abs(wrap(hDes - u.hdg)); vDes = Math.min(this._speedCap(u), Math.sqrt(2 * FOOT.decel * D[2])) * Math.max(0, Math.cos(e)) ** 1.5; }
     else if (u.target != null) { const tg = this.byId.get(u.target); if (tg) hDes = Math.atan2(tg.y - u.y, tg.x - u.x); }
@@ -771,7 +826,7 @@ export class World {
   _combat(u, dt) {
     if (u.passive) return;
     if (u.kind === 'jet') return this._jetCombat(u);
-    if (u.order.type === 'exiting' || (u.order.type === 'garrison' && u.enterT)) return;
+    if (u.order.type === 'exiting' || ((u.order.type === 'garrison' || u.order.type === 'enter') && u.enterT)) return;
     for (let k = 0; k < u.sys.length; k++) this._system(u, u.sys[k], k, dt);
   }
   _jetCombat(u) {

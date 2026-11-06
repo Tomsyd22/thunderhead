@@ -6,3 +6,44 @@ node_modules/
 .cache/
 .sync/
 play/index.local.html
+
+# ── backup policy (2026-11-07): only what can't be regenerated is versioned ──
+# Everything below is rebuilt by the generators and build scripts (see CLAUDE.md). The files stay on disk in the cloud
+# workspace and on the Mac (tools/sync_pack.py syncs them); they are just not in git.
+# archives and vendored downloads (npm / the three.js release)
+*.zip
+*.tgz
+*.tar.gz
+vendor/package/
+# renders, previews and screenshots
+maps/renders/**/*.png
+maps/renders/**/*.exr
+maps/lab/shots/
+maps/assets/preview/
+maps/assets/staging/
+units/preview/
+blender/preview/
+play/results/shots/
+**/results/**/*.png
+**/shots/
+play/results/*.log
+# builds: map generator output, the Map Lab export, Blender scenes and models, asset exports, bundles
+maps/build/
+maps/lab/data/
+maps/scenes/
+maps/assets/blend/
+maps/assets/glb/
+maps/assets/bounds/
+maps/assets/measured_bounds.json
+units/blend/
+units/out/
+units/sandbox/assets/
+blender/out/
+art/out/
+game/dist/
+proto/dist/
+# the game client's copies (python3 play/build.py)
+play/engine/
+play/assets/
+play/maps/
+play/data/

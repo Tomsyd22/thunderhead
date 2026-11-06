@@ -5,8 +5,8 @@ import { TICK, MECH } from './engine/mech.js';
 import { harvesterSandboxSpeed } from './engine/pace.js';
 import { loadMapData } from './mapdata.js';
 import { buildMapView, addMapLighting, MAP_QUALITY } from './maprender.js';
-import { createMatch, stepMatch, applyMapping } from './setup.js';
-import { loadUnitProtos, loadBuildingProtos } from './assets.js';
+import { createMatch, stepMatch, applyMapping, addEngineers, ENGINEERS } from './setup.js';
+import { loadUnitProtos, loadBuildingProtos, makeEngineerProto } from './assets.js';
 import { Presenter } from './present.js';
 import { RTSCamera } from './camera.js';
 import { FACTIONS, STRUCTURES } from './rules.js';
@@ -27,10 +27,11 @@ async function boot() {
   try { Audio = (await import('./audio.js')).Audio; } catch (e) { C.errors.push('audio: ' + e.message); }
   const [specRaw, mapping, paceFile, geom, combat] = await Promise.all(['data/unit_specs.json', 'data/faction_mapping.json', 'data/pace.json', 'data/sockets.json', 'data/combat.json'].map((u) => fetch(u).then((r) => r.json())));
   C.combat = combat; if (C.saved && isFinite(C.saved.ttk)) combat.ttk_scale = C.saved.ttk;
-  C.specRaw = applyMapping(specRaw, mapping); C.paceFile = paceFile; C.geom = geom; C.mapping = mapping;
+  C.specRaw = addEngineers(applyMapping(specRaw, mapping)); C.paceFile = paceFile; C.geom = geom; C.mapping = mapping;
   const pace = C.pace = structuredClone(paceFile);
   try { const sv = JSON.parse(localStorage.getItem('thunderhead.settings') || 'null'); if (sv) C.saved = sv; } catch (e) { /* storage unavailable */ }
   if (C.saved && isFinite(C.saved.gs)) pace.game_speed = C.saved.gs; if (C.saved && isFinite(C.saved.hr)) pace.harvester_speed_ratio = C.saved.hr;
+  C.unitScale = Q.has('us') ? +Q.get('us') : C.saved && isFinite(C.saved.us) ? C.saved.us : 1.75;
   if (Q.has('gs')) pace.game_speed = +Q.get('gs');
   const T = C.T = await loadMapData('maps/01/');
   // renderer (ACES, sRGB, PCF soft shadows: the map shaders expect them)
@@ -49,6 +50,7 @@ async function boot() {
   const uids = ['H01', 'H02', 'H03', 'H04', 'H05', 'A01', 'A03', 'A04', 'A05', 'T01', 'T02', 'T03', 'T04', 'T05', 'HV']; let nu = 0;
   const U = await loadUnitProtos(uids, 'assets/units/', C.specRaw.units.concat([{ id: 'HV', dimensions_m: { length: 10, width: 4, height: 4 } }]), () => prog('Loading units', 0.6 + 0.25 * (++nu / uids.length)));
   C.protos = U.protos; C.errors.push(...U.errors);
+  for (const [id, E] of Object.entries(ENGINEERS)) if (C.protos[E.base]) C.protos[id] = makeEngineerProto(C.protos[E.base]);
   const bnames = [...new Set(Object.values(STRUCTURES).map((s) => s.model).filter((m) => m.startsWith('bld_')))].concat(['prop_gantry_crane']);
   const B = await loadBuildingProtos(bnames, 'assets/map/', () => prog('Loading structures', 0.9)); C.bprotos = B.protos; C.errors.push(...B.errors);
   prog('Preparing', 0.96);
@@ -70,7 +72,7 @@ function start(opt) {
   const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat });
   C.world = M.world; C.game = M.game; C.p = M.game.players[0]; C.enemy = M.game.players[1]; C.spec = M.world.spec;
   C.P = new Presenter({ scene: C.scene, camera: C.camera, T: C.T, world: C.world, game: C.game, protos: C.protos, bprotos: C.bprotos, playerTeam: C.p.team, audio: C.audio });
-  C.P.afterStep(); C.world.events.length = 0;   // views for the starting yard and squad
+  C.P.unitScale = C.unitScale; C.P.afterStep(); C.world.events.length = 0;   // views for the starting yard and squad
   C.seq = 0; C.acc = 0; C.paused = false; C.sel = new Set(); C.groups = {}; C.alerts = [];
   const y = C.world.byId.get(C.p.yard); C.rcam.setFocus(y.x + (C.T.W / 2 - y.x) * 0.05, y.y + (C.T.H / 2 - y.y) * 0.05); C.rcam.dist = C.rcam.distT = 165; C.rcam.fz = y.z;
   C.ui = new UI(C); C.input = new Input(C);
@@ -80,8 +82,9 @@ function start(opt) {
 function setPace(o) {
   const P = C.pace; if (o.game_speed != null) P.game_speed = +o.game_speed; if (o.harvester_speed_ratio != null) P.harvester_speed_ratio = +o.harvester_speed_ratio;
   if (C.world) C.world.setHarvesterSpeed(harvesterSandboxSpeed(P));
+  if (o.unit_scale != null) { C.unitScale = +o.unit_scale; if (C.P) C.P.setUnitScale(C.unitScale); }
   if (o.ttk != null) { C.combat.ttk_scale = +o.ttk; if (C.world) C.world.dmgScale = 1 / C.combat.ttk_scale; }
-  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
+  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, us: C.unitScale, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
   if (C.ui) C.ui.paceChanged();
   return { game_speed: P.game_speed, harvester_speed_ratio: P.harvester_speed_ratio, harvester_mps: harvesterSandboxSpeed(P) };
 }

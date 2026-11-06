@@ -3,6 +3,7 @@
 // (Same loader as units/sandbox/app.js and play/maprender.js.)
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { MECH } from './engine/mech.js';
 
 const loader = new GLTFLoader();
@@ -50,4 +51,28 @@ export async function loadBuildingProtos(names, base, onOne) {
     if (onOne) onOne(n);
   }));
   return { protos: out, errors };
+}
+
+/** engineer prototype on a rifleman's frame (round 1, until a modelled engineer exists): the rifle is replaced by a rugged
+ * tool case carried at the same two grips, and a safety-yellow hard hat sits on the head bone. Shares the base's LODs
+ * (the added meshes keep their LOD0 geometry at every level; the hidden rifle swaps as before). */
+export function makeEngineerProto(base) {
+  const scene = base.isSkinned ? SkeletonUtils.clone(base.scene) : base.scene.clone(true); let weapon = null, head = null;
+  scene.traverse((o) => { if (o.name === 'weapon') weapon = o; if (o.name === 'head' && o.isBone) head = o; });
+  const hat = new THREE.MeshStandardMaterial({ name: 'ENG_hat', color: 0xf2c230, roughness: 0.45, metalness: 0.05 });
+  const caseM = new THREE.MeshStandardMaterial({ name: 'ENG_case', color: 0xc8501e, roughness: 0.55, metalness: 0.2 });
+  const steel = new THREE.MeshStandardMaterial({ name: 'ENG_steel', color: 0x8d949b, roughness: 0.35, metalness: 0.8 });
+  if (weapon) {
+    weapon.traverse((o) => { if (o.isMesh) o.visible = false; });
+    const box = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.2, 0.34), caseM); box.name = 'eng_case'; box.position.set(0, -0.13, -0.07); weapon.add(box);
+    const lid = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.025, 0.35), steel); lid.position.set(0, -0.025, -0.07); weapon.add(lid);
+    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.01, 6, 12, Math.PI), steel); handle.rotation.y = Math.PI / 2; handle.position.set(0, -0.012, -0.07); weapon.add(handle);
+  }
+  if (head) {
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.122, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), hat); dome.position.set(0, 0.12, 0.0); dome.scale.set(1, 0.85, 1.12); head.add(dome);
+    const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.148, 0.148, 0.012, 18), hat); brim.position.set(0, 0.122, -0.018); brim.scale.set(1, 1, 1.15); head.add(brim);
+  }
+  for (const m of [hat, caseM, steel]) m.envMapIntensity = 0.6;
+  scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  return { scene, isSkinned: base.isSkinned, lods: base.lods };
 }

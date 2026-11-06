@@ -67,7 +67,7 @@ class BaseView {
     this.allMats = []; this.model.traverse((o) => { if (o.isMesh) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) if (!this.allMats.includes(m)) this.allMats.push(m); });
     // distant-view levels: the LOD GLBs share this model's node tree and material names, so each mesh just swaps geometry
     // (materials, bones, sockets and animation stay on the LOD0 objects)
-    this.lod = 0; this.lodMeshes = []; const sz = u.sp.dimensions_m; this.lodSize = Math.max(sz.length, sz.width, sz.height);
+    this.lod = 0; this.lodMeshes = []; const sz = u.sp.dimensions_m; this.lodSize0 = this.lodSize = Math.max(sz.length, sz.width, sz.height); this.vs = 1;
     if (proto.lods && proto.lods.length) {
       const key = (o) => `${o.parent ? o.parent.name : ''}/${o.name.replace(/_\d+$/, '')}/${(Array.isArray(o.material) ? o.material[0] : o.material)?.name || ''}`;
       const index = (root) => { const mp = new Map(); root.traverse((o) => { if (o.isMesh) { const k = key(o); (mp.get(k) || mp.set(k, []).get(k)).push(o.geometry); } }); return mp; };
@@ -76,6 +76,9 @@ class BaseView {
     }
     for (const m of this.allMats) m.userData.baseOpacity = m.opacity;
   }
+  // readability: the model is drawn `s`× its true size around its true position (the simulation is unchanged). Views
+  // that turn ground distance into motion (gait phase, track scroll, wheel roll) divide by vs so nothing slides.
+  setVisualScale(s) { this.vs = s; this.group.scale.setScalar(s); this.lodSize = this.lodSize0 * s; this._ll = null; }
   setLod(l) { for (const m of this.lodMeshes) { const g = m.g[l] || m.g[l - 1] || m.g[0]; if (m.o.geometry !== g) m.o.geometry = g; } this.lod = l; }
   sock(name, v = new V3()) { const n = this.N[name]; return n ? n.getWorldPosition(v) : this.group.getWorldPosition(v); }
   dirOf(name, v = new V3()) { const n = this.N[name]; if (!n) return v.set(0, 0, -1).applyQuaternion(this.group.quaternion); n.getWorldQuaternion(_q); return v.set(0, 0, -1).applyQuaternion(_q); }
@@ -117,15 +120,16 @@ export class InfantryView extends BaseView {
     // gait phase from distance actually travelled: stride shortens at walking pace, the spec run loop sets the cycle at
     // full speed (H01: 0.8 s × 4.4 m/s = 3.52 m per two steps). Planted feet move back at exactly body speed.
     // distance actually covered on the ground this frame (includes separation nudges and obstacle slides)
-    if (!this.lastPos) this.lastPos = [S.x, S.y]; const ds = S.hidden ? 0 : Math.hypot(S.x - this.lastPos[0], S.y - this.lastPos[1]); this.lastPos = [S.x, S.y];
-    const spd = Math.hypot(S.vx, S.vy); const rr = clamp(spd / u.sp.speed_mps, 0, 1);
+    const vs = this.vs; if (!this.lastPos) this.lastPos = [S.x, S.y]; const ds = S.hidden ? 0 : Math.hypot(S.x - this.lastPos[0], S.y - this.lastPos[1]) / vs; this.lastPos = [S.x, S.y];
+    // gait is solved in model units: a figure drawn vs× larger takes vs× longer strides at the same ground speed
+    const spdW = Math.hypot(S.vx, S.vy), spd = spdW / vs; const rr = clamp(spdW / u.sp.speed_mps, 0, 1);
     // cadence rises from a 0.9 Hz walk to the spec run loop; stance (ground contact) length is capped at 0.62 m for reach
-    const f = 0.9 + (1 / this.loop - 0.9) * rr; this.C = Math.max(0.6, spd / f); this.duty = Math.min(0.6 - 0.4 * rr, 0.62 / this.C);
+    const f = (0.9 + (1 / this.loop - 0.9) * rr) / Math.sqrt(vs); this.C = Math.max(0.6, spd / f); this.duty = Math.min(0.6 - 0.4 * rr, 0.62 / this.C);
     this.phase = (this.phase + ds / this.C) % 1;
     const deployed = S.deploy === 'deployed' || S.deploy === 'deploying' || S.deploy === 'packing';
     const kneelT = S.deploy === 'deployed' ? 1 : S.deploy === 'deploying' ? smooth((t - this.deployT) / (this.m.deploy ? this.m.deploy.setup : 1)) : S.deploy === 'packing' ? 1 - smooth((t - this.deployT) / (this.m.deploy ? this.m.deploy.pack : 1)) : 0;
     this.kneel = kneelT; this.gaitW = damp(this.gaitW, clamp(spd / 1.2, 0, 1), 10, dt);
-    const engaged = S.target != null && !S.path && spd < 0.3;
+    const engaged = S.target != null && !S.path && spdW < 0.3;
     this.aimW = damp(this.aimW, engaged || deployed ? 1 : 0, 9, dt);
     if (this.dead) { this.feet.R = this.feet.L = false; return this.deathPose(S, t, dt); }
     // animation LOD: off-screen infantry only move; beyond 160 m the pose updates every third frame
@@ -163,13 +167,13 @@ export class InfantryView extends BaseView {
         const kx = side === 'R' ? 0.12 : -0.1, ky = side === 'R' ? -0.3 : 0.42; lx += (kx - lx) * kneelT; ly += (ky - ly) * kneelT; lz += ((side === 'R' ? 0.06 : 0.03) - lz) * kneelT; heel *= 1 - kneelT;
         if (side === 'R') heel += 1.0 * kneelT;
       }
-      const ground = this.app.T.height(S.x + (lx * Math.sin(S.hdg) + ly * Math.cos(S.hdg)), S.y + (-lx * Math.cos(S.hdg) + ly * Math.sin(S.hdg))) - S.z;
+      const ground = this.app.T.height(S.x + (lx * Math.sin(S.hdg) + ly * Math.cos(S.hdg)), S.y + (-lx * Math.cos(S.hdg) + ly * Math.sin(S.hdg))) - S.z; const gnd = clamp(ground / vs, -0.3, 0.3);
       // ankle from the ball point and the heel pitch (foot: ball 0.13 m ahead of and 0.065 m below the ankle)
-      const al = 0.145, a0 = Math.atan2(0.065, 0.13) + heel; const ballM = new V3(lx, lz + clamp(ground, -0.3, 0.3), -ly);
+      const al = 0.145, a0 = Math.atan2(0.065, 0.13) + heel; const ballM = new V3(lx, lz + gnd, -ly);
       // foot lock: at touchdown the ball point is pinned in the world for the whole stance (turns and separation nudges
       // then rotate the leg instead of sliding the foot); released at toe-off or if the leg would over-reach
       const L = this.lock[side]; let ballW = this.group.localToWorld(ballM.clone());
-      if (stance && this.gaitW > 0.3 && kneelT === 0) { if (!L.on) { L.on = true; L.p.copy(ballW); L.rel = null; } else { const hip = wpos(th); if (L.p.distanceTo(hip) > 0.98) { L.on = false; L.rel = { t, p: L.p.clone() }; FS.duty = ph; stance = false; } else ballW = L.p.clone(); } }  // would over-reach: lift early (take the next step) rather than slide
+      if (stance && this.gaitW > 0.3 && kneelT === 0) { if (!L.on) { L.on = true; L.p.copy(ballW); L.rel = null; } else { const hip = wpos(th); if (L.p.distanceTo(hip) > 0.98 * vs) { L.on = false; L.rel = { t, p: L.p.clone() }; FS.duty = ph; stance = false; } else ballW = L.p.clone(); } }  // would over-reach: lift early (take the next step) rather than slide
       else if (L.on) { L.on = false; L.rel = { t, p: L.p.clone() }; }
       if (!L.on && L.rel) { const k = smooth((t - L.rel.t) / 0.15); if (k >= 1) L.rel = null; else ballW = L.rel.p.clone().lerp(ballW, k); }  // released: ease the foot over 0.15 s instead of snapping
       const fq0 = this.group.getWorldQuaternion(new Q());
@@ -178,7 +182,7 @@ export class InfantryView extends BaseView {
         L.on = false; L.rel = { t, p: L.p.clone() }; FS.duty = ph; stance = false; } }
       const pole = this.group.localToWorld(new V3(lx * 1.3, 0.6, -(side === 'R' && kneelT > 0.5 ? 0.6 : 1.2)));
       ik2(th, sh, ft, target, pole);
-      { const e = wpos(ft).distanceTo(target); if (stance && this.gaitW > 0.6) { this.app.ikErr = this.app.ikErr || { n: 0, max: 0, over2: 0, by: {} }; const IE = this.app.ikErr; IE.n++; IE.max = Math.max(IE.max, e); if (e > 0.02) { IE.over2++; IE.by[this.uid] = (IE.by[this.uid] || 0) + 1; } } }
+      { const e = wpos(ft).distanceTo(target) / vs; if (stance && this.gaitW > 0.6) { this.app.ikErr = this.app.ikErr || { n: 0, max: 0, over2: 0, by: {} }; const IE = this.app.ikErr; IE.n++; IE.max = Math.max(IE.max, e); if (e > 0.02) { IE.over2++; IE.by[this.uid] = (IE.by[this.uid] || 0) + 1; } } }
       const fq = wquat(this.group); setWorldQuat(ft, fq.multiply(this._restModelQuat('foot_' + side)));
       rotateWorld(ft, new Q().setFromAxisAngle(right, -heel));
       const toe = B['toe_' + side]; if (toe && stance && this.gaitW > 0.6 && kneelT === 0) { wpos(toe, this.footWorld[side]); this.feet[side] = true; } else this.feet[side] = false;
@@ -198,7 +202,7 @@ export class InfantryView extends BaseView {
     // ── head looks along the aim ──
     if (B.head) rotateWorld(B.head, new Q().setFromAxisAngle(right, -aimPitch * 0.6 * this.aimW));
     // garrison entry: weapon lowered, step in and fade out
-    if (S.order === 'garrison' && this.enterT > 0 && S.hidden !== true) { const k = clamp((t - this.enterT) / (this.m.garrison || 1), 0, 1); this.setOpacity(1 - k); } else if (!S.hidden) this.setOpacity(1);
+    if ((S.order === 'garrison' || S.order === 'enter') && this.enterT > 0 && S.hidden !== true) { const k = clamp((t - this.enterT) / (this.m.garrison || 1), 0, 1); this.setOpacity(1 - k); } else if (!S.hidden) this.setOpacity(1);
     this.group.visible = !S.hidden;
     this.deployables(S, t, kneelT);
   }
@@ -277,7 +281,7 @@ export class GroundView extends BaseView {
   update(S, dt) {
     const t = this.app.simTime, m = this.m; this.place(S);
     // hull attitude: terrain normal under the hull + acceleration squat/dive (≤ maxHullPitch) + hover bank
-    const nrm = this.app.T.normal(S.x, S.y, this.hover ? 2.5 : 3.0); const c = Math.cos(S.hdg), s = Math.sin(S.hdg);
+    const nrm = this.app.T.normal(S.x, S.y, (this.hover ? 2.5 : 3.0) * this.vs); const c = Math.cos(S.hdg), s = Math.sin(S.hdg);
     const slopeF = Math.atan2(-(nrm[0] * c + nrm[1] * s), nrm[2]), slopeR = Math.atan2(-(nrm[0] * s - nrm[1] * c), nrm[2]);
     const accP = clamp(-S.accelF * 0.012, -(m.maxHullPitch || 3) * D2R, (m.maxHullPitch || 3) * D2R);
     let bank = 0; if (this.hover) bank = clamp(S.accelS * 0.03 + S.w * S.v * 0.004, -m.bank * D2R, m.bank * D2R);
@@ -297,8 +301,8 @@ export class GroundView extends BaseView {
       if (this.mats.GLOW_cyan) this.mats.GLOW_cyan.emissiveIntensity = 1 + 4 * clamp(ch, 0, 1); }
     if (this.hover) for (const [n, p0] of Object.entries(this.pods0)) this.N[n].position.copy(p0).add(new V3(0, 0.02 * Math.sin(t * 3.1 + (n === 'pod_L' ? 0 : 1.7)), 0));
     // tracks: scroll each belt by its own ground distance; wheels roll with r
-    for (const sd of ['L', 'R']) { const T_ = this.tracks[sd]; const d = sd === 'L' ? S.trackL : S.trackR; if (T_.mat && T_.mat.map) T_.mat.map.offset.x = d / T_.uvm; }   // U grows toward the front on the ground run, so +offset moves the pattern rearward: the contact run stays still on the ground
-    for (const w of this.wheels) { const d = w.side === 'L' ? S.trackL : S.trackR; w.o.quaternion.copy(w.q0).multiply(new Q().setFromAxisAngle(w.axle, -d / w.r)); }
+    for (const sd of ['L', 'R']) { const T_ = this.tracks[sd]; const d = (sd === 'L' ? S.trackL : S.trackR) / this.vs; if (T_.mat && T_.mat.map) T_.mat.map.offset.x = d / T_.uvm; }   // U grows toward the front on the ground run, so +offset moves the pattern rearward: the contact run stays still on the ground
+    for (const w of this.wheels) { const d = (w.side === 'L' ? S.trackL : S.trackR) / this.vs; w.o.quaternion.copy(w.q0).multiply(new Q().setFromAxisAngle(w.axle, -d / w.r)); }
     // harvester: cutter drum spins while loading; ore dust at the hopper while loading and at the grate while unloading
     if (this.N.drum && this.drum0) { this.drumW = damp(this.drumW || 0, S.loading ? 3.2 : 0, 2.5, dt); this.drumA += this.drumW * dt; this.N.drum.quaternion.copy(this.drum0).multiply(new Q().setFromAxisAngle(new V3(0, 0, 1), -this.drumA)); }
     if ((S.loading || S.harv === 'unload') && this.app.fx && !this.dead) { this.oreAcc += dt * 9; while (this.oreAcc > 1) { this.oreAcc -= 1; const p = this.group.localToWorld(new V3((Math.random() - 0.5) * 2.2, S.loading ? 3.6 : 0.4, (Math.random() - 0.5) * 3.0 + (S.loading ? 0.6 : 0)));

@@ -1,0 +1,17 @@
+{
+  "_doc": "Ore fields (round 1 playtest, play/ore.js). Credits and GAME seconds. Each field sits around its extraction rig (the ore mine). field_total: starting (and maximum) ore by deposit kind. load_rate: one harvester's loading rate (capacity 500 / load 10 s). regrow_share: regrowth per field as a share of load_rate (0.05 = 2.5 credits per game second); the Settings slider scales it 0-4x. spread_min / patch_rate / core_m: regrowth creeps outward from the rig (a patch regrows only when its inner neighbour holds spread_min of its maximum, at most patch_rate of its maximum per second). Patches: 4 m nav cells within field_radius_m of the rig that a harvester can drive onto; richness falls off toward the rim (falloff, noise) and the rim is scattered (edge_gaps).",
+  "field_radius_m": 34,
+  "rig_clear_m": 3,
+  "harvester_clear_m": 2.0,
+  "edge_gaps": 0.45,
+  "falloff": 0.55,
+  "noise": 0.25,
+  "field_total": { "home": 20000, "expansion": 30000, "contested": 40000, "contested-expansion": 35000 },
+  "load_rate": 50,
+  "regrow_share": 0.05,
+  "regrow_scale_range": [0, 4],
+  "spread_min": 0.3,
+  "patch_rate": 0.02,
+  "core_m": 10,
+  "min_patch": 10
+}

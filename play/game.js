@@ -61,10 +61,53 @@ export class Game {
     else return 0;
     return Math.round(wrap(want) / D90) * D90;
   }
-  /** placement check: returns { ok, reason, x, y, rot, rect } (x, y snapped to 2 m; naval yards snap to the player's dock site) */
-  canPlace(p, kind, x, y) {
+  /** a structure's keep-clear lanes in world space: { rect (axis-aligned), dom, end: [x, y] } */
+  lanesOf(kind, x, y, rot) {
+    const S = STRUCTURES[kind], b = { x, y, rot }; return (S.lanes || []).map((L) => { const [ax, ay] = toWorld(b, L.x, L.y0), [ex, ey] = toWorld(b, L.x, L.y1);
+      const len = Math.abs(L.y1 - L.y0), q = Math.abs(Math.sin(rot)) > 0.5; return { rect: { x: (ax + ex) / 2, y: (ay + ey) / 2, w: q ? len : L.w, d: q ? L.w : len }, dom: L.dom, end: [ex, ey] }; });
+  }
+  /** lanes of every standing structure (cached until the set of structures changes) */
+  _allLanes() {
+    const key = this.world.buildings.filter((b) => b.alive).map((b) => b.id).join(',');
+    if (this._lanesKey !== key) { this._lanesKey = key; this._lanes = []; for (const b of this.world.buildings) if (b.alive && STRUCTURES[b.kind]) for (const L of this.lanesOf(b.kind, b.x, b.y, b.rot)) this._lanes.push({ ...L, b }); }
+    return this._lanes;
+  }
+  /** lanes stay usable: the candidate covers no lane; its own lanes lie on open ground clear of other structures; and with
+   * its footprint stamped into the nav grid, every lane end of the player's base that reached the yard still does */
+  _laneCheck(p, kind, x, y, rot, rect) {
+    const nav = this.world.nav, rects = (S0, x0, y0, r0) => (S0.blocks || [[0, 0, S0.size[0], S0.size[1]]]).map(([lx, ly, w, d]) => { const [wx, wy] = toWorld({ x: x0, y: y0, rot: r0 }, lx, ly); return rectOf(wx, wy, r0, w, d); });
+    const S = STRUCTURES[kind], mine = rects(S, x, y, rot);
+    for (const L of this._allLanes()) if (mine.some((r) => rectGap(r, L.rect) < 0.5)) return `Blocks the ${L.b.kind === 'refinery' ? 'refinery dock' : (STRUCTURES[L.b.kind].name || 'structure').toLowerCase() + ' door'}`;
+    const own = this.lanesOf(kind, x, y, rot);
+    for (const L of own) {
+      for (const b of this.world.buildings) if (b.alive && rectGap(L.rect, b) < 1) return S.dock ? 'Dock lane blocked by a structure' : 'Door blocked by a structure';
+      const R = L.rect; for (let sx = R.x - R.w / 2 + 1; sx <= R.x + R.w / 2 - 1 + 0.01; sx += 2) for (let sy = R.y - R.d / 2 + 1; sy <= R.y + R.d / 2 - 1 + 0.01; sy += 2) {
+        if (!nav.base[L.dom][nav.cellOf(sx, sy)]) return S.dock ? 'Dock lane is not open ground' : 'Door faces blocked ground'; }
+    }
+    // connectivity, judged before and after stamping the candidate (only lanes that reached the yard count)
+    const yard = this.world.buildings.find((b) => b.alive && b.kind === 'yard' && b.owner === p.id); if (!yard) return null;
+    const ref = this.lanesOf('yard', yard.x, yard.y, yard.rot)[0].end;
+    const lanes = this._allLanes().filter((L) => L.b.owner === p.id && L.b !== yard).map((L) => ({ ...L, old: true })).concat(own);
+    if (!lanes.length) return null;
+    const lab = (dom, pt) => { const k = nav.cellOf(pt[0], pt[1]); const Lb = nav.labels(dom); if (Lb[k]) return Lb[k]; const q = nav.nearestOk(dom, pt[0], pt[1], 0.5, 12); return q ? Lb[nav.cellOf(q[0], q[1])] : 0; };
+    const before = lanes.map((L) => L.old && lab(L.dom, L.end) && lab(L.dom, L.end) === lab(L.dom, ref));
+    for (const r of mine) nav.footprint(r, true);
+    let bad = null;
+    try { lanes.forEach((L, i) => { if (bad) return; const ok = lab(L.dom, L.end) && lab(L.dom, L.end) === lab(L.dom, ref); if (!ok && (before[i] || !L.old)) bad = L.old ? `Cuts off the ${L.b.kind === 'refinery' ? 'refinery dock' : STRUCTURES[L.b.kind].name.toLowerCase() + ' door'}` : (S.dock ? 'Dock lane cannot be reached' : 'Door cannot be reached'); }); }
+    finally { for (const r of mine) nav.footprint(r, false); }
+    return bad;
+  }
+  /** placement check: returns { ok, reason, x, y, rot, rect } (x, y snapped to 2 m; naval yards snap to the player's dock site).
+   * rot: a multiple of 90° chosen by the player (null = automatic: doors toward the map centre, refinery bays toward ore) */
+  canPlace(p, kind, x, y, rotIn = null) {
     const S = STRUCTURES[kind]; x = Math.round(x / 2) * 2; y = Math.round(y / 2) * 2;
-    let rot = this.autoRot(p, kind, x, y);
+    const key = `${p.id}|${kind}|${x}|${y}|${rotIn}|${this.world.buildings.length}|${this._allLanes().length}|${this.world.units.length}`;
+    if (this._pcKey === key) return this._pc;
+    const res = this._canPlace(p, kind, x, y, rotIn); this._pcKey = key; this._pc = res; return res;
+  }
+  _canPlace(p, kind, x, y, rotIn) {
+    const S = STRUCTURES[kind];
+    let rot = rotIn == null ? this.autoRot(p, kind, x, y) : Math.round(wrap(rotIn) / D90) * D90;
     if (S.naval) {
       const site = this.dockSites.filter((s) => !this.world.buildings.some((b) => b.alive && b.kind === 'naval' && Math.hypot(b.x - s.water_center[0], b.y - s.water_center[1]) < 5))
         .sort((a, b) => Math.hypot(a.water_center[0] - x, a.water_center[1] - y) - Math.hypot(b.water_center[0] - x, b.water_center[1] - y))[0];
@@ -87,12 +130,13 @@ export class Game {
     for (const d of this.deposits) if (Math.abs(d.pos[0] - x) < 25 + rect.w / 2 && Math.abs(d.pos[1] - y) < 25 + rect.d / 2) return { ok: false, reason: 'On an ore field', x, y, rot, rect };
     for (const u of this.world.units) if (u.alive && u.team !== p.team && u.dom !== 'air' && Math.abs(u.x - x) < rect.w / 2 + u.r && Math.abs(u.y - y) < rect.d / 2 + u.r) return { ok: false, reason: 'Enemy units in the way', x, y, rot, rect };
     if (!this.structures(p).some((b) => rectGap(rect, b) <= RULES.buildGap)) return { ok: false, reason: 'Outside your build radius', x, y, rot, rect };
+    const lane = this._laneCheck(p, kind, x, y, rot, rect); if (lane) return { ok: false, reason: lane, x, y, rot, rect };
     return { ok: true, x, y, rot, rect };
   }
-  /** place the structure that finished building (player.ready) */
-  place(p, x, y) {
+  /** place the structure that finished building (player.ready); rot as in canPlace */
+  place(p, x, y, rot = null) {
     const it = p.ready; if (!it) return { ok: false, reason: 'Nothing ready' };
-    const c = this.canPlace(p, it.key, x, y); if (!c.ok) { this.emit('cannot_place', { player: p.id, reason: c.reason }); return c; }
+    const c = this.canPlace(p, it.key, x, y, rot); if (!c.ok) { this.emit('cannot_place', { player: p.id, reason: c.reason }); return c; }
     p.ready = null; p.queues.structure.shift(); this._spawnStructure(p, it.key, c.x, c.y, c.rot); return c;
   }
 
@@ -190,8 +234,29 @@ export class Game {
   }
   nextDeposit(u) { // nearest field with ore, preferring ones no other harvester of the team is working
     const working = new Map(); for (const h of this.world.units) if (h.alive && h.harv && h.team === u.team && h !== u && h.harv.dep) working.set(h.harv.dep.id, (working.get(h.harv.dep.id) || 0) + 1);
-    let best = null, bc = 1e18; for (const d of this.deposits) { if (d.ore <= 0) continue; const c = Math.hypot(d.svc[0] - u.x, d.svc[1] - u.y) + (working.get(d.id) || 0) * 120; if (c < bc) { bc = c; best = d; } }
+    // ore fields: the nearest one with a patch left (measured from the rig, the field's centre), never the one just emptied
+    const cur = u.harv && u.harv.dep, has = (d) => (d.field && this.ore ? this.ore.hasPatch(d.field) : d.ore > 0);
+    let best = null, bc = 1e18; for (const d of this.deposits) { if (!has(d) || (d === cur && u.harv && u.harv.state !== 'idle' && !this.ore.hasPatch(d.field || { cells: [] }))) continue; const at = d.field ? d.field.src : d.svc; const c = Math.hypot(at[0] - u.x, at[1] - u.y) + (working.get(d.id) || 0) * 120; if (c < bc) { bc = c; best = d; } }
     return best;
+  }
+
+  // ───────────── repair ─────────────
+  /** wrench: start / stop repairing one of p's structures. Returns the new state, or null when it can't be repaired */
+  toggleRepair(p, b) {
+    if (!b || !b.alive || !b.isBuilding || b.owner !== p.id) return null;
+    if (b.repairing) { b.repairing = false; this.emit('repair_stop', { player: p.id, id: b.id }); return false; }
+    if (b.hp >= b.maxHp - 0.5) { this.emit('repair_full', { player: p.id, id: b.id }); return null; }
+    b.repairing = true; this.emit('repair_start', { player: p.id, id: b.id }); return true;
+  }
+  repairCost(b, hp = b.maxHp - b.hp) { return (STRUCTURES[b.kind].cost * RULES.repairCost) * hp / b.maxHp; }
+  _repair(p, dt) {
+    for (const b of this.structures(p)) {
+      if (!b.repairing) continue;
+      if (b.hp >= b.maxHp - 1e-6) { b.repairing = false; b.hp = b.maxHp; this.emit('repair_done', { player: p.id, id: b.id }); continue; }
+      const want = Math.min(b.maxHp / RULES.repairTime * dt, b.maxHp - b.hp), cost = this.repairCost(b, want);
+      if (p.credits < cost) { b.repairStalled = true; if (this.t - p.fundsWarned > 12) { p.fundsWarned = this.t; this.emit('no_funds', { player: p.id }); } continue; }
+      p.credits -= cost; b.hp += want; b.repairStalled = false; p.stats.repairSpent = (p.stats.repairSpent || 0) + cost;
+    }
   }
 
   // ───────────── per tick ─────────────
@@ -199,6 +264,7 @@ export class Game {
     this.t += dt; const W = this.world;
     if (this.events.length > 400 || (this.events.length && this.t - this.events[0].t > 20)) this.events = this.events.filter((e) => this.t - e.t <= 20);
     for (const e of W.events) {
+      if (e.type === 'engineer_enter') { const b = W.byId.get(e.b); if (b && b.alive) { const p = this.players[b.owner]; b.hp = b.maxHp; b.repairing = false; this._power(p); this.emit('engineer_repair', { player: p.id, id: b.id, x: b.x, y: b.y }); } }
       if (e.type === 'harvest_cycle' && e.amount) { const p = this.players[e.team]; if (p) { p.credits += e.amount; p.stats.harvested += e.amount; } }
       if (e.type === 'death') { const o = W.byId.get(e.id); if (!o) continue; const p = this.players[o.team]; if (!p) continue;
         if (o.isBuilding) { this._power(p); this.emit('structure_lost', { player: p.id, kind: o.kind, id: o.id, x: o.x, y: o.y });
@@ -208,8 +274,10 @@ export class Game {
         if (o && s && o.team !== s.team && o.team >= 0 && !(o.lastAlertT > this.t - 2)) { o.lastAlertT = this.t; this.emit('under_attack', { player: o.team, x: o.x, y: o.y, building: !!o.isBuilding, harvester: o.uid === 'HV', id: o.id, src: s.id }); } }
     }
     for (const u of W.units) if (u.alive && u.rollOut) this._rollOut(u, dt);
+    if (this.ore) { this.ore.tick(dt);   // harvesters that stopped for want of ore go back to work when some has regrown
+      if ((this.tick5 = (this.tick5 || 0) + dt) > 5) { this.tick5 = 0; for (const u of W.units) if (u.alive && u.harv && u.harv.noOre && u.order.type === 'idle') { const d = this.nextDeposit(u), dock = this.bestDock(u); if (d && dock) { u.harv.noOre = false; W.harvest(u, d, dock); } } } }
     for (const p of this.players) {
-      if (p.lost) continue; this._power(p); this._produce(p, dt);
+      if (p.lost) continue; this._repair(p, dt); this._power(p); this._produce(p, dt);
       // credits counter ticks toward the real balance (fast for big jumps, never overshoots)
       const diff = p.credits - p.shown; p.shown += Math.sign(diff) * Math.min(Math.abs(diff), Math.max(40, Math.abs(diff) * 3) * dt);
       if (!this.structures(p).length) { p.lost = true; this.emit('defeated', { player: p.id }); }

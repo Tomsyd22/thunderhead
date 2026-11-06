@@ -1,0 +1,61 @@
+// Screenshot scenarios for reviews and before/after comparisons (headless Chromium, software GL: looks, not timings).
+//   node play/shots.mjs <scenario> [--qs=extra&query] [--out=dir]
+// Scenarios: scale (the same view at unit size 1.0× and 1.75×), repair (wrench badge, repair button, engineer close-up).
+import fs from 'fs'; import path from 'path'; import http from 'http'; import { spawn } from 'child_process'; import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url); const { chromium } = require('playwright');
+const DIR = path.dirname(fileURLToPath(import.meta.url)); const args = process.argv.slice(2);
+const opt = (k, d) => { const a = args.find((x) => x.startsWith(`--${k}=`)); return a ? a.slice(k.length + 3) : d; };
+const SCEN = args.find((a) => !a.startsWith('--')) || 'scale', PORT = +opt('port', 8795), OUT = opt('out', path.join(DIR, 'results', 'shots'));
+const THREE_DIR = process.env.THREE_DIR || path.resolve(DIR, '../.cache/three-0.160.0'); const CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/';
+fs.mkdirSync(OUT, { recursive: true });
+fs.writeFileSync(path.join(DIR, 'index.local.html'), '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"></head><body>' + fs.readFileSync(path.join(DIR, 'index.html'), 'utf8') + '</body></html>');
+const get = (url) => new Promise((res, rej) => { const q = http.get(url, (r) => { r.resume(); res(r.statusCode); }); q.on('error', rej); q.setTimeout(2000, () => q.destroy(new Error('timeout'))); });
+
+const srv = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], { cwd: DIR, stdio: 'ignore' });
+for (let i = 0; i < 50; i++) { try { if (await get(`http://127.0.0.1:${PORT}/index.local.html`) === 200) break; } catch (e) { /* wait */ } await new Promise((r) => setTimeout(r, 100)); }
+const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage({ viewport: { width: 1600, height: 900 } }); const logs = [];
+page.on('pageerror', (e) => logs.push(String(e)));
+await page.route('**/*', (route) => { const u = route.request().url(); if (u.startsWith(CDN)) { const f = path.join(THREE_DIR, u.slice(CDN.length).split('?')[0]); if (fs.existsSync(f)) return route.fulfill({ path: f, contentType: 'application/javascript' }); } return route.continue(); });
+await page.goto(`http://127.0.0.1:${PORT}/index.local.html?autostart=1&manual=1&faction=compact&ai=lattice&quality=${opt('quality', 'high')}&dpr=1&${opt('qs', '')}`);
+await page.waitForFunction(() => window.__game && window.__game.started, null, { timeout: 240000 });
+const ev = (fn, a) => page.evaluate(fn, a);
+const snap = async (name) => { await ev(() => window.__game.renderNow()); const f = path.join(OUT, name + '.png'); await page.screenshot({ path: f }); console.log(f); };
+
+// a mixed group parked in front of the yard: a rifle squad, rockets, two tanks and the harvester going about its work
+const stage = () => ev(() => { const C = window.__game, W = C.world, p = C.p, y = W.byId.get(p.yard); const ids = [];
+  const at = (dx, dy) => W.nav.nearestOk('foot', y.x + dx, y.y + dy, 2.5, 40);
+  for (const [uid, dx, dy] of [['H01', 30, -36], ['H01', 32, -38], ['H01', 34, -36], ['H01', 31, -40], ['H01', 35, -41], ['H02', 38, -34], ['H02', 39, -38], ['H03', 46, -46], ['H03', 26, -52], ['T01', 60, -40], ['T03', 64, -50]]) {
+    const q = at(dx, dy); const u = W.spawn(uid, uid[0] === 'T' ? 1 : p.team, q[0], q[1], { hdg: -0.6 }); u.owner = uid[0] === 'T' ? 1 : p.id; ids.push(u.id); }
+  C.P.afterStep(); W.events.length = 0; C.advance(1, 30, 0); C.sel = new Set(ids.slice(0, 9)); C.ui.selChanged();
+  for (const id of ids.slice(0, 9)) { const u = W.byId.get(id); u.hp = u.maxHp * (0.45 + 0.5 * ((id * 7) % 10) / 10); }
+  C.lookAt(y.x + 40, y.y - 42, 95); C.advance(0.05, 60, 0); return ids; });
+
+if (SCEN === 'scale') {
+  await stage();
+  for (const s of [1, 1.75]) { await ev((s) => { const C = window.__game; C.setPace({ unit_scale: s }); C.advance(0.05, 60, 0); }, s); await snap(`scale_${s.toFixed(2)}`); }
+  await ev(() => { const C = window.__game, y = C.world.byId.get(C.p.yard); C.lookAt(y.x + 40, y.y - 42, 190); C.setPace({ unit_scale: 1 }); C.advance(0.05, 60, 0); });
+  await snap('scale_far_1.00'); await ev(() => { const C = window.__game; C.setPace({ unit_scale: 1.75 }); C.advance(0.05, 60, 0); }); await snap('scale_far_1.75');
+}
+if (SCEN === 'repair') {
+  await ev(() => { const C = window.__game, W = C.world, p = C.p, y = W.byId.get(p.yard);
+    for (const id of ['HE', 'AE', 'TE']) { const q = W.nav.nearestOk('foot', y.x - 20 + ['HE', 'AE', 'TE'].indexOf(id) * 2.6, y.y - 34, 0.4, 40); const u = W.spawn(id, p.team, q[0], q[1], { hdg: -2.2 }); u.owner = p.id; }
+    C.P.afterStep(); W.events.length = 0; y.hp = 0.45 * y.maxHp; C.game.toggleRepair(p, y); C.input.setMode('repair'); C.sel = new Set([y.id]); C.ui.selChanged();
+    C.advance(1.2, 30, 0); C.lookAt(y.x + 12, y.y - 14, 70); C.advance(0.3, 60, 0); });
+  await snap('repair_base');
+  await ev(() => { const C = window.__game, y = C.world.byId.get(C.p.yard); C.lookAt(y.x - 17.4, y.y - 34, 16); C.rcam.pitch = C.rcam.pitch; C.advance(0.05, 60, 0); });
+  await snap('repair_engineers');
+}
+if (SCEN === 'rotate') {
+  const at = await ev(() => { const C = window.__game, G = C.game, p = C.p; p.credits = 20000; for (const k of ['power', 'refinery']) if (!G.has(p, k)) C.testBuild(k);
+    p.queues.structure.length = 0; p.ready = null; G.enqueue(p, 'structure', 'refinery'); const it = p.queues.structure[0]; it.spent = it.cost; p.ready = it; C.input.startPlace('refinery');
+    const y = C.world.byId.get(p.yard); let spot = null; for (let r = 60; r < 240 && !spot; r += 4) for (let a = 0; a < 24 && !spot; a++) { const x = y.x + Math.cos(a / 24 * 6.283) * r, yy = y.y + Math.sin(a / 24 * 6.283) * r; if (G.canPlace(p, 'refinery', x, yy).ok) spot = [x, yy]; }
+    C.lookAt(spot[0], spot[1], 120); C.advance(0.05); return C.screenOf(spot[0], spot[1]); });
+  await page.mouse.move(at[0], at[1]); await ev(() => window.__game.advance(1 / 60)); await snap('rotate_0');
+  await page.keyboard.press('r'); await ev(() => window.__game.advance(1 / 60)); await snap('rotate_1');
+  const bad = await ev(() => { const C = window.__game, G = C.game, p = C.p, y = C.world.byId.get(p.yard); for (let k = 0; k < 4; k++) { for (let a = 0; a < 48; a++) for (let r = 40; r < 80; r += 4) { const x = y.x + Math.cos(a / 48 * 6.283) * r, yy = y.y + Math.sin(a / 48 * 6.283) * r; const c = G.canPlace(p, 'refinery', x, yy, C.input.place.rot); if (!c.ok && /[Dd]ock/.test(c.reason)) { C.lookAt(x, yy, 130); C.advance(0.05); return C.screenOf(x, yy); } } C.input.rotatePlace(1); } return null; });
+  if (bad) { await page.mouse.move(bad[0], bad[1]); await ev(() => window.__game.advance(1 / 60)); await snap('rotate_blocked'); }
+}
+if (logs.length) console.log('page errors:', logs.join(' | '));
+await browser.close(); srv.kill();

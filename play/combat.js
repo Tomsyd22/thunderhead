@@ -5,7 +5,7 @@
 // × veterancy × world.dmgScale (the time-to-kill setting: dmgScale = 1 / ttk). Which targets a weapon can engage still
 // comes from the pack (weapon.targets by target class).
 export const ARMOUR = {
-  H01: 'infantry', H02: 'infantry', A01: 'infantry', A02: 'infantry', T01: 'infantry', T02: 'infantry',
+  H01: 'infantry', H02: 'infantry', HE: 'infantry', AE: 'infantry', TE: 'infantry', A01: 'infantry', A02: 'infantry', T01: 'infantry', T02: 'infantry',
   H03: 'heavy', A03: 'medium', T03: 'light', HV: 'heavy',
   H04: 'aircraft', A04: 'aircraft', T04: 'aircraft',
   H05: 'ship', A05: 'ship', T05: 'ship',
