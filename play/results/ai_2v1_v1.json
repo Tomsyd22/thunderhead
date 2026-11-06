@@ -1,0 +1,190 @@
+{
+ "Normal vs 2 Easy": [
+  {
+   "k": 0,
+   "map": "02",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "compact",
+    "lattice+helix"
+   ],
+   "pads": [
+    "B1",
+    "R1+R2"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 41.295555555528956,
+   "val": [
+    49192,
+    8619
+   ],
+   "income": [
+    55477,
+    20000
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 48.747
+  },
+  {
+   "k": 1,
+   "map": "04",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "lattice",
+    "helix+compact"
+   ],
+   "pads": [
+    "B2",
+    "R1+R2"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 40.60499999997403,
+   "val": [
+    46614,
+    4350
+   ],
+   "income": [
+    49500,
+    26500
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 41.525
+  },
+  {
+   "k": 2,
+   "map": "05",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "helix",
+    "compact+lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1+R2"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 19.44055555554883,
+   "val": [
+    8883,
+    42792
+   ],
+   "income": [
+    20000,
+    16000
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 14.535
+  },
+  {
+   "k": 3,
+   "map": "02",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "compact",
+    "lattice+helix"
+   ],
+   "pads": [
+    "R2",
+    "B1+B2"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 44.3749999999706,
+   "val": [
+    41975,
+    7486
+   ],
+   "income": [
+    53500,
+    29500
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 42.787
+  },
+  {
+   "k": 4,
+   "map": "04",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "lattice",
+    "helix+compact"
+   ],
+   "pads": [
+    "R1",
+    "B1+B2"
+   ],
+   "winner": 1,
+   "decided": false,
+   "t": 59.99999999995639,
+   "val": [
+    44733,
+    53295
+   ],
+   "income": [
+    55952,
+    49000
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 42.098
+  },
+  {
+   "k": 5,
+   "map": "05",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "helix",
+    "compact+lattice"
+   ],
+   "pads": [
+    "R2",
+    "B1+B2"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 23.201111111100964,
+   "val": [
+    6060,
+    47702
+   ],
+   "income": [
+    23000,
+    19000
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 9.491
+  }
+ ]
+}

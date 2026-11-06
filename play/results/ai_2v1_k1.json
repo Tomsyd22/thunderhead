@@ -1,0 +1,35 @@
+{
+ "Normal vs 2 Easy": [
+  {
+   "k": 1,
+   "map": "04",
+   "levels": [
+    "normal",
+    "easy"
+   ],
+   "factions": [
+    "lattice",
+    "helix+compact"
+   ],
+   "pads": [
+    "B2",
+    "R1+R2"
+   ],
+   "winner": 1,
+   "decided": false,
+   "t": 59.99999999995639,
+   "val": [
+    25649,
+    69293
+   ],
+   "income": [
+    56078,
+    48000
+   ],
+   "raids": 0,
+   "prongs": 0,
+   "honest": true,
+   "wall": 33.181
+  }
+ ]
+}

@@ -211,6 +211,14 @@ export class World {
   _canHitFromDeploy(u, o) { const tg = this.byId.get(o.target); if (!tg) return false; return this._weaponFor(u, u.sys[0], tg) != null; }
   _setDeploy(u, st) { u.deploy = st; u.deployT = this.t; for (const s of u.sys) { s.wind = null; s.aimed = null; } this.emit('deploy', { id: u.id, state: st }); }
   _plan(u, x, y, stopDist = 0) {
+    // a goal in another region (an island it cannot drive to) that this unit has already gone as near to as it can: no new
+    // search, it stays put; a plain move / attack-move counts as arrived. Ordering it there again costs nothing.
+    const N = this.nav, U = u.unreach, bx = Math.floor(x / 16), by = Math.floor(y / 16);
+    if (U && u.dom !== 'air' && U.bx === bx && U.by === by && Math.hypot(u.x - U.at[0], u.y - U.at[1]) < 12 + 2 * u.r) {
+      u.path = null; u.pi = 0; u.needPlan = false; u.goal = { x: u.x, y: u.y, stop: stopDist }; u.pathReached = false;
+      if ((u.order.type === 'move' || u.order.type === 'attackMove') && u.target == null) { u.order = { type: 'idle' }; u.groupCap = null; }
+      return;
+    }
     // over this tick's search budget: head straight for the goal now (the order is visibly taken) and plan on a later tick
     if (u.dom !== 'air' && this.planBudget <= 0) { u.goal = { x, y, stop: stopDist }; u.needPlan = true; if (!u.path || !this.deferKeep) { u.path = [[x, y]]; u.pi = 0; } u.repathAt = this.t + 0.1; return; }
     this.planBudget--; u.needPlan = false;
@@ -221,8 +229,9 @@ export class World {
       const L = u.sp.dimensions_m.length; const g = this.nav.nearestOk('ship', x, y, this._navR(u) + 0.25 * L, 300) || this.nav.nearestOk('ship', x, y, this._navR(u), 700);
       if (g) { x = g[0]; y = g[1]; }
     }
-    const P = this.nav.path(u.dom, u.x, u.y, x, y, this._navR(u), pref);
+    const P = N.path(u.dom, u.x, u.y, x, y, this._navR(u), pref);
     u.path = P.pts.length ? P.pts : null; u.pi = 0; u.pathReached = P.reached; u.repathAt = this.t + 4; u.stuckT = 0;
+    u.unreach = P.unreach && P.goal ? { bx, by, at: [P.goal[0], P.goal[1]] } : null;
     if (u.path) u.goal = { x: u.path[u.path.length - 1][0], y: u.path[u.path.length - 1][1], stop: stopDist };
   }
   // ships plan with room to swing their hull (≈ 45 % of the length beyond the beam), so they never nose into water

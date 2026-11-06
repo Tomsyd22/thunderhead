@@ -21,11 +21,18 @@ const T = {}; for (const id of MAPS) { const D = path.join(HERE, '..', 'maps', '
   const u8 = (f) => { try { const b = rd(f); return new Uint8Array(b.buffer, b.byteOffset, b.length); } catch (e) { return null; } };
   T[id] = makeMapTerrain({ meta: JSON.parse(rd('map.json')), height: new Float32Array(h.buffer, h.byteOffset, h.length / 4), surface: u8('surface.u8'), nav: u8('nav.u8'), deck: u8('deck.u8'), instances: JSON.parse(rd('instances.json')) }); }
 const FAC = ['compact', 'lattice', 'helix'];
+// reproducible batches: Math.random (the AIs' spreads) is re-seeded at the start of every match from the seed set and the
+// match index, so a batch run twice gives the same games. --seed picks another seed set (to check robustness, not luck).
+const SEED = +arg('--seed', 1), KS = arg('--ks', '') ? arg('--ks', '').split(',').map(Number) : null;   // --ks 1,4: only these match indexes (0-based), same rotation
+let __s = 0; Math.random = () => { __s |= 0; __s = (__s + 0x6D2B79F5) | 0; let t = Math.imul(__s ^ (__s >>> 15), 1 | __s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+const TAG = arg('--tag', KS ? 'partial' : (SEED !== 1 ? 'seed' + SEED : '')), OUT = (base, ext) => path.join(HERE, 'results', `${base}${TAG ? '_' + TAG : ''}.${ext}`);
+const seedMatch = (k) => { __s = (SEED * 100003 + k * 7919) | 0; };
 let pass = 0, fail = 0; const out = [];
 const check = (name, ok, info = '') => { (ok ? pass++ : fail++); const l = `${ok ? '✓' : '✗'} ${name}${info ? ' — ' + info : ''}`; out.push(l); console.log(l); };
 
 function value(G, p) { return G.structures(p).reduce((a, b) => a + (STRUCTURES[b.kind].cost || 0) * b.hp / b.maxHp, 0) + G.unitsOf(p).reduce((a, u) => a + u.sp.cost * u.hp / u.maxHp, 0) + p.credits; }
 function match(k, levels) {
+  seedMatch(k);
   const id = MAPS[k % MAPS.length], swap = Math.floor(k / MAPS.length) % 2 === 1, fa = FAC[k % 3], fb = FAC[(k + 1 + Math.floor(k / 3)) % 3] === fa ? FAC[(k + 2) % 3] : FAC[(k + 1 + Math.floor(k / 3)) % 3];
   const pads = T[id].meta.pads.map((q) => q.id), A = { faction: fa, pad: swap ? pads[1] : pads[0], isAI: true, level: levels[0] }, B = { faction: fb, pad: swap ? pads[0] : pads[1], isAI: true, level: levels[1] };
   const M = createMatch({ T: T[id], spec, geom, pace, combat, economy, players: [A, B] }); const G = M.game, W = M.world;
@@ -43,6 +50,7 @@ function match(k, levels) {
 
 /** 2v1 on a 4-player map: one AI (team 0) on a start of one side against two allied AIs (team 1) on the other side's starts */
 function match2v1(k, solo, duo) {
+  seedMatch(k);
   const id = MAPS[k % MAPS.length], pads = T[id].meta.pads.map((q) => q.id), side = Math.floor(k / MAPS.length) % 2 ? 'R' : 'B', mine = pads.filter((q) => q[0] === side), theirs = pads.filter((q) => q[0] !== side);
   const fs = FAC[k % 3], fd = [FAC[(k + 1) % 3], FAC[(k + 2) % 3]];
   const players = [{ faction: fs, pad: mine[k % mine.length], isAI: true, level: solo, team: 0 }, { faction: fd[0], pad: theirs[0], isAI: true, level: duo, team: 1 }, { faction: fd[1], pad: theirs[1], isAI: true, level: duo, team: 1 }];
@@ -57,20 +65,20 @@ function match2v1(k, solo, duo) {
 if (MODE === '2v1') {
   const R2 = {}; const B2 = { 'Normal vs 2 Easy': ['normal', 'easy'], 'Hard vs 2 Normal': ['hard', 'normal'] };
   const ONLY = arg('--only', ''); for (const [name, lv] of Object.entries(B2)) { if (ONLY && !name.toLowerCase().startsWith(ONLY.toLowerCase())) continue; R2[name] = []; console.log(`\n── ${name} (${N} matches, ${MAPS.join(' + ')}, up to ${MIN} game min) ──`);
-    for (let k = 0; k < N; k++) { const r = match2v1(k, lv[0], lv[1]); R2[name].push(r);
+    for (let k = 0; k < N; k++) { if (KS && !KS.includes(k)) continue; const r = match2v1(k, lv[0], lv[1]); R2[name].push(r);
       console.log(`  #${k + 1} ${r.map} ${r.pads.join(' vs ')} ${r.factions.join(' vs ')}: ${r.winner == null ? 'draw' : r.winner === 0 ? lv[0] + ' (solo) wins' : lv[1] + ' pair wins'} ${r.decided ? 'by destroying the bases' : 'on value'} at ${r.t.toFixed(1)} min · value ${r.val.join(' / ')} · mined ${r.income.join(' / ')} · ${r.wall.toFixed(0)} s`); } }
   for (const [name, rs] of Object.entries(R2)) { const w = rs.filter((r) => r.winner === 0).length, d = rs.filter((r) => r.winner === 0 && r.decided).length; check(`${name}: the single AI wins every match`, w === rs.length, `${w}/${rs.length} wins (${d} by destroying both bases), avg ${(rs.reduce((a, r) => a + r.t, 0) / rs.length).toFixed(1)} game min`); }
   check('2v1: no resource cheating', Object.values(R2).flat().every((r) => r.honest));
   const md = ['# AI difficulty, 2v1 (round 1)', '', `One AI against two allied AIs on ${MAPS.join(', ')}; ${N} matches per batch, up to ${MIN} game minutes; the single AI's side and the factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw).`, ''];
   for (const [name, rs] of Object.entries(R2)) { md.push(`## ${name}`, '', '| # | map | starts | factions | result | at (game min) | value (solo / pair) | mined |', '|---|---|---|---|---|---|---|---|');
     for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' vs ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : (r.winner === 0 ? 'solo ' + r.levels[0] : r.levels[1] + ' pair') + ' wins' + (r.decided ? '' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} |`); md.push(''); }
-  md.push(out.join('  \n'), '', `${pass}/${pass + fail} checks passed`); fs.writeFileSync(path.join(HERE, 'results', 'ai_2v1.md'), md.join('\n') + '\n'); fs.writeFileSync(path.join(HERE, 'results', 'ai_2v1.json'), JSON.stringify(R2, null, 1));
+  md.push(out.join('  \n'), '', `${pass}/${pass + fail} checks passed`); fs.writeFileSync(OUT('ai_2v1', 'md'), md.join('\n') + '\n'); fs.writeFileSync(OUT('ai_2v1', 'json'), JSON.stringify(R2, null, 1));
   console.log(`\n${pass}/${pass + fail} checks passed`); process.exit(fail ? 1 : 0);
 }
 const batches = { 'Hard vs Normal': ['hard', 'normal'], 'Normal vs Normal': ['normal', 'normal'] }, R = {};
 for (const [name, lv] of Object.entries(batches)) {
   R[name] = []; console.log(`\n── ${name} (${N} matches, ${MAPS.join(' + ')}, up to ${MIN} game min) ──`);
-  for (let k = 0; k < N; k++) { const r = match(k, lv); R[name].push(r);
+  for (let k = 0; k < N; k++) { if (KS && !KS.includes(k)) continue; const r = match(k, lv); R[name].push(r);
     console.log(`  #${k + 1} ${r.map} ${r.pads.join('/')} ${r.factions.join(' vs ')}: ${r.winner == null ? 'draw' : (r.winner === 0 ? lv[0] : lv[1]) + ' (' + r.factions[r.winner] + ')'} ${r.decided ? 'destroyed the base' : 'on value'} at ${r.t.toFixed(1)} min · value ${r.val.join(' / ')} · mined ${r.income.join(' / ')} · raids ${r.raids}, flank waves ${r.prongs} · ${r.wall.toFixed(0)} s`); }
 }
 const hv = R['Hard vs Normal'], wins = hv.filter((r) => r.winner === 0).length, losses = hv.filter((r) => r.winner === 1).length, nn = R['Normal vs Normal'], nnA = nn.filter((r) => r.winner === 0).length, nnB = nn.filter((r) => r.winner === 1).length;
@@ -83,5 +91,5 @@ const md = ['# AI difficulty (round 1)', '', `Headless AI-vs-AI on ${MAPS.join('
 for (const [name, rs] of Object.entries(R)) { md.push(`## ${name}`, '', '| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves |', '|---|---|---|---|---|---|---|---|---|---|');
   for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' / ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : r.levels[r.winner] + ' wins' + (r.decided ? '' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} | ${r.raids} | ${r.prongs} |`); md.push(''); }
 md.push(out.join('  \n'), '', `${pass}/${pass + fail} checks passed`);
-fs.writeFileSync(path.join(HERE, 'results', 'ai.md'), md.join('\n') + '\n'); fs.writeFileSync(path.join(HERE, 'results', 'ai.json'), JSON.stringify(R, null, 1));
+fs.writeFileSync(OUT('ai', 'md'), md.join('\n') + '\n'); fs.writeFileSync(OUT('ai', 'json'), JSON.stringify(R, null, 1));
 console.log(`\n${pass}/${pass + fail} checks passed`);

@@ -1,43 +1,4 @@
-✓ boot: page loads and the match starts — 20.5 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
-✓ controls: drag box selects the infantry squad — 4 selected
-✓ orders (2.4×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
-✓ orders (1×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
-✓ controls: double-click selects every unit of that type on screen — 2 × H03
-✓ controls: Ctrl+1 assigns, 1 recalls, double-tap centres the camera — recalled 2, camera moved 644 m
-✓ controls: shift-right-click queues a waypoint — queues 1, 1
-✓ controls: A attack-move, S stop, G guard — A → attackMove/attackMove, S → idle/idle, G → guard/guard
-✓ controls: build hotkeys queue from the open tab — Q, Z → power
-✓ building: ghost is red on a bad spot and green on a good one; build radius drawn — bad: "Too close to a structure", radius outlines 1 for 1 structures
-✓ building: left-click places the structure — yard, power
-✓ building: queued builds, progress on the button, full refund on cancel — queued 5, spent $173 in 3 s (1 finished), button at 73 %, balance after cancelling the rest: 0.00 (finished units excluded)
-✓ building: select a barracks and right-click to set its rally point — 384, 1374
-✓ building: trained units walk out of the door to the rally point — 0.9 m, 0.0 m
-✓ repair: K turns on repair mode and a click starts the wrench on the structure — mode repair → null, power repairing true
-✓ repair: health returns over time and is paid for as it comes (60 game s and 25 % of the price for a full repair) — +167 HP in 10 game s for $33; 40 %→100 % cost $120 (expected $120)
-✓ repair: pauses with no credits and resumes when money comes in
-✓ engineer: in each build menu, with a portrait — HE $500
-✓ engineer: right-click a damaged structure; it walks in and repairs it fully, used up (not a loss) — order enter, in after 19 game s, structure full true, events unit_ready queued engineer_repair
-✓ engineer: a structure at full health is refused (the engineer is not wasted) — order idle
-✓ rotate: R, the arrow keys and the Rotate button turn the ghost in 90° steps — steps 1 → 0 → -1 → 0 → -1 (×90°), footprint 30×40 / 40×30 / 30×40 / 40×30 / 30×40, button true
-✓ rotate: the structure keeps the chosen angle and its door works — -90°, tank rolled out and reached the rally point in 7 game s, 36 m from the factory
-✓ rotate: nothing may be built on a door or dock lane, or turn a dock lane into a wall — power plant in front of the factory: "Blocks the war factory door"; refinery: 36 spots × angles refused for the dock, 310 fine
-✓ camera: edge scroll pans (and stops when the pointer leaves the edge) — left edge 0.5 s → 125 m
-✓ camera: middle-drag grabs the ground — 200 px → 34 m (34 m expected)
-✓ camera: smooth wheel zoom toward the cursor — distance 200 → 97 m, ground point under the cursor drifted 0.1 px
-✓ camera: minimap click jumps — → (450, 450)
-✓ camera: Space jumps to the last alert — → (1200, 600)
-✓ info: money ticks smoothly toward the balance — +500 → 50.0 after 1 frame, $18,500 after 2.5 s
-✓ info: power meter shows supply and demand — 85 / 200 (bar 45.5%)
-✓ info: idle harvester indicator counts and selects it (I) — 1 idle
-✓ info: tooltips show cost, build time and counters — Bastion | $900 | 16 s | 950 HP | 7.8 m/s | Durable frontline anti-armour attacker | Strong vs light vehicles, tanks | Weak vs Nullifier, Arbiter, Wisp | Click: 
-✓ info: announcer lines fire for game events — building, construction_complete, new_options, construction_complete, new_options, unit_ready, unit_ready, unit_ready, insufficient_funds, new_options, new_options, construction_complete
-✓ combat: muzzle flash lights, hit reactions, camera shake — 149 flashes, 103 hit reactions, 154 shakes
-✓ combat: deaths throw debris and turrets — 6 kills, 60 debris pieces, 5 turrets tossed
-✓ combat: no errors
-✓ movement: a mixed group moves at the slowest speed and arrives in formation — 9/9 arrived in 54 game s, tanks held to 4.4 m/s (infantry 4.4), all within 15.6 m of the click
-✓ movement: three harvesters share one refinery dock without jamming — 3 harvesters, 13 loads delivered in 360 game s (one alone ≈ 6), longest wait in a queue 29 s
-✓ movement: ten tanks pass the narrowest point of the base-to-base route without jamming — choke at (579, 1278), clearance 4.3 m · 10/10 through in 34 game s (one tank alone ≈ 26 s for the 200 m)
-✓ smoothness: interpolated motion has no snaps — 20366 unit-frames, worst 65 % of the speed limit, 123 distant-view switches
-✓ performance: simulation cost per tick — avg 0.42 ms, p99 4.6 ms with 34 units
-✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 122 s wall · helix: 5 structures, 4 units, 24 lost, $8000 mined | compact: 9 structures, 26 units, 1 lost, $6000 mined
-42/42
+✓ boot: page loads and the match starts — 21.6 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
+✓ smoothness: interpolated motion has no snaps — 3594 unit-frames, worst 50 % of the speed limit, 18 distant-view switches
+✓ performance: simulation cost per tick — avg 0.40 ms, p99 7.1 ms with 12 units
+3/3

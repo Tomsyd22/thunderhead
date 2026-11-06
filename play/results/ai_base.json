@@ -1,0 +1,942 @@
+{
+ "Hard vs Normal": [
+  {
+   "k": 0,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 23.027222222212234,
+   "val": [
+    62118,
+    4206
+   ],
+   "income": [
+    45000,
+    19500
+   ],
+   "lost": [
+    11,
+    31
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 17.115
+  },
+  {
+   "k": 1,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "helix"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 22.840555555545738,
+   "val": [
+    58000,
+    2826
+   ],
+   "income": [
+    38500,
+    14000
+   ],
+   "lost": [
+    1,
+    32
+   ],
+   "raids": 1,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 11.148
+  },
+  {
+   "k": 2,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 27.415555555541577,
+   "val": [
+    53735,
+    2895
+   ],
+   "income": [
+    44500,
+    28500
+   ],
+   "lost": [
+    27,
+    94
+   ],
+   "raids": 1,
+   "waves": [
+    1,
+    4
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 16.501
+  },
+  {
+   "k": 3,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": false,
+   "t": 39.99999999997458,
+   "val": [
+    94339,
+    7794
+   ],
+   "income": [
+    76390,
+    26000
+   ],
+   "lost": [
+    4,
+    51
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    2
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 26.518
+  },
+  {
+   "k": 4,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "compact"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 22.716111111101405,
+   "val": [
+    51160,
+    1271
+   ],
+   "income": [
+    34500,
+    20000
+   ],
+   "lost": [
+    6,
+    48
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    2
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 10.411
+  },
+  {
+   "k": 5,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 25.377222222210097,
+   "val": [
+    67605,
+    3203
+   ],
+   "income": [
+    48965,
+    15000
+   ],
+   "lost": [
+    2,
+    25
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 14.138
+  },
+  {
+   "k": 6,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 29.156666666651105,
+   "val": [
+    69575,
+    2852
+   ],
+   "income": [
+    54361,
+    26000
+   ],
+   "lost": [
+    19,
+    50
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    2
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 17.851
+  },
+  {
+   "k": 7,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": false,
+   "t": 39.99999999997458,
+   "val": [
+    26355,
+    9242
+   ],
+   "income": [
+    54229,
+    51822
+   ],
+   "lost": [
+    75,
+    156
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    8
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 38.908
+  },
+  {
+   "k": 8,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 26.97388888887531,
+   "val": [
+    65704,
+    0
+   ],
+   "income": [
+    52000,
+    20500
+   ],
+   "lost": [
+    11,
+    30
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 21.867
+  },
+  {
+   "k": 9,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 31.630555555537743,
+   "val": [
+    75851,
+    2047
+   ],
+   "income": [
+    59105,
+    15500
+   ],
+   "lost": [
+    8,
+    31
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 24.946
+  },
+  {
+   "k": 10,
+   "map": "01",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 23.96833333332249,
+   "val": [
+    47829,
+    4321
+   ],
+   "income": [
+    34500,
+    24000
+   ],
+   "lost": [
+    8,
+    45
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    2
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 9.208
+  },
+  {
+   "k": 11,
+   "map": "03",
+   "levels": [
+    "hard",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 30.32999999998337,
+   "val": [
+    59542,
+    6647
+   ],
+   "income": [
+    52754,
+    30500
+   ],
+   "lost": [
+    22,
+    62
+   ],
+   "raids": 1,
+   "waves": [
+    1,
+    3
+   ],
+   "prongs": 1,
+   "honest": true,
+   "wall": 21.9
+  }
+ ],
+ "Normal vs Normal": [
+  {
+   "k": 0,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 17.58611111110607,
+   "val": [
+    31223,
+    1247
+   ],
+   "income": [
+    22000,
+    11000
+   ],
+   "lost": [
+    22,
+    24
+   ],
+   "raids": 0,
+   "waves": [
+    4,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 4.364
+  },
+  {
+   "k": 1,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "helix"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 10.286111111112712,
+   "val": [
+    9733,
+    8546
+   ],
+   "income": [
+    6000,
+    6000
+   ],
+   "lost": [
+    6,
+    5
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.257
+  },
+  {
+   "k": 2,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 12.303333333333098,
+   "val": [
+    305,
+    27964
+   ],
+   "income": [
+    7500,
+    12000
+   ],
+   "lost": [
+    27,
+    2
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    3
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.245
+  },
+  {
+   "k": 3,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 14.277777777775748,
+   "val": [
+    15054,
+    2708
+   ],
+   "income": [
+    13000,
+    5500
+   ],
+   "lost": [
+    12,
+    15
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 4.801
+  },
+  {
+   "k": 4,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "compact"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 16.959444444439974,
+   "val": [
+    461,
+    30974
+   ],
+   "income": [
+    13000,
+    18000
+   ],
+   "lost": [
+    26,
+    16
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    3
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 4.03
+  },
+  {
+   "k": 5,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 10.151111111112835,
+   "val": [
+    4322,
+    12746
+   ],
+   "income": [
+    5000,
+    6000
+   ],
+   "lost": [
+    9,
+    3
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.079
+  },
+  {
+   "k": 6,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 12.168888888888777,
+   "val": [
+    25678,
+    3462
+   ],
+   "income": [
+    9500,
+    10000
+   ],
+   "lost": [
+    0,
+    27
+   ],
+   "raids": 0,
+   "waves": [
+    2,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.284
+  },
+  {
+   "k": 7,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 10.795555555556692,
+   "val": [
+    6695,
+    7486
+   ],
+   "income": [
+    6500,
+    7500
+   ],
+   "lost": [
+    5,
+    7
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.64
+  },
+  {
+   "k": 8,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 23.277222222212007,
+   "val": [
+    26723,
+    5764
+   ],
+   "income": [
+    30000,
+    27000
+   ],
+   "lost": [
+    27,
+    38
+   ],
+   "raids": 0,
+   "waves": [
+    3,
+    2
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 6.19
+  },
+  {
+   "k": 9,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "compact",
+    "lattice"
+   ],
+   "pads": [
+    "B1",
+    "R1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 10.367777777779304,
+   "val": [
+    6044,
+    8688
+   ],
+   "income": [
+    5000,
+    6000
+   ],
+   "lost": [
+    9,
+    4
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 4.366
+  },
+  {
+   "k": 10,
+   "map": "01",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "lattice",
+    "helix"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 0,
+   "decided": true,
+   "t": 12.894444444443673,
+   "val": [
+    23415,
+    968
+   ],
+   "income": [
+    10500,
+    9000
+   ],
+   "lost": [
+    10,
+    30
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.09
+  },
+  {
+   "k": 11,
+   "map": "03",
+   "levels": [
+    "normal",
+    "normal"
+   ],
+   "factions": [
+    "helix",
+    "compact"
+   ],
+   "pads": [
+    "R1",
+    "B1"
+   ],
+   "winner": 1,
+   "decided": true,
+   "t": 10.507222222223621,
+   "val": [
+    8678,
+    9397
+   ],
+   "income": [
+    6500,
+    7000
+   ],
+   "lost": [
+    5,
+    9
+   ],
+   "raids": 0,
+   "waves": [
+    1,
+    1
+   ],
+   "prongs": 0,
+   "honest": true,
+   "wall": 3.791
+  }
+ ]
+}
