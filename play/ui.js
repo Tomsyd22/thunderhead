@@ -286,11 +286,12 @@ export class UI {
     }
     for (const x of cards.children) x.classList.toggle('on', x.dataset.f === fac);
     const aiSel = $('#aiFac'); aiSel.innerHTML = `<option value="random">Random</option>` + Object.entries(FACTIONS).map(([k, F]) => `<option value="${k}">${F.name}</option>`).join('');
+    const lv = $('#aiLevel'); lv.value = (C.saved && C.saved.lv) || 'normal';
     const gs = $('#startGs'); gs.value = C.pace.game_speed; $('#startGsV').textContent = `${(+gs.value).toFixed(1)}×`; gs.oninput = () => { $('#startGsV').textContent = `${(+gs.value).toFixed(1)}×`; };
     $('#btnStart').onclick = () => {
       ai = aiSel.value === 'random' ? Object.keys(FACTIONS).filter((k) => k !== fac)[Math.floor(Math.random() * 2)] : aiSel.value; C.pace.game_speed = +gs.value;
-      try { localStorage.setItem('thunderhead.settings', JSON.stringify(Object.assign({}, C.saved || {}, { fac, gs: +gs.value }))); } catch (e) { /* ignore */ }
-      box.hidden = true; start({ faction: fac, ai });
+      C.saved = Object.assign({}, C.saved || {}, { fac, gs: +gs.value, lv: lv.value }); try { localStorage.setItem('thunderhead.settings', JSON.stringify(C.saved)); } catch (e) { /* ignore */ }
+      box.hidden = true; start({ faction: fac, ai, level: lv.value });
     };
     if (C.Q.has('autostart')) box.hidden = true;
   }

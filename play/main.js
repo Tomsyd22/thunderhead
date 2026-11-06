@@ -62,7 +62,7 @@ async function boot() {
   addEventListener('resize', resize); resize();
   $('#loading').hidden = true; C.ready = true;
   UI.startScreen(C, start);
-  if (Q.has('autostart')) start({ faction: Q.get('faction') || 'compact', ai: Q.get('ai') || 'lattice', spectate: Q.has('spectate') });
+  if (Q.has('autostart')) start({ faction: Q.get('faction') || 'compact', ai: Q.get('ai') || 'lattice', level: Q.get('level') || 'normal', spectate: Q.has('spectate') });
   C.last = performance.now(); requestAnimationFrame(frame);
 }
 function resize() { const r = C.renderer; r.setSize(innerWidth, innerHeight, false); C.camera.aspect = innerWidth / innerHeight; C.camera.updateProjectionMatrix(); if (C.ui) C.ui.resize(); }
@@ -71,7 +71,7 @@ function resize() { const r = C.renderer; r.setSize(innerWidth, innerHeight, fal
 function start(opt) {
   if (C.started) return; C.started = true;
   if (Audio) { try { Audio.init(); C.audio = Audio; } catch (e) { C.errors.push('audio init: ' + e.message); } }
-  const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, name: FACTIONS[opt.ai].name }];
+  const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, level: opt.level || 'normal', name: FACTIONS[opt.ai].name + (opt.level === 'hard' ? ' (Hard)' : '') }];
   const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat, economy: C.economy });
   if (M.game.ore) { M.game.ore.regrowScale = C.regrow; C.oreView = new OreView(C.scene, C.T, M.game.ore); }
   C.world = M.world; C.game = M.game; C.p = M.game.players[0]; C.enemy = M.game.players[1]; C.spec = M.world.spec;
@@ -89,7 +89,7 @@ function setPace(o) {
   if (o.regrow != null) { C.regrow = +o.regrow; if (C.game && C.game.ore) C.game.ore.regrowScale = C.regrow; }
   if (o.unit_scale != null) { C.unitScale = +o.unit_scale; if (C.P) C.P.setUnitScale(C.unitScale); }
   if (o.ttk != null) { C.combat.ttk_scale = +o.ttk; if (C.world) C.world.dmgScale = 1 / C.combat.ttk_scale; }
-  try { localStorage.setItem('thunderhead.settings', JSON.stringify({ gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, us: C.unitScale, rg: C.regrow, quality: C.quality, vol: C.vol })); } catch (e) { /* ignore */ }
+  try { localStorage.setItem('thunderhead.settings', JSON.stringify(Object.assign({}, C.saved || {}, { gs: P.game_speed, hr: P.harvester_speed_ratio, ttk: C.combat.ttk_scale, us: C.unitScale, rg: C.regrow, quality: C.quality, vol: C.vol }))); } catch (e) { /* ignore */ }
   if (C.ui) C.ui.paceChanged();
   return { game_speed: P.game_speed, harvester_speed_ratio: P.harvester_speed_ratio, harvester_mps: harvesterSandboxSpeed(P) };
 }

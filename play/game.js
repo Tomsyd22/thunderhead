@@ -270,6 +270,7 @@ export class Game {
         if (o.isBuilding) { this._power(p); this.emit('structure_lost', { player: p.id, kind: o.kind, id: o.id, x: o.x, y: o.y });
           if (p.ready && !this.has(p, 'yard')) { /* keeps the finished structure; it can be placed once a yard exists */ } }
         else { p.stats.lostUnits++; this.emit('unit_lost', { player: p.id, uid: o.uid, x: o.x, y: o.y }); } }
+      if (e.type === 'damage') { const o = W.byId.get(e.id); if (o) o.lastHitT = this.t; }
       if (e.type === 'damage' && e.src != null) { const o = W.byId.get(e.id), s = W.byId.get(e.src);   // at most one alert per victim per 2 s
         if (o && s && o.team !== s.team && o.team >= 0 && !(o.lastAlertT > this.t - 2)) { o.lastAlertT = this.t; this.emit('under_attack', { player: o.team, x: o.x, y: o.y, building: !!o.isBuilding, harvester: o.uid === 'HV', id: o.id, src: s.id }); } }
     }
