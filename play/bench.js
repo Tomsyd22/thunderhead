@@ -42,12 +42,14 @@ async function run(C, d) {
   const cam = C.rcam, path = [[y.x, y.y, 150], [mx, my, 120], [mx, my, 90], [(y.x + mx) / 2, (y.y + my) / 2, 300], [C.T.W / 2, C.T.H / 2, 520]];
   // warm-up (shader compiles, texture uploads)
   cam.setFocus(path[0][0], path[0][1]); cam.distT = path[0][2]; for (let i = 0; i < 90; i++) await raf();
-  const secs = d.seconds || 20, times = [], t0 = performance.now(); let last = t0, seg = -1;
+  const secs = d.seconds || 20, times = [], long = [], t0 = performance.now(); let last = t0, seg = -1; const lt = [];
+  let po = null; try { po = new PerformanceObserver((l) => { for (const e of l.getEntries()) lt.push({ t: Math.round(e.startTime - t0), ms: Math.round(e.duration) }); }); po.observe({ type: 'longtask', buffered: false }); } catch (err) { /* no longtask API */ }
   while (performance.now() - t0 < secs * 1000) {
     const now = await raf(), f = (now - t0) / (secs * 1000), s = Math.min(path.length - 2, Math.floor(f * (path.length - 1)));
     if (s !== seg) { seg = s; const [x, yy, dist] = path[s + 1]; cam.flyTo ? cam.flyTo(x, yy, 0.6) : cam.setFocus(x, yy); cam.distT = dist; }
-    times.push(now - last); last = now;
+    const dtf = now - last; times.push(dtf); last = now; if (dtf > 150) { const c = C.cpu[C.cpu.length - 1] || [0, 0]; long.push({ t: Math.round(now - t0), ms: Math.round(dtf), tick: +c[0].toFixed(1), render: +c[1].toFixed(1), seg }); }
   }
+  if (po) po.disconnect();
   times.shift();
   const st = C.stats(), med = pct(times, 0.5), avg = times.reduce((a, b) => a + b, 0) / times.length, worst1 = [...times].sort((a, b) => b - a).slice(0, Math.max(1, Math.floor(times.length / 100)));
   const frames = { fps: 1000 / avg, low1: 1000 / (worst1.reduce((a, b) => a + b, 0) / worst1.length), p50: med, p95: pct(times, 0.95), p99: pct(times, 0.99), max: Math.max(...times), hitches: times.filter((t) => t > 2 * med).length, n: times.length };
@@ -63,12 +65,12 @@ async function run(C, d) {
     const acked = C.acks.length > n0; await raf(); const tFrame = performance.now(); await raf();   // the frame after the ack has been submitted
     lat.push({ ack: acked, ms: tFrame - tIn }); await sleep(120 + Math.random() * 60);
   }
-  const ok = lat.filter((l) => l.ack).map((l) => l.ms);
+  const ok = lat.filter((l) => l.ack).map((l) => l.ms); const cpu = C.cpu.slice(-300), cpuT = cpu.map((c) => c[0]), cpuR = cpu.map((c) => c[1]);
   const gl = C.renderer.getContext(), dbg = gl.getExtension('WEBGL_debug_renderer_info');
   return {
     quality: C.quality, canvas: [C.renderer.domElement.width, C.renderer.domElement.height], css: [innerWidth, innerHeight], dpr: devicePixelRatio, pixelRatio: C.renderer.getPixelRatio(),
     gpu: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER), post: !!(C.post && C.post.enabled), units: st.units, calls: st.calls, tris: st.tris, tickAvg: st.tickAvg, tickP99: st.tickP99,
-    frames, latency: { n: ok.length, of: lat.length, p50: pct(ok, 0.5), max: ok.length ? Math.max(...ok) : null, refreshMs: med }, ua: navigator.userAgent, hidden: document.hidden, errors: C.errors.slice(0, 5),
+    frames, long: long.slice(0, 12), longtasks: lt.slice(0, 12), cpu: { tickP50: pct(cpuT, 0.5), tickP95: pct(cpuT, 0.95), renderP50: pct(cpuR, 0.5), renderP95: pct(cpuR, 0.95) }, latency: { n: ok.length, of: lat.length, p50: pct(ok, 0.5), max: ok.length ? Math.max(...ok) : null, refreshMs: med }, ua: navigator.userAgent, hidden: document.hidden, errors: C.errors.slice(0, 5),
   };
 }
 

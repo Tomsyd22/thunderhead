@@ -19,7 +19,7 @@ import { createPost, postWanted } from './post.js';
 
 const Q = new URLSearchParams(location.search);
 const $ = (s) => document.querySelector(s);
-const C = window.__game = { ready: false, started: false, errors: [], frames: [], tickMs: [], acks: [], Q };
+const C = window.__game = { ready: false, started: false, errors: [], frames: [], tickMs: [], acks: [], cpu: [], Q };
 addEventListener('error', (e) => C.errors.push(String(e.message || e)));
 addEventListener('unhandledrejection', (e) => C.errors.push(String(e.reason && (e.reason.stack || e.reason.message) || e.reason)));
 let Audio = null;
@@ -104,7 +104,8 @@ function frame(now) {
   let dt = (now - C.last) / 1000; C.last = now; if (!(dt > 0)) dt = 0; if (dt > 0.25) dt = 0.25;
   if (C.manual) return;
   C.frames.push(dt * 1000); if (C.frames.length > 600) C.frames.shift();
-  tick(dt); render();
+  const c0 = performance.now(); tick(dt); const c1 = performance.now(); render(); const c2 = performance.now();
+  C.cpu.push([c1 - c0, c2 - c1]); if (C.cpu.length > 600) C.cpu.shift();
 }
 function tick(dt) {
   if (!C.started) { C.rcam.update(dt); C.light.update(C.camera); C.mapView.update(C.camera, dt); return; }
