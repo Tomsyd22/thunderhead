@@ -20,7 +20,7 @@ export class Game {
     this.deposits = deposits.map((d) => ({ ...d, svc: d.service_point, ore: d.ore ?? 100000, busy: null }));
     this.dockSites = dockSites || [];
     this.players = players.map((p, i) => ({
-      id: i, team: i, faction: p.faction, name: p.name || FACTIONS[p.faction].name, isAI: !!p.isAI, color: p.color || FACTIONS[p.faction].color,
+      id: i, team: p.team ?? i, faction: p.faction, name: p.name || FACTIONS[p.faction].name, isAI: !!p.isAI, color: p.color || FACTIONS[p.faction].color,
       credits: RULES.startCredits, shown: RULES.startCredits, power: { made: 0, used: 0 }, start: p.start,
       queues: { structure: [], infantry: [], vehicle: [], air: [], naval: [] }, ready: null, primary: {}, lost: false,
       stats: { built: 0, lostUnits: 0, killed: 0, harvested: 0 }, lowPowerWarned: false, fundsWarned: 0,
@@ -33,7 +33,10 @@ export class Game {
   since(seq) { const out = []; for (let i = this.events.length - 1; i >= 0 && this.events[i].seq > seq; i--) out.push(this.events[i]); return out.reverse(); }
   structures(p) { return this.world.buildings.filter((b) => b.alive && b.owner === p.id); }
   has(p, kind) { return this.structures(p).some((b) => b.kind === kind); }
-  unitsOf(p) { return this.world.units.filter((u) => u.alive && u.team === p.team); }
+  /** a player's own units (allies share a team id for vision and targeting, so ownership goes by owner) */
+  ownerOf(o) { return this.players[o.owner != null ? o.owner : this.players.findIndex((q) => q.team === o.team)] || null; }
+  unitsOf(p) { return this.world.units.filter((u) => u.alive && (u.owner != null ? u.owner === p.id : u.team === p.team)); }
+  enemiesOf(p) { return this.players.filter((q) => q.team !== p.team && !q.lost); }
 
   // ───────────── structures ─────────────
   /** start structure (no cost): the construction yard at the player's start pad */
@@ -226,10 +229,10 @@ export class Game {
   }
 
   // ───────────── harvesting ─────────────
-  docksOf(team) { return this.world.buildings.filter((b) => b.alive && b.dock && b.team === team && this.t - b.born > 1).map((b) => b.dock); }
+  docksOf(owner) { return this.world.buildings.filter((b) => b.alive && b.dock && b.owner === owner && this.t - b.born > 1).map((b) => b.dock); }
   bestDock(u) { // nearest refinery, with a penalty for a busy bay so harvesters spread across refineries instead of queueing
     let best = null, bc = 1e18;
-    for (const d of this.docksOf(u.team)) { const c = Math.hypot(d.approach[0] - u.x, d.approach[1] - u.y) + (d.busy && d.busy !== u.id ? 160 : 0); if (c < bc) { bc = c; best = d; } }
+    for (const d of this.docksOf(u.owner != null ? u.owner : (this.ownerOf(u) || { id: -1 }).id)) { const c = Math.hypot(d.approach[0] - u.x, d.approach[1] - u.y) + (d.busy && d.busy !== u.id ? 160 : 0); if (c < bc) { bc = c; best = d; } }
     return best || (u.harv && u.harv.dock);
   }
   nextDeposit(u) { // nearest field with ore, preferring ones no other harvester of the team is working
@@ -265,14 +268,14 @@ export class Game {
     if (this.events.length > 400 || (this.events.length && this.t - this.events[0].t > 20)) this.events = this.events.filter((e) => this.t - e.t <= 20);
     for (const e of W.events) {
       if (e.type === 'engineer_enter') { const b = W.byId.get(e.b); if (b && b.alive) { const p = this.players[b.owner]; b.hp = b.maxHp; b.repairing = false; this._power(p); this.emit('engineer_repair', { player: p.id, id: b.id, x: b.x, y: b.y }); } }
-      if (e.type === 'harvest_cycle' && e.amount) { const p = this.players[e.team]; if (p) { p.credits += e.amount; p.stats.harvested += e.amount; } }
-      if (e.type === 'death') { const o = W.byId.get(e.id); if (!o) continue; const p = this.players[o.team]; if (!p) continue;
+      if (e.type === 'harvest_cycle' && e.amount) { const h = W.byId.get(e.id), p = h ? this.ownerOf(h) : this.players[e.team]; if (p) { p.credits += e.amount; p.stats.harvested += e.amount; } }
+      if (e.type === 'death') { const o = W.byId.get(e.id); if (!o) continue; const p = this.ownerOf(o); if (!p) continue;
         if (o.isBuilding) { this._power(p); this.emit('structure_lost', { player: p.id, kind: o.kind, id: o.id, x: o.x, y: o.y });
           if (p.ready && !this.has(p, 'yard')) { /* keeps the finished structure; it can be placed once a yard exists */ } }
         else { p.stats.lostUnits++; this.emit('unit_lost', { player: p.id, uid: o.uid, x: o.x, y: o.y }); } }
       if (e.type === 'damage') { const o = W.byId.get(e.id); if (o) o.lastHitT = this.t; }
       if (e.type === 'damage' && e.src != null) { const o = W.byId.get(e.id), s = W.byId.get(e.src);   // at most one alert per victim per 2 s
-        if (o && s && o.team !== s.team && o.team >= 0 && !(o.lastAlertT > this.t - 2)) { o.lastAlertT = this.t; this.emit('under_attack', { player: o.team, x: o.x, y: o.y, building: !!o.isBuilding, harvester: o.uid === 'HV', id: o.id, src: s.id }); } }
+        if (o && s && o.team !== s.team && o.team >= 0 && !(o.lastAlertT > this.t - 2)) { o.lastAlertT = this.t; const op = this.ownerOf(o); if (!op) continue; this.emit('under_attack', { player: op.id, x: o.x, y: o.y, building: !!o.isBuilding, harvester: o.uid === 'HV', id: o.id, src: s.id }); } }
     }
     for (const u of W.units) if (u.alive && u.rollOut) this._rollOut(u, dt);
     if (this.ore) { this.ore.tick(dt);   // harvesters that stopped for want of ore go back to work when some has regrown
@@ -284,6 +287,7 @@ export class Game {
       if (!this.structures(p).length) { p.lost = true; this.emit('defeated', { player: p.id }); }
     }
     const alive = this.players.filter((p) => !p.lost);
-    if (!this.over && alive.length <= 1 && this.players.length > 1) { this.over = { winner: alive[0] ? alive[0].id : null, t: this.t }; this.emit('game_over', this.over); }
+    const teams = new Set(alive.map((p) => p.team));   // last team standing wins (allies share a team)
+    if (!this.over && teams.size <= 1 && new Set(this.players.map((p) => p.team)).size > 1) { this.over = { winner: alive[0] ? alive[0].id : null, team: alive[0] ? alive[0].team : null, t: this.t }; this.emit('game_over', this.over); }
   }
 }

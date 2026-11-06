@@ -6,6 +6,7 @@ import { makeMapNav } from './mapnav.js';
 import { Game } from './game.js';
 import { AI } from './ai.js';
 import { HardAI } from './ai_hard.js';
+import { EasyAI } from './ai_easy.js';
 import { FACTIONS, RULES } from './rules.js';
 import { applyCombat } from './combat.js';
 import { OreFields, oreHooks } from './ore.js';
@@ -70,7 +71,7 @@ export function createMatch({ T, spec, geom = {}, pace, players, startUnits = tr
       list.forEach((uid, k) => { const s = k < 4 ? 26 : 38, lat = k < 4 ? (k - 1.5) * 3.2 : (k - 4.5) * 9;
         const u = world.spawn(uid, p.team, yard.x + ox * s - oy * lat, yard.y + oy * s + ox * lat, { hdg: toC }); u.owner = p.id; u.born = 0; });
     }
-    if (setup[i].isAI) ais.push(new (setup[i].level === 'hard' ? HardAI : AI)(game, p, mine.map((r) => [r.asset, r.x, r.y])));
+    if (setup[i].isAI) ais.push(new (setup[i].level === 'hard' ? HardAI : setup[i].level === 'easy' ? EasyAI : AI)(game, p, mine.map((r) => [r.asset, r.x, r.y])));
   });
   return { world, game, ais, nav };
 }

@@ -296,7 +296,7 @@ export class UI {
     if (C.Q.has('autostart')) box.hidden = true;
   }
   endScreen() {
-    const C = this.C; this.endShown = true; const win = C.game.over.winner === C.p.id; const box = $('#end');
+    const C = this.C; this.endShown = true; const win = C.game.over.team != null ? C.game.over.team === C.p.team : C.game.over.winner === C.p.id; const box = $('#end');
     this.announce(win ? 'mission_accomplished' : 'mission_failed', win ? 'Mission accomplished' : 'Mission failed');
     const st = C.p.stats, t = C.game.t; box.querySelector('h2').textContent = win ? 'Victory' : 'Defeat'; box.classList.toggle('win', win);
     box.querySelector('.stats').innerHTML = `<div><span>Game time</span><b>${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}</b></div><div><span>Structures built</span><b>${st.built}</b></div><div><span>Units lost</span><b>${st.lostUnits}</b></div><div><span>Enemy units lost</span><b>${C.enemy.stats.lostUnits}</b></div><div><span>Ore harvested</span><b>$${fmt(st.harvested)}</b></div>`;

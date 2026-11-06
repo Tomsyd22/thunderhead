@@ -12,11 +12,13 @@ export class AI {
   constructor(game, p, kitItems) {
     this.g = game; this.p = p; this.next = 0; this.waves = 0; this.lastWave = 0; this.defending = 0; this.wave = new Set();
     this.slots = kitItems.map(([asset, x, y]) => ({ kind: KIT_KIND[asset], x, y })).filter((s) => s.kind);
-    const c = p.start; const enemy = game.players.find((q) => q.id !== p.id).start;
+    const c = p.start; const foes = game.players.filter((q) => q.team !== p.team), enemy = (foes.sort((a, b) => Math.hypot(a.start.x - c.x, a.start.y - c.y) - Math.hypot(b.start.x - c.x, b.start.y - c.y))[0] || game.players.find((q) => q.id !== p.id)).start;
     const dx = enemy.x - c.x, dy = enemy.y - c.y, L = Math.hypot(dx, dy) || 1; this.toward = [dx / L, dy / L];
     this.stage = [c.x + this.toward[0] * 150, c.y + this.toward[1] * 150];
   }
   get structs() { return this.g.structures(this.p); }
+  /** living players on other teams, nearest start first (1v1: just the opponent) */
+  enemies() { const c = this.p.start; return this.g.enemiesOf(this.p).sort((a, b) => Math.hypot(a.start.x - c.x, a.start.y - c.y) - Math.hypot(b.start.x - c.x, b.start.y - c.y)); }
   count(kind) { return this.structs.filter((b) => b.kind === kind).length + (this.p.queues.structure[0] && this.p.queues.structure[0].key === kind ? 1 : 0) + (this.p.ready && this.p.ready.key === kind ? 1 : 0); }
   think() {
     const g = this.g, p = this.p; if (p.lost || g.over) return;
@@ -85,12 +87,12 @@ export class AI {
     this.wave = new Set([...this.wave].filter((id) => { const u = W.byId.get(id); return u && u.alive; }));
     const size = Math.min(18, 6 + 2 * this.waves), ready = units.filter((u) => !this.wave.has(u.id) && u.dom !== 'ship');
     if (g.t > 240 && g.t - this.lastWave > 150 && ready.length >= size) {
-      const enemy = g.players.find((q) => q.id !== p.id && !q.lost); if (!enemy) return;
+      const enemy = this.enemies()[0]; if (!enemy) return;
       const tgt = g.structures(enemy).sort((a, b) => Math.hypot(a.x - p.start.x, a.y - p.start.y) - Math.hypot(b.x - p.start.x, b.y - p.start.y))[0];
       if (!tgt) return; this.waves++; this.lastWave = g.t; for (const u of ready) this.wave.add(u.id);
       W.orderGroup(ready, { type: 'attackMove', x: tgt.x, y: tgt.y }); g.emit('ai_wave', { player: p.id, n: ready.length });
     }
     // waves that ran out of targets push on to the next structure
-    for (const id of this.wave) { const u = W.byId.get(id); if (u && u.order.type === 'idle') { const enemy = g.players.find((q) => q.id !== p.id && !q.lost); const s = enemy && g.structures(enemy)[0]; if (s) W.order(u, { type: 'attackMove', x: s.x, y: s.y }); } }
+    for (const id of this.wave) { const u = W.byId.get(id); if (u && u.order.type === 'idle') { const enemy = this.enemies()[0]; const s = enemy && g.structures(enemy)[0]; if (s) W.order(u, { type: 'attackMove', x: s.x, y: s.y }); } }
   }
 }

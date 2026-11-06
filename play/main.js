@@ -14,6 +14,7 @@ import { Input } from './input.js';
 import { UI } from './ui.js';
 import { makeCameos } from './cameos.js';
 import { OreView } from './orerender.js';
+import { createPost, postWanted } from './post.js';
 
 const Q = new URLSearchParams(location.search);
 const $ = (s) => document.querySelector(s);
@@ -39,12 +40,13 @@ async function boot() {
   const T = C.T = await loadMapData('maps/01/');
   // renderer (ACES, sRGB, PCF soft shadows: the map shaders expect them)
   const quality = C.quality = Q.get('quality') || (C.saved && C.saved.quality) || 'medium', QP = MAP_QUALITY[quality] || MAP_QUALITY.medium;
-  const renderer = C.renderer = new THREE.WebGLRenderer({ canvas: $('#view'), antialias: quality !== 'low', powerPreference: 'high-performance', preserveDrawingBuffer: Q.has('shots') });
+  const renderer = C.renderer = new THREE.WebGLRenderer({ canvas: $('#view'), antialias: quality !== 'low' && !postWanted(quality, Q), powerPreference: 'high-performance', preserveDrawingBuffer: Q.has('shots') });
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.enabled = QP.shadows;
   renderer.setPixelRatio(Q.has('dpr') ? +Q.get('dpr') : QP.pixelRatio(devicePixelRatio)); renderer.setSize(innerWidth, innerHeight, false);
   const scene = C.scene = new THREE.Scene(); const camera = C.camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.5, 4000);
   C.light = addMapLighting(THREE, scene, renderer, T, { quality });
+  try { C.post = createPost(renderer, scene, camera, { quality, Q }); } catch (e) { C.errors.push('post: ' + e.message); C.post = null; }
   prog('Building terrain', 0.08);
   // the base kits and demo units in the map are not drawn (players build their own bases); the docks stay as piers
   const exclude = (name, r) => name.startsWith('unit_') || ((r[5] || 0) !== 0 && name !== 'bld_naval_dock');
@@ -65,13 +67,13 @@ async function boot() {
   if (Q.has('autostart')) start({ faction: Q.get('faction') || 'compact', ai: Q.get('ai') || 'lattice', level: Q.get('level') || 'normal', spectate: Q.has('spectate') });
   C.last = performance.now(); requestAnimationFrame(frame);
 }
-function resize() { const r = C.renderer; r.setSize(innerWidth, innerHeight, false); C.camera.aspect = innerWidth / innerHeight; C.camera.updateProjectionMatrix(); if (C.ui) C.ui.resize(); }
+function resize() { const r = C.renderer; r.setSize(innerWidth, innerHeight, false); C.camera.aspect = innerWidth / innerHeight; C.camera.updateProjectionMatrix(); if (C.post) C.post.setSize(); if (C.ui) C.ui.resize(); }
 
 /** start a match: { faction, ai, spectate } */
 function start(opt) {
   if (C.started) return; C.started = true;
   if (Audio) { try { Audio.init(); C.audio = Audio; } catch (e) { C.errors.push('audio init: ' + e.message); } }
-  const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, level: opt.level || 'normal', name: FACTIONS[opt.ai].name + (opt.level === 'hard' ? ' (Hard)' : '') }];
+  const pace = C.pace, players = [{ faction: opt.faction, pad: 'B1', isAI: !!opt.spectate, name: 'You' }, { faction: opt.ai, pad: 'R1', isAI: true, level: opt.level || 'normal', name: FACTIONS[opt.ai].name + (opt.level === 'hard' ? ' (Hard)' : opt.level === 'easy' ? ' (Easy)' : '') }];
   const M = C.M = createMatch({ T: C.T, spec: C.specRaw, geom: C.geom, pace, players, combat: C.combat, economy: C.economy });
   if (M.game.ore) { M.game.ore.regrowScale = C.regrow; C.oreView = new OreView(C.scene, C.T, M.game.ore); }
   C.world = M.world; C.game = M.game; C.p = M.game.players[0]; C.enemy = M.game.players[1]; C.spec = M.world.spec;
@@ -121,7 +123,7 @@ function tick(dt) {
   C.ui.frame(dt); C.input.frame(dt);
   C.frameMs = performance.now() - t0;
 }
-function render() { C.renderer.render(C.scene, C.camera); if (C.ui) C.ui.drawHud(); }
+function render() { if (C.post && C.post.enabled) C.post.render(); else C.renderer.render(C.scene, C.camera); if (C.ui) C.ui.drawHud(); }
 
 // ───────── test clock and probes (Playwright) ─────────
 C.advance = (sec, fps = 60, renderEvery = 0) => { C.manual = true; const n = Math.round(sec * fps); for (let i = 0; i < n; i++) { tick(1 / fps); if (renderEvery && i % renderEvery === 0) render(); } return C.stats(); };
