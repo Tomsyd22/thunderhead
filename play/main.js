@@ -127,9 +127,13 @@ function frame(now) {
  * pixels — down to 70 % of the preset's scale — and creep back up once there is headroom. Changes are at most every 2 s
  * (each one reallocates the post-processing targets). */
 function dynRes(ms, now) {
-  C.dynEma = C.dynEma == null ? ms : C.dynEma + (Math.min(ms, 100) - C.dynEma) * 0.08; if (now - (C.dynT || 0) < 2000) return;
-  let s = C.resScale; if (C.dynEma > 19 && s > 0.7) s = Math.max(0.7, s - 0.1); else if (C.dynEma < 15 && s < 1) s = Math.min(1, s + 0.05); else return;
-  C.resScale = s; C.dynT = now; C.renderer.setPixelRatio(C.basePR * s); C.renderer.setSize(innerWidth, innerHeight, false);
+  // frames can't beat the display refresh, so "headroom" = every recent frame on time; a step up that then misses
+  // backs off for longer each time (no see-sawing between two sizes)
+  C.dynEma = C.dynEma == null ? ms : C.dynEma + (Math.min(ms, 100) - C.dynEma) * 0.08; C.dynMin = Math.min(C.dynMin || 99, ms); if (now - (C.dynT || 0) < 2000) return;
+  const vsync = Math.max(6, Math.min(C.dynMin, 17)); let s = C.resScale, up = false;
+  if (C.dynEma > vsync * 1.15 && s > 0.7) { s = Math.max(0.7, s - 0.1); if (C.dynUpT && now - C.dynUpT < 4000) C.dynWait = Math.min(60000, (C.dynWait || 4000) * 2); }
+  else if (C.dynEma < vsync * 1.04 && s < 1 && now - (C.dynT || 0) > (C.dynWait || 4000)) { s = Math.min(1, s + 0.1); up = true; } else return;
+  C.resScale = s; C.dynT = now; if (up) C.dynUpT = now; C.renderer.setPixelRatio(C.basePR * s); C.renderer.setSize(innerWidth, innerHeight, false);
 }
 function tick(dt) {
   if (!C.started) { C.rcam.update(dt); C.light.update(C.camera); C.mapView.update(C.camera, dt); return; }
