@@ -1,7 +1,7 @@
 ✓ kit footprints re-opened on both pads — 12 kit buildings, 644 cells
-✓ foot path base to base — 1 waypoints, 1351 m, 11.8 ms
-✓ veh path base to base — 9 waypoints, 1357 m, 13.5 ms
-✓ hover path base to base — 8 waypoints, 1361 m, 4.9 ms
+✓ foot path base to base — 1 waypoints, 1351 m, 11.9 ms
+✓ veh path base to base — 9 waypoints, 1357 m, 10.3 ms
+✓ hover path base to base — 8 waypoints, 1361 m, 5.8 ms
 ✓ dock approach B1 (420,1479) is vehicle ground
 ✓ dock approach B1 (483,1479) is vehicle ground
 ✓ dock approach R1 (1381,321) is vehicle ground
@@ -19,13 +19,13 @@
 ✓ nearest-field round trip in the 20–40 s band (player-placed refinery) — 24.4
 ✓ infantry trains and leaves through the barracks door — 3 ready, 3 at the door
 ✓ AI match runs without exceptions — 12.0 game min
-✓ average tick cost leaves room for rendering — avg 0.13 ms/tick, worst 21.8 ms (1 ticks > 20 ms: 1.0s 22ms); per-frame sim budget ≈ 16.7 ms
+✓ average tick cost leaves room for rendering — avg 0.13 ms/tick, worst 15.7 ms (0 ticks > 20 ms); per-frame sim budget ≈ 16.7 ms
 ✓ both AIs harvest — cycles 22 / 17
-✓ AI compact builds a base — power refinery barracks factory radar airpad naval
+✓ AI compact builds a base — power refinery barracks factory radar airpad
 ✓ AI lattice builds a base — power refinery barracks factory radar airpad naval
-✓ AI armies are produced — 6 alive, 32 lost | 10 alive, 10 lost
-✓ AI waves are launched and reach the enemy base — 2 waves, first contact T01 team 1 at 476 s
+✓ AI armies are produced — 9 alive, 28 lost | 14 alive, 7 lost
+✓ AI waves are launched and reach the enemy base — 2 waves, first contact T01 team 1 at 479 s
 ✓ no ground unit stuck on a path for 20 s — worst 7 s: HV#47 at (490.3, 1517.7) order {"type":"harvest"} v 3.40 path [[485,1505],[484,1480]] pass 1 clear 4.3 deploy null hidden false
 ✓ doors and refinery docks of AI-built bases stay reachable — 4 lanes checked
-✓ engine counters — shots 1327, hits 1326, kills 43
+✓ engine counters — shots 1899, hits 1896, kills 37
 30/30

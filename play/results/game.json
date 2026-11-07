@@ -10,29 +10,60 @@
  "perf": {
   "fps": null,
   "p95": 0,
-  "tickAvg": 0.4024901703759286,
-  "tickP99": 7.100000000093132,
+  "tickAvg": 0.2528888888957186,
+  "tickP99": 2.400000000372529,
   "calls": 119,
   "tris": 122698,
-  "units": 12,
-  "t": 25.433333333333756,
+  "units": 33,
+  "t": 889.8666666665147,
   "errors": [],
   "present": {
-   "hitReactions": 0,
-   "debris": 0,
-   "tossed": 0,
-   "flashes": 0,
-   "shakes": 0,
-   "structsBuilt": 0,
-   "sfx": 0
+   "hitReactions": 104,
+   "debris": 70,
+   "tossed": 5,
+   "flashes": 153,
+   "shakes": 158,
+   "structsBuilt": 11,
+   "sfx": 306
   },
   "lod": [
    0,
-   2,
-   10
+   16,
+   14
   ]
  },
  "logs": [
   "Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
- ]
+ ],
+ "match": {
+  "t": 612.0000000001007,
+  "wall": 130.542,
+  "errors": [],
+  "over": null,
+  "players": [
+   {
+    "f": "helix",
+    "s": 8,
+    "u": 4,
+    "lost": 24,
+    "h": 8000
+   },
+   {
+    "f": "compact",
+    "s": 9,
+    "u": 26,
+    "lost": 1,
+    "h": 6000
+   }
+  ],
+  "present": {
+   "hitReactions": 601,
+   "debris": 86,
+   "tossed": 3,
+   "flashes": 183,
+   "shakes": 39,
+   "structsBuilt": 16,
+   "sfx": 1652
+  }
+ }
 }

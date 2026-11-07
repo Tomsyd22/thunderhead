@@ -1,44 +1,44 @@
-# AI difficulty (round 1)
+# AI difficulty (round 2)
 
-Headless AI-vs-AI on 01 and 03; 12 matches per batch, up to 40 game minutes; sides and factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw).
+Headless AI-vs-AI on 01 and 03; 12 matches per batch, up to 40 game minutes; sides and factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw). Seed set 1 (Math.random re-seeded per match).
 
 ## Hard vs Normal
 
-| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 01 | B1 / R1 | compact vs lattice | hard wins | 25.5 | 69205 / 1674 | 51388 / 17500 | 0 | 1 |
-| 2 | 03 | B1 / R1 | lattice vs helix | hard wins | 22.1 | 54596 / 1423 | 37500 / 13000 | 0 | 1 |
-| 3 | 01 | R1 / B1 | helix vs compact | hard wins | 28.8 | 59678 / 3624 | 50500 / 29000 | 0 | 1 |
-| 4 | 03 | R1 / B1 | compact vs helix | hard wins | 38.1 | 85079 / 3142 | 68331 / 23000 | 0 | 1 |
-| 5 | 01 | B1 / R1 | lattice vs compact | hard wins | 23.6 | 44611 / 2027 | 35000 / 22000 | 0 | 0 |
-| 6 | 03 | B1 / R1 | helix vs lattice | hard wins | 16.1 | 38891 / 3856 | 23500 / 13500 | 0 | 1 |
-| 7 | 01 | R1 / B1 | compact vs helix | hard wins | 28.3 | 70595 / 2121 | 53770 / 22500 | 0 | 1 |
-| 8 | 03 | R1 / B1 | lattice vs compact | hard wins | 28.4 | 54048 / 884 | 45500 / 24000 | 2 | 0 |
-| 9 | 01 | B1 / R1 | helix vs lattice | hard wins | 24.2 | 61448 / 3032 | 45000 / 20500 | 0 | 1 |
-| 10 | 03 | B1 / R1 | compact vs lattice | hard wins | 26.3 | 69810 / 2349 | 51907 / 14000 | 0 | 1 |
-| 11 | 01 | R1 / B1 | lattice vs helix | hard wins | 26.0 | 53702 / 3019 | 38500 / 21500 | 1 | 0 |
-| 12 | 03 | R1 / B1 | helix vs compact | hard wins | 32.2 | 60339 / 1000 | 52578 / 24500 | 2 | 1 |
+| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves | wall (s) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 01 | B1 / R1 | compact vs lattice | hard (compact) wins | 22.0 | 59912 / 2194 | 41000 / 17000 | 0 | 1 | 16 |
+| 2 | 03 | B1 / R1 | lattice vs helix | hard (lattice) wins | 14.8 | 37724 / 2082 | 22000 / 12000 | 1 | 0 | 6 |
+| 3 | 01 | R1 / B1 | helix vs compact | hard (helix) wins | 26.4 | 63885 / 1651 | 48000 / 23500 | 1 | 1 | 16 |
+| 4 | 03 | R1 / B1 | compact vs helix | hard (compact) wins | 28.9 | 70565 / 2014 | 53840 / 20000 | 0 | 1 | 18 |
+| 5 | 01 | B1 / R1 | lattice vs compact | hard (lattice) wins | 22.0 | 46311 / 1797 | 34000 / 20000 | 0 | 1 | 11 |
+| 6 | 03 | B1 / R1 | helix vs lattice | hard (helix) wins | 26.4 | 68705 / 3376 | 50807 / 15500 | 0 | 1 | 15 |
+| 7 | 01 | R1 / B1 | compact vs helix | hard (compact) wins | 22.0 | 55578 / 2131 | 38000 / 22000 | 0 | 1 | 13 |
+| 8 | 03 | R1 / B1 | lattice vs compact | hard (lattice) wins | 25.1 | 60825 / 1607 | 42500 / 13000 | 2 | 1 | 12 |
+| 9 | 01 | B1 / R1 | helix vs lattice | hard (helix) wins | 23.1 | 60719 / 4394 | 43500 / 20500 | 1 | 1 | 13 |
+| 10 | 03 | B1 / R1 | compact vs lattice | hard (compact) wins | 26.1 | 70491 / 5173 | 52164 / 14500 | 0 | 1 | 15 |
+| 11 | 01 | R1 / B1 | lattice vs helix | hard (lattice) wins | 21.3 | 43004 / 7583 | 29500 / 24500 | 1 | 1 | 8 |
+| 12 | 03 | R1 / B1 | helix vs compact | hard (helix) wins | 27.3 | 63994 / 1497 | 49636 / 21000 | 2 | 1 | 16 |
 
 ## Normal vs Normal
 
-| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 01 | B1 / R1 | compact vs lattice | normal wins | 12.9 | 27931 / 647 | 13000 / 8000 | 0 | 0 |
-| 2 | 03 | B1 / R1 | lattice vs helix | normal wins | 10.9 | 7871 / 9617 | 6000 / 7000 | 0 | 0 |
-| 3 | 01 | R1 / B1 | helix vs compact | normal wins | 31.0 | 8101 / 42277 | 39500 / 45500 | 0 | 0 |
-| 4 | 03 | R1 / B1 | compact vs helix | normal wins | 11.0 | 11506 / 4660 | 7500 / 6500 | 0 | 0 |
-| 5 | 01 | B1 / R1 | lattice vs compact | normal wins | 37.4 | 3929 / 41746 | 49170 / 50701 | 0 | 0 |
-| 6 | 03 | B1 / R1 | helix vs lattice | normal wins | 10.6 | 4079 / 14429 | 5000 / 7000 | 0 | 0 |
-| 7 | 01 | R1 / B1 | compact vs helix | normal wins | 12.4 | 25320 / 1542 | 9500 / 9500 | 0 | 0 |
-| 8 | 03 | R1 / B1 | lattice vs compact | normal wins | 10.5 | 7221 / 6854 | 6500 / 5500 | 0 | 0 |
-| 9 | 01 | B1 / R1 | helix vs lattice | normal wins | 22.4 | 33954 / 327 | 30500 / 22500 | 0 | 0 |
-| 10 | 03 | B1 / R1 | compact vs lattice | normal wins | 10.4 | 13518 / 7308 | 7500 / 6000 | 0 | 0 |
-| 11 | 01 | R1 / B1 | lattice vs helix | normal wins | 28.2 | 5617 / 27328 | 34000 / 37500 | 0 | 0 |
-| 12 | 03 | R1 / B1 | helix vs compact | normal wins | 10.6 | 8492 / 16116 | 7000 / 8000 | 0 | 0 |
+| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves | wall (s) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 01 | B1 / R1 | compact vs lattice | normal (compact) wins | 28.0 | 46449 / 8872 | 41000 / 35000 | 0 | 0 | 12 |
+| 2 | 03 | B1 / R1 | lattice vs helix | normal (lattice) wins | 23.4 | 41580 / 9205 | 33000 / 29000 | 0 | 0 | 8 |
+| 3 | 01 | R1 / B1 | helix vs compact | normal (compact) wins | 14.6 | 1759 / 32720 | 9000 / 16500 | 0 | 0 | 4 |
+| 4 | 03 | R1 / B1 | compact vs helix | normal (helix) wins | 30.2 | 616 / 25672 | 30000 / 33500 | 0 | 0 | 8 |
+| 5 | 01 | B1 / R1 | lattice vs compact | draw | 40.0 | 32040 / 31819 | 52440 / 50869 | 0 | 0 | 21 |
+| 6 | 03 | B1 / R1 | helix vs lattice | normal (lattice) wins | 22.1 | 11890 / 42276 | 29500 / 26500 | 0 | 0 | 6 |
+| 7 | 01 | R1 / B1 | compact vs helix | normal (helix) wins | 32.1 | 10877 / 42994 | 41500 / 47000 | 0 | 0 | 10 |
+| 8 | 03 | R1 / B1 | lattice vs compact | normal (compact) wins | 12.5 | 7056 / 26952 | 10000 / 12000 | 0 | 0 | 3 |
+| 9 | 01 | B1 / R1 | helix vs lattice | normal (helix) wins on value | 40.0 | 33218 / 19608 | 53693 / 50907 | 0 | 0 | 18 |
+| 10 | 03 | B1 / R1 | compact vs lattice | normal (compact) wins | 35.7 | 41085 / 11010 | 48781 / 45707 | 0 | 0 | 16 |
+| 11 | 01 | R1 / B1 | lattice vs helix | normal (lattice) wins | 26.1 | 46260 / 13997 | 34000 / 36500 | 0 | 0 | 7 |
+| 12 | 03 | R1 / B1 | helix vs compact | normal (helix) wins | 39.5 | 34857 / 11372 | 49291 / 49373 | 0 | 0 | 14 |
 
 ✓ Hard beats Normal in most matches — 12 wins, 0 losses, 0 draws of 12 (100 %)  
-✓ Hard uses its tools: scouting, raids and two-pronged waves — raids in 3/12 matches, two-pronged waves in 9/12  
+✓ Hard uses its tools: scouting, raids and two-pronged waves — raids in 6/12 matches, two-pronged waves in 11/12  
 ✓ no resource cheating: every credit held came from start money or harvesting  
-✓ control: Normal vs Normal is roughly even (side and faction rotation) — side A 6, side B 6, draws 0
+✓ control: Normal vs Normal is roughly even (side and faction rotation) — side A 6, side B 5, draws 1
 
 4/4 checks passed

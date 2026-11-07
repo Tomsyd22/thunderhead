@@ -20,6 +20,16 @@
 //              together, without chasing beyond weapon range
 //   pulls back damaged units (under 30 % health) to the base before they die, then reuses them for defence
 //   deploys  — deployable infantry (Helix MG teams) set up when an enemy is within machine-gun range
+// Round 3 (2v1 and across water; none of this is active in a 1v1 on a map where the enemy can be reached by land, so the
+// 1v1 tuning above is unchanged):
+//   across water it scouts with its first aircraft or hovercraft, waits for a real force (10 units, 9000 credits) before
+//   attacking when it faces several opponents, goes first for the opponent whose army can hurt its hovercraft least (from
+//   what it has seen of each), approaches a naval yard from the water, raids harvesters with hovercraft, and does not keep
+//   rebuilding a naval yard that keeps being sunk (3, 6, 12 game min waits)
+//   outnumbered or across water, with enemy aircraft about: anti-air infantry may grow past the home-guard cap, stands
+//   among the structures (yard first), and meets an air raid alone — the rest of the army neither stays home for it nor
+//   is called back; two engineers wait by the yard for the yard or a war factory that is going down
+//   several opponents: the enemy-army estimate counts only units of the opponent it is going for
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { MECH } from './engine/mech.js';
 import { AI } from './ai.js';
@@ -56,7 +66,15 @@ export class HardAI extends AI {
     // opponents our ground army can walk to (the map is public: its land regions are part of it); none → ships and aircraft
     const land = f.filter((e) => this.landLinked(e) || this.reaches('foot', e)); this.naval = !land.length;
     const reach = f.filter((e) => ['foot', 'veh', 'hover'].some((d) => this.reaches(d, e)));
-    const pool = land.length ? land : reach.length ? reach : f, fresh = pool.filter((e) => !(this.g.t - ((this.avoid || {})[e.join()] ?? -1e9) < 300));   // skip a base we just failed to crack, for a while
+    let pool = land.length ? land : reach.length ? reach : f; const fresh0 = pool.filter((e) => !(this.g.t - ((this.avoid || {})[e.join()] ?? -1e9) < 300));   // skip a base we just failed to crack, for a while
+    // across water against several opponents: the one whose known army can hurt what we send across the least goes first
+    // (distance breaks ties: 1 m ≈ 4 credits of their army)
+    if (this.naval && f.length > 1 && this.intel) { const t = this.g.t, who = (e) => this.foes().find((q) => q.start.x === e[0] && q.start.y === e[1]);   // a unit's colours show whose it is
+      const thr = (e) => { const q = who(e), A = q && this.armyOf && this.armyOf.get(q.id); let v = 0; if (A) for (const u of A.values()) if (u.hurts) v += u.cost; return v + 4 * D(e, this.home); };
+      pool = pool.slice().sort((a, b) => thr(a) - thr(b));
+      const cur = this._front && pool.find((e) => e.join() === this._front.join()); if (cur && thr(cur) < thr(pool[0]) + 2500) pool = [cur, ...pool.filter((e) => e !== cur)];   // no flip-flopping between two close calls
+    }
+    const fresh = this.naval && f.length > 1 ? pool.filter((e) => fresh0.includes(e)) : fresh0;
     const prev = this._front; this._front = (fresh.length ? fresh : pool)[0]; this.enemyStarts = f;
     if (prev && prev.join() !== this._front.join() && this.op) {   // one down (or a base we gave up on): regroup at home before the next
       const us = [...this.wave].map((id) => this.W.byId.get(id)).filter((u) => u && u.alive); this.op = null; this.wave.clear(); this.lastWave = this.g.t;
@@ -70,7 +88,7 @@ export class HardAI extends AI {
   think() {
     const g = this.g, p = this.p; if (p.lost || g.over) return;
     if (!this._front || (this._frontT || 0) < g.t - 10) { this._frontT = g.t; this.updateFront(); }
-    this.observe(); if (p.ready) this.placeReady();
+    this.observe(); this.trackLosses(); if (p.ready) this.placeReady();
     this.buildStructures(); this.expand(); this.produce(); this.repair();
     this.scoutThink(); this.retreat(); this.raidThink(); this.army(); this.fleetThink(); this.focusFire(); this.deployMicro();
   }
@@ -79,6 +97,23 @@ export class HardAI extends AI {
   armed(u) { return u.alive && u.sys && u.sys.length && u.uid !== 'HV' && !(u.m && u.m.engineer); }
   val(u) { return u.sp.cost * u.hp / u.maxHp; }
 
+  // ── upkeep: Normal's wrench and engineer; outnumbered or across water with enemy aircraft about, two engineers wait by the
+  // yard and go into the yard or a war factory that is going down (aircraft can knock the yard flat in seconds) ──
+  repair() {
+    const g = this.g, p = this.p, W = this.W;
+    if (!((this.naval || this.foes().length > 1) && this.airThreat())) return super.repair();
+    for (const b of this.structs) { const f = b.hp / b.maxHp; if (!b.repairing && f < 0.75 && p.credits > 1500) g.toggleRepair(p, b); else if (b.repairing && p.credits < 400 && f > 0.5) g.toggleRepair(p, b); }
+    const F = FACTIONS[p.faction], eid = F.infantry.find((k) => W.spec[k] && !W.spec[k].weapons.length), eng = g.unitsOf(p).filter((u) => u.m.engineer && !u.rollOut), yard = this.structs.find((b) => b.kind === 'yard');
+    if (eid && eng.length < 2 && g.has(p, 'barracks') && !p.queues.infantry.some((i) => i.key === eid) && p.credits > 600) { g.enqueue(p, 'infantry', eid); const q = p.queues.infantry; q.unshift(q.pop()); }
+    const key = this.structs.filter((b) => (b.kind === 'yard' || b.kind === 'factory') && b.hp / b.maxHp < 0.5).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+    const worst = key || this.structs.filter((b) => b.hp / b.maxHp < 0.3).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+    const busy = eng.filter((u) => u.order.type === 'enter'), free = eng.filter((u) => u.order.type !== 'enter');
+    if (worst && free.length && !busy.some((u) => u.order.building === worst.id) && (key || free.length > 1)) W.order(free.shift(), { type: 'enter', building: worst.id });   // the last one is kept for the yard
+    if (yard) for (const u of free) if (!u.path && Math.hypot(u.x - yard.x, u.y - yard.y) > 30) W.order(u, { type: 'move', x: yard.x + 16, y: yard.y + 16 });
+  }
+  trackLosses() {   // our own naval yards sunk (we know our own losses): see wantStructure
+    for (const e of this.g.events) if (e.type === 'structure_lost' && e.player === this.p.id && e.kind === 'naval' && e.seq > (this._navSeq || 0)) { this._navSeq = e.seq; this._navLosses = (this._navLosses || 0) + 1; this._navLostT = e.t; }
+  }
   // ── intel: remember what our side sees ──
   observe() {
     const W = this.W, t = this.g.t, I = this.intel, me = this.p.team;
@@ -87,29 +122,37 @@ export class HardAI extends AI {
     this.visEnemies = [];
     for (const u of W.units) if (u.alive && !u.hidden && this.enemyOf(u) && W.visible(me, u)) {
       this.visEnemies.push(u);
-      I.units.set(u.id, { x: u.x, y: u.y, uid: u.uid, armour: u.sp.armour_type || u.sp.armor, cost: u.sp.cost, t, armed: !!u.sys.length });
+      I.units.set(u.id, { x: u.x, y: u.y, uid: u.uid, armour: u.sp.armour_type || u.sp.armor, cost: u.sp.cost, t, armed: !!u.sys.length, owner: u.owner });
       if (u.uid === 'HV') I.harv.set(u.id, { x: u.x, y: u.y, t, dep: u.harv && u.harv.dep ? u.harv.dep.id : null });
     }
     // a unit we were watching a moment ago and is now dead died in front of us; anything else is forgotten when stale
     for (const [id, s] of I.units) { const u = W.byId.get(id); const dead = !u || !u.alive;
       if (dead && t - s.t <= 2) { I.units.delete(id); if (s.armed) this.killed += s.cost || 0; } else if (t - s.t > 240) I.units.delete(id); }
+    // what each opponent has fielded that we have seen (kept until we see it die, or 10 min unseen): picks the front across water
+    const A = this.armyOf || (this.armyOf = new Map());
+    for (const u of this.visEnemies) if (u.sys.length && u.owner != null) { let m = A.get(u.owner); if (!m) A.set(u.owner, m = new Map()); m.set(u.id, { cost: u.sp.cost, t, hurts: this.hurts(u, 'hover') }); }
+    for (const m of A.values()) for (const [id, s] of m) { const u = W.byId.get(id); if ((!u || !u.alive) && t - s.t <= 2 || t - s.t > 600) m.delete(id); }
     for (const [id, s] of I.harv) { const u = W.byId.get(id); if (((!u || !u.alive) && t - s.t <= 2) || t - s.t > 300) I.harv.delete(id); }
   }
   seesPoint(x, y) { return this.g.unitsOf(this.p).some((u) => Math.hypot(u.x - x, u.y - y) < (u.sp.sight_m || 30) * 0.8) || this.structs.some((b) => Math.hypot(b.x - x, b.y - y) < 40); }
-  enemyArmyEstimate() { const t = this.g.t; let s = 0; for (const u of this.intel.units.values()) if (u.armed && t - u.t < 200) s += u.cost || 0; return s; }
+  enemyArmyEstimate() {   // several opponents: only what we've seen around the one we're going for (the other's army is not in the way)
+    const t = this.g.t, near = this.foes().length > 1 && this._front ? this._front : null, q = near && this.foes().find((o) => o.start.x === near[0] && o.start.y === near[1]); let s = 0;
+    for (const u of this.intel.units.values()) if (u.armed && t - u.t < 200 && (!near || (q ? u.owner === q.id : D([u.x, u.y], near) < 700))) s += u.cost || 0; return s; }
 
   // ── base: Normal's order without the early luxuries; extra production once it is banking ──
   wantStructure() {
     const g = this.g, p = this.p, pw = p.power; if (p.queues.structure.length || p.ready) return null;
     if (pw.made - pw.used < 40 && this.count('power') < 10) return 'power';
     const need = {}; for (const k of HORDER) { need[k] = (need[k] || 0) + 1; if (this.count(k) < need[k]) return g.available(p, 'structure', k) ? k : null; }
+    // a naval yard that keeps being sunk at its pier is not rebuilt straight away (each loss doubles the wait: 3, 6, 12 min)
+    const navOk = !this._navLosses || g.t - this._navLostT > 180 * 2 ** Math.min(2, this._navLosses - 1);
     if (this.naval) {   // opponents across the water: a naval yard as soon as the core base stands, then aircraft, then a second yard
-      const dock = g.dockSites.some((s) => this.nearMe(s.water_center, 800));
+      const dock = navOk && g.dockSites.some((s) => this.nearMe(s.water_center, 800));
       if (dock && this.count('naval') < 1 && g.available(p, 'structure', 'naval')) return 'naval';
       if (p.credits > 1200) for (const k of ['radar', 'airpad']) if (this.count(k) < 1 && g.available(p, 'structure', k)) return k;
       if (dock && p.credits > 2500 && this.count('naval') < 2 && g.available(p, 'structure', 'naval')) return 'naval';
     }
-    if (this.shipsSeen() && this.count('naval') < 1 && p.credits > 1500 && g.dockSites.some((s) => this.nearMe(s.water_center, 700)) && g.available(p, 'structure', 'naval')) return 'naval';
+    if (navOk && this.shipsSeen() && this.count('naval') < 1 && p.credits > 1500 && g.dockSites.some((s) => this.nearMe(s.water_center, 700)) && g.available(p, 'structure', 'naval')) return 'naval';
     if (p.credits > 2600 && g.t > 420) for (const [k, n] of [['factory', 2], ['barracks', 2]]) if (this.count(k) < n && g.available(p, 'structure', k)) return k;
     if (p.credits > 4000 && g.t > 900) for (const k of ['radar', 'airpad']) if (this.count(k) < 1 && g.available(p, 'structure', k)) return k;
     return null;
@@ -203,7 +246,9 @@ export class HardAI extends AI {
     const sq = p.queues.structure[0]; if (sq && !p.ready && p.credits < Math.min(1500, sq.cost - sq.spent)) return;
     const has = { infantry: g.has(p, 'barracks'), vehicle: g.has(p, 'factory'), air: g.has(p, 'airpad'), naval: g.has(p, 'naval') && (this.shipsSeen() || this.naval) };
     const cands = []; for (const cat of ['infantry', 'vehicle', 'air', 'naval']) if (has[cat]) for (const k of F[cat]) if (k !== 'HV' && W.spec[k] && W.spec[k].weapons.length && g.available(p, cat, k)) cands.push({ cat, k });
-    if (this.naval && army.filter((u) => u.dom !== 'ship' && u.dom !== 'air' && !this.goDoms.has(u.dom)).length >= 12) for (let i = cands.length - 1; i >= 0; i--) if ((cands[i].cat === 'infantry' || cands[i].cat === 'vehicle') && !this.goDoms.has(this.domOf(cands[i].k))) cands.splice(i, 1);   // across water a small home guard is enough
+    // across water a small home guard is enough — except anti-air, which may keep growing while enemy aircraft are about
+    const guardN = army.filter((u) => u.dom !== 'ship' && u.dom !== 'air' && !this.goDoms.has(u.dom)).length, aa = (k) => this.dpsVs(W.spec[k], 'aircraft', k) > 0;
+    if (this.naval && guardN >= 12) for (let i = cands.length - 1; i >= 0; i--) if ((cands[i].cat === 'infantry' || cands[i].cat === 'vehicle') && !this.goDoms.has(this.domOf(cands[i].k)) && !(this.airThreat() && guardN < 45 && aa(cands[i].k))) cands.splice(i, 1);
     if (!cands.length) return;
     const want = this.composition(cands), have = {}; let tot = 0;
     for (const u of army) { have[u.uid] = (have[u.uid] || 0) + u.sp.cost; tot += u.sp.cost; }
@@ -224,15 +269,16 @@ export class HardAI extends AI {
   scoutThink() {
     const g = this.g, W = this.W, p = this.p;
     if (this.scout != null) { const u = W.byId.get(this.scout); if (!u || !u.alive) { this.scout = null; this.scouted = true; return; }
-      if (!u.path && Math.hypot(u.x - this.scoutPlan[0][0], u.y - this.scoutPlan[0][1]) < 30) this.scoutPlan.shift();
+      let next = false; if ((!u.path || u.dom === 'air') && Math.hypot(u.x - this.scoutPlan[0][0], u.y - this.scoutPlan[0][1]) < 30) { this.scoutPlan.shift(); next = true; }   // aircraft circle: near is there
       if (!this.scoutPlan.length) { this.scout = null; this.scouted = true; W.order(u, { type: 'move', x: this.stage[0], y: this.stage[1] }); return; }
-      if (!u.path) W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] }); return; }
+      if (!u.path || next) W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] }); return; }
     if (this.scouted || g.t < 15) return;
-    const u = g.unitsOf(p).filter((q) => q.kind === 'foot' && q.sys.length && !q.rollOut).sort((a, b) => b.sp.speed_mps - a.sp.speed_mps)[0]; if (!u) return;
+    // across water: the first aircraft (or hovercraft) does the tour — infantry cannot get there
+    const u = g.unitsOf(p).filter((q) => (this.naval ? q.dom === 'air' && q.kind !== 'jet' || q.dom === 'hover' : q.kind === 'foot') && q.sys.length && !q.rollOut).sort((a, b) => (b.dom === 'air') - (a.dom === 'air') || b.sp.speed_mps - a.sp.speed_mps)[0]; if (!u) return;
     this.scoutPlan = [];   // per opponent (nearest first): the expansions by its start, a point on its doorstep, its start
     for (const es of this.enemyStarts || [this.enemyStart]) { const ex = g.deposits.filter((d) => d.kind !== 'home').map((d) => d.pos).sort((a, b) => D(a, es) - D(b, es)).slice(0, 2);
       this.scoutPlan.push(...ex, [es[0] + (this.p.start.x - es[0]) * 0.2, es[1] + (this.p.start.y - es[1]) * 0.2], es); }
-    this.scoutPlan = this.scoutPlan.filter((q) => this.landLinked(q)); if (!this.scoutPlan.length) { this.scouted = true; return; }   // only where it can walk
+    this.scoutPlan = this.scoutPlan.filter((q) => u.dom === 'air' || this.reaches(u.dom, q)); if (!this.scoutPlan.length) { this.scouted = true; return; }   // only where it can get to
     this.scout = u.id; W.order(u, { type: 'move', x: this.scoutPlan[0][0], y: this.scoutPlan[0][1] });
   }
 
@@ -261,7 +307,7 @@ export class HardAI extends AI {
     if (g.t < 330 || g.t - this.lastRaid < 150 || !this.intel.harv.size || this.homeThreat) return;
     const fast = g.unitsOf(this.p).filter((u) => u.uid !== 'HV' && !u.m.engineer && (u.dom === 'veh' || u.dom === 'hover') && !this.wave.has(u.id) && !this.retreating.has(u.id) && u.hp > 0.7 * u.maxHp && !u.rollOut && u.sp.speed_mps >= 9.5)
       .sort((a, b) => b.sp.speed_mps - a.sp.speed_mps).slice(0, 3);
-    if (fast.length < 2) return; const s = [...this.intel.harv.values()].filter((h) => this.landLinked([h.x, h.y])).sort((a, b) => b.t - a.t)[0]; if (!s || g.t - s.t > 200) return;
+    if (fast.length < 2) return; const s = [...this.intel.harv.values()].filter((h) => fast.every((u) => this.reaches(u.dom, [h.x, h.y]))).sort((a, b) => b.t - a.t)[0]; if (!s || g.t - s.t > 200) return;   // hovercraft raid across water too
     this.lastRaid = g.t; for (const u of fast) this.raid.add(u.id); W.orderGroup(fast, { type: 'attackMove', x: s.x, y: s.y }); g.emit('ai_raid', { player: this.p.id, n: fast.length });
   }
 
@@ -276,10 +322,18 @@ export class HardAI extends AI {
     this.wave = new Set([...this.wave].filter((id) => { const u = W.byId.get(id); return u && u.alive && !this.retreating.has(id); }));
     const home = units.filter((u) => !this.wave.has(u.id));
     // threat: enemy fighters seen near the base, or anything hitting our structures / harvesters near the base
-    const foes = (this.visEnemies || []).filter((e) => this.armed(e) && e.dom !== 'air' && e.dom !== 'ship' && (D([e.x, e.y], this.home) < 420 || this.structs.some((b) => Math.hypot(b.x - e.x, b.y - e.y) < 110)));
+    // (outnumbered or across water, enemy aircraft over the base count too: the home army goes for them, not for the building they hit)
+    const airToo = this.naval || this.foes().length > 1;
+    const foes = (this.visEnemies || []).filter((e) => this.armed(e) && (e.dom !== 'air' || airToo) && e.dom !== 'ship' && (D([e.x, e.y], this.home) < 420 || this.structs.some((b) => Math.hypot(b.x - e.x, b.y - e.y) < 110)));
     const ev = g.events.filter((e) => e.type === 'under_attack' && e.player === p.id && g.t - e.t < 3 && this.nearMe([e.x, e.y], 450)).pop();
-    this.homeThreat = foes.length > 0 || !!ev; if (ev && ev.building) this.homeThreatT = g.t;
-    if (this.homeThreat) {
+    // outnumbered or across water: a raid by aircraft alone is met by the anti-air guns only — the rest of the army can't
+    // shoot it, so it neither stays home for it nor is called back from an attack (the raiders' own base is emptier now)
+    const srcAir = (e) => { const s0 = e && e.src != null ? W.byId.get(e.src) : null; return !!s0 && s0.dom === 'air'; };
+    const airOnly = airToo && (foes.length > 0 || !!ev) && foes.every((e) => e.dom === 'air') && (!ev || srcAir(ev));
+    this.homeThreat = !airOnly && (foes.length > 0 || !!ev); if (ev && ev.building && !airOnly) this.homeThreatT = g.t;
+    if (airOnly) { const pt = foes.length ? this.centroid(foes.slice().sort((a, b) => D([a.x, a.y], this.home) - D([b.x, b.y], this.home)).slice(0, 6)) : [ev.x, ev.y];
+      this.lastDefend = g.t; this.sendGroup(home.filter((u) => u.dom === 'foot' && this.dpsVs(u.sp, 'aircraft', u.uid) > 0), pt[0], pt[1]); }
+    else if (this.homeThreat) {
       const tv = foes.reduce((a, e) => a + this.val(e), 0), hv = home.reduce((a, u) => a + this.val(u), 0);
       this.raidSeen = Math.max(this.raidSeen && g.t - this.raidSeenT < 300 ? this.raidSeen : 0, tv); if (tv >= this.raidSeen) this.raidSeenT = g.t;   // biggest push on the base lately
       const pt = foes.length ? (() => { const f = foes.slice().sort((a, b) => D([a.x, a.y], this.home) - D([b.x, b.y], this.home)); const n = f.slice(0, 6); return this.centroid(n); })() : [ev.x, ev.y];
@@ -292,6 +346,12 @@ export class HardAI extends AI {
       }
       this.lastDefend = g.t; this.sendGroup(home, pt[0], pt[1]);
     } else if (g.t - this.lastDefend > 6) {
+      // outnumbered or across water, with enemy aircraft about: anti-air infantry stands among the structures (aircraft hit
+      // buildings from ~36 m, so the guns have to be close by): the yard first, then production and refineries
+      if (airToo && this.airThreat()) { const DEF = { yard: 0, factory: 1, refinery: 2, barracks: 3, airpad: 4, radar: 5, power: 6 }, bs = this.structs.filter((b) => b.kind !== 'naval').sort((a, b) => (DEF[a.kind] ?? 9) - (DEF[b.kind] ?? 9));
+        const aa = home.filter((u) => u.dom === 'foot' && u.sys.length && this.dpsVs(u.sp, 'aircraft', u.uid) > 0 && u.target == null && !u.path && (u.order.type === 'idle' || u.order.type === 'guard' || u.order.type === 'attackMove')).sort((a, b) => a.id - b.id);
+        if (bs.length) aa.forEach((u, i) => { const b = bs[i % bs.length], a = (u.id * 2.39996) % 6.2832, pt = [b.x + Math.cos(a) * 20, b.y + Math.sin(a) * 20];
+          if (!(u.order.type === 'guard' && Math.hypot(u.order.x - pt[0], u.order.y - pt[1]) < 10)) W.order(u, { type: 'guard', x: pt[0], y: pt[1] }); }); }
       for (const u of home) if (u.order.type === 'idle' && u.target == null && !u.path && D([u.x, u.y], this.stage) > 45 && !(u.deploy === 'deployed')) W.order(u, { type: 'attackMove', x: this.stage[0] + ((u.id * 37) % 41 - 20), y: this.stage[1] + ((u.id * 53) % 41 - 20) });
     }
     if (this.op) return this.opThink(home);
@@ -305,7 +365,9 @@ export class HardAI extends AI {
       if (g.t > 300 && met && !this.homeThreat && g.t - this.lastWave > 20 && go.length >= 12 && ((lv > est * 1.35 + 1000 && lv > 9000) || (maxed && lv > est * 0.8))) this.launch(go);
       return;
     }
-    if (g.t > 300 && met && !this.homeThreat && g.t - this.lastWave > 20 && pool.length >= (this.naval ? 6 : 8) && (pv > est * 1.35 + 1000 || (maxed && pv > est * 0.8))) this.launch(pool);
+    // across water against several opponents we see little of their armies: go only with a real force, never in dribs
+    const big = this.naval && this.foes().length > 1, minN = big ? 10 : this.naval ? 6 : 8, minV = big ? 9000 : 0;
+    if (g.t > 300 && met && !this.homeThreat && g.t - this.lastWave > 20 && pool.length >= minN && pv >= minV && (pv > est * 1.35 + 1000 || (maxed && pv > est * 0.8))) this.launch(pool);
   }
   launch(ready) {
     const g = this.g, W = this.W, p = this.p; const tgt = this.attackTarget(this.centroid(ready)); if (!tgt) return;
@@ -366,7 +428,7 @@ export class HardAI extends AI {
     const S = [...this.intel.structs.values()];
     const air = this.airThreat(), pr = (k) => (k === 'airpad' && air ? 0 : PRIO[k] ?? 200);   // aircraft we can't shoot down: their airpads go first
     if (S.length) { this.op && (this.op.search = null); const fr = (this.enemyStarts || []).length > 1 ? (q) => 0.5 * D([q.x, q.y], this.enemyStart) : () => 0;   // several opponents: stay on the one we're working on
-      const s = S.sort((a, b) => (D([a.x, a.y], from) + pr(a.kind) + fr(a)) - (D([b.x, b.y], from) + pr(b.kind) + fr(b)))[0]; return s.kind === 'naval' ? this.landPoint([s.x, s.y]) : [s.x, s.y]; }
+      const s = S.sort((a, b) => (D([a.x, a.y], from) + pr(a.kind) + fr(a)) - (D([b.x, b.y], from) + pr(b.kind) + fr(b)))[0]; return s.kind === 'naval' ? this.pierPoint(s) : [s.x, s.y]; }
     const pts = this.searchPoints(), t = this.g.t; let best = null, bs = 1e9;
     for (const q of pts) { const last = this.searched.get(q.key); if (last != null && t - last < 600) continue; const sc = D(q, from) + 0.5 * D(q, this.enemyStart) - (q.dock ? 250 : 0); if (sc < bs) { bs = sc; best = q; } }
     if (best == null) { this.searched.clear(); return this.enemyStart; }
@@ -379,6 +441,10 @@ export class HardAI extends AI {
     for (const d of this.g.deposits) if (D(d.pos, es) < D(d.pos, this.home) * 1.3) pts.push(this.landPoint(d.pos));
     this._ptsFor = es; this._pts = pts.filter((q, i) => q && q[0] > 0 && !pts.slice(0, i).some((o) => D(o, q) < 40)).map((q) => { const o = [q[0], q[1]]; o.dock = q.dock; o.key = `${q[0] | 0},${q[1] | 0}`; return o; });
     return this._pts;
+  }
+  pierPoint(s) {   // a naval yard stands in the water: the shore by it, or (hovercraft only, across water) the water 30 m off its middle
+    const lp = this.landPoint([s.x, s.y]), d = D(lp, [s.x, s.y]); if (d <= 36 || !this.naval || !this.goDoms.has('hover')) return lp;
+    const k = 30 / d; return this.landPoint([s.x + (lp[0] - s.x) * k, s.y + (lp[1] - s.y) * k], 'hover');
   }
   landPoint(pt, dom = 'veh') { const q = this.W.nav.nearestOk(dom, Math.max(20, Math.min(this.g.T.W - 20, pt[0])), Math.max(20, Math.min(this.g.T.H - 20, pt[1])), 3, 200); return q || pt; }
   centroid(us) { us = us.filter(Boolean); return us.length ? [us.reduce((a, u) => a + u.x, 0) / us.length, us.reduce((a, u) => a + u.y, 0) / us.length] : this.stage; }

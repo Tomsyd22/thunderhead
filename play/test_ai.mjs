@@ -1,5 +1,5 @@
 // AI difficulty: headless AI-vs-AI batches on the 2-player maps (01 Emerald Strait, 03 Granite Fjord).
-//   node play/test_ai.mjs [--n 12] [--minutes 40] [--maps 01,03]
+//   node play/test_ai.mjs [--n 12] [--minutes 40] [--maps 01,03] [--seed 1] [--ks 0,3] [--tag name]
 // Hard vs Normal with sides and factions rotated, plus a Normal vs Normal control batch. A match ends when a side has no
 // structures left, or at the time limit (then it is judged on the value of what each side still has). Both AIs run on the
 // same Game object: same starting credits, build rates, prices and fog of war — the check below also confirms that every
@@ -69,9 +69,9 @@ if (MODE === '2v1') {
       console.log(`  #${k + 1} ${r.map} ${r.pads.join(' vs ')} ${r.factions.join(' vs ')}: ${r.winner == null ? 'draw' : r.winner === 0 ? lv[0] + ' (solo) wins' : lv[1] + ' pair wins'} ${r.decided ? 'by destroying the bases' : 'on value'} at ${r.t.toFixed(1)} min · value ${r.val.join(' / ')} · mined ${r.income.join(' / ')} · ${r.wall.toFixed(0)} s`); } }
   for (const [name, rs] of Object.entries(R2)) { const w = rs.filter((r) => r.winner === 0).length, d = rs.filter((r) => r.winner === 0 && r.decided).length; check(`${name}: the single AI wins every match`, w === rs.length, `${w}/${rs.length} wins (${d} by destroying both bases), avg ${(rs.reduce((a, r) => a + r.t, 0) / rs.length).toFixed(1)} game min`); }
   check('2v1: no resource cheating', Object.values(R2).flat().every((r) => r.honest));
-  const md = ['# AI difficulty, 2v1 (round 1)', '', `One AI against two allied AIs on ${MAPS.join(', ')}; ${N} matches per batch, up to ${MIN} game minutes; the single AI's side and the factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw).`, ''];
-  for (const [name, rs] of Object.entries(R2)) { md.push(`## ${name}`, '', '| # | map | starts | factions | result | at (game min) | value (solo / pair) | mined |', '|---|---|---|---|---|---|---|---|');
-    for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' vs ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : (r.winner === 0 ? 'solo ' + r.levels[0] : r.levels[1] + ' pair') + ' wins' + (r.decided ? '' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} |`); md.push(''); }
+  const md = ['# AI difficulty, 2v1 (round 2)', '', `One AI against two allied AIs on ${MAPS.join(', ')}; ${N} matches per batch, up to ${MIN} game minutes; the single AI's side and the factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw). Seed set ${SEED} (Math.random re-seeded per match).`, ''];
+  for (const [name, rs] of Object.entries(R2)) { md.push(`## ${name}`, '', '| # | map | starts | factions | result | at (game min) | value (solo / pair) | mined | wall (s) |', '|---|---|---|---|---|---|---|---|---|');
+    for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' vs ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : (r.winner === 0 ? 'solo ' + r.levels[0] : r.levels[1] + ' pair') + ' wins' + (r.decided ? ' (bases destroyed)' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} | ${r.wall.toFixed(0)} |`); md.push(''); }
   md.push(out.join('  \n'), '', `${pass}/${pass + fail} checks passed`); fs.writeFileSync(OUT('ai_2v1', 'md'), md.join('\n') + '\n'); fs.writeFileSync(OUT('ai_2v1', 'json'), JSON.stringify(R2, null, 1));
   console.log(`\n${pass}/${pass + fail} checks passed`); process.exit(fail ? 1 : 0);
 }
@@ -87,9 +87,9 @@ check('Hard beats Normal in most matches', wins >= Math.ceil(N * 0.7), `${wins} 
 check('Hard uses its tools: scouting, raids and two-pronged waves', hv.some((r) => r.raids > 0) && hv.some((r) => r.prongs > 0), `raids in ${hv.filter((r) => r.raids > 0).length}/${N} matches, two-pronged waves in ${hv.filter((r) => r.prongs > 0).length}/${N}`);
 check('no resource cheating: every credit held came from start money or harvesting', hv.concat(nn).every((r) => r.honest));
 check('control: Normal vs Normal is roughly even (side and faction rotation)', Math.abs(nnA - nnB) <= Math.ceil(N * 0.5), `side A ${nnA}, side B ${nnB}, draws ${N - nnA - nnB}`);
-const md = ['# AI difficulty (round 1)', '', `Headless AI-vs-AI on ${MAPS.join(' and ')}; ${N} matches per batch, up to ${MIN} game minutes; sides and factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw).`, ''];
-for (const [name, rs] of Object.entries(R)) { md.push(`## ${name}`, '', '| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves |', '|---|---|---|---|---|---|---|---|---|---|');
-  for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' / ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : r.levels[r.winner] + ' wins' + (r.decided ? '' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} | ${r.raids} | ${r.prongs} |`); md.push(''); }
+const md = ['# AI difficulty (round 2)', '', `Headless AI-vs-AI on ${MAPS.join(' and ')}; ${N} matches per batch, up to ${MIN} game minutes; sides and factions rotate. "On value" = time limit reached, judged on structures + units + credits (15 % margin, else a draw). Seed set ${SEED} (Math.random re-seeded per match).`, ''];
+for (const [name, rs] of Object.entries(R)) { md.push(`## ${name}`, '', '| # | map | sides | factions | result | at (game min) | value | mined | raids | flank waves | wall (s) |', '|---|---|---|---|---|---|---|---|---|---|---|');
+  for (const r of rs) md.push(`| ${r.k + 1} | ${r.map} | ${r.pads.join(' / ')} | ${r.factions.join(' vs ')} | ${r.winner == null ? 'draw' : r.levels[r.winner] + ' (' + r.factions[r.winner] + ') wins' + (r.decided ? '' : ' on value')} | ${r.t.toFixed(1)} | ${r.val.join(' / ')} | ${r.income.join(' / ')} | ${r.raids} | ${r.prongs} | ${r.wall.toFixed(0)} |`); md.push(''); }
 md.push(out.join('  \n'), '', `${pass}/${pass + fail} checks passed`);
 fs.writeFileSync(OUT('ai', 'md'), md.join('\n') + '\n'); fs.writeFileSync(OUT('ai', 'json'), JSON.stringify(R, null, 1));
 console.log(`\n${pass}/${pass + fail} checks passed`);

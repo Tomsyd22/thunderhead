@@ -9,7 +9,12 @@
 // Across water (round 2): only units that can get to the target go in a wave (the nav regions are public map info). When no
 // enemy can be reached by land it builds a naval yard and aircraft early, keeps a small home guard of land units, and
 // attacks with what can cross: hovercraft and aircraft in the waves, ships as a fleet, jets on bombing runs. On maps where
-// an enemy can be reached by land none of this changes what it does.
+// an enemy can be reached by land none of this changes what it does. Across water a wave first meets 300 m short of its
+// target (aircraft are faster than hovercraft) and then goes in together.
+// Outnumbered (round 2: more living opponents than players on its own side, e.g. alone against two): a second barracks
+// and factory before the radar / airpad / naval yard, no more than one infantry per vehicle (plus a few), the first wave
+// not before 9 game minutes and bigger, a third of the army stays home, production structures are the first targets, and
+// a wave far from its target comes home when the base starts losing structures. In 1v1 and as one of a pair it plays as before.
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { MECH } from './engine/mech.js';
 
@@ -159,8 +164,9 @@ export class AI {
     const guard = mine.filter((u) => LAND.includes(u.dom) && !(ept && this.reachDoms(ept).has(u.dom))).length, ships = mine.filter((u) => u.dom === 'ship').length;
     const infX = inf.filter(crosses), vehX = veh.filter(crosses), armedAir = F.air.filter((k) => W.spec[k] && W.spec[k].weapons.length);
     keep('infantry', infX.length ? infX : guard < 6 ? inf : [], 1); keep('vehicle', vehX.length ? vehX : guard < 6 ? veh : [], 1);
-    const hitsB = (k) => W.spec[k].weapons.some((w) => w.targets.includes('building')), strikers = mine.filter((u) => u.dom !== 'ship' && hitsB(u.uid)).length, support = mine.filter((u) => u.dom === 'air' && !hitsB(u.uid)).length;
-    keep('air', armedAir.filter((k) => hitsB(k) || support < strikers + 3), 1); if (ships < (armedAir.length || vehX.length ? 4 : 8)) keep('naval', F.naval.filter((k) => W.spec[k] && W.spec[k].weapons.length), 1);
+    const hitsB = (k) => W.spec[k].weapons.some((w) => w.targets.includes('building')), goesX = (u) => u.dom === 'air' || (LAND.includes(u.dom) && ept && this.reachDoms(ept).has(u.dom));
+    const strikers = mine.filter((u) => goesX(u) && hitsB(u.uid)).length, support = mine.filter((u) => u.dom === 'air' && !hitsB(u.uid)).length;   // support aircraft: at most one per striker
+    keep('air', armedAir.filter((k) => hitsB(k) || support < Math.max(3, strikers)), 1); if (ships < (armedAir.length || vehX.length ? 4 : 8)) keep('naval', F.naval.filter((k) => W.spec[k] && W.spec[k].weapons.length), 1);
   }
   // ── army ──
   army() {
@@ -185,13 +191,23 @@ export class AI {
     const size = Math.min(18, 6 + 2 * this.waves); let ready = units.filter((u) => !this.wave.has(u.id) && u.dom !== 'ship' && goes(u));
     // outnumbered: the first wave waits until 9 game minutes (the base has to hold the first pushes), waves are bigger, and
     // a third of the army stays home to meet the other side's waves
-    const first = this.outnum ? 540 : 240, need = this.cross ? Math.max(14, size) : this.outnum ? Math.max(15, size + 6) : size;
+    const first = this.outnum ? 540 : 240, need = this.cross ? Math.max(10, size) : this.outnum ? Math.max(15, size + 6) : size;
     if (g.t > first && g.t - this.lastWave > 150 && ready.length >= need) {
       const tgt = this.targetFor(enemy, [p.start.x, p.start.y]);
       if (!tgt) return;
       if (this.outnum && !this.cross) { const home = [p.start.x, p.start.y]; ready = ready.slice().sort((a, b) => D([a.x, a.y], home) - D([b.x, b.y], home)).slice(Math.floor(ready.length / 3)); }
       this.waves++; this.lastWave = g.t; for (const u of ready) this.wave.add(u.id);
-      W.orderGroup(ready, { type: 'attackMove', x: tgt[0], y: tgt[1] }); g.emit('ai_wave', { player: p.id, n: ready.length });
+      if (this.cross) {   // across water the wave meets 300 m short of the target first (aircraft are faster than hovercraft), then goes in together
+        const c = [ready.reduce((a, u) => a + u.x, 0) / ready.length, ready.reduce((a, u) => a + u.y, 0) / ready.length], L = D(c, tgt) || 1, k = Math.min(1, 300 / L);
+        const q = [tgt[0] + (c[0] - tgt[0]) * k, tgt[1] + (c[1] - tgt[1]) * k], gp = W.nav.nearestOk('hover', q[0], q[1], 3, 150) || q;
+        this.gather = { pt: gp, t0: g.t, tgt }; W.orderGroup(ready, { type: 'move', x: gp[0], y: gp[1] });
+      } else W.orderGroup(ready, { type: 'attackMove', x: tgt[0], y: tgt[1] });
+      g.emit('ai_wave', { player: p.id, n: ready.length });
+    }
+    if (this.gather) {
+      const G = this.gather, ws = [...this.wave].map((id) => W.byId.get(id)).filter((u) => u && u.alive), there = ws.filter((u) => Math.hypot(u.x - G.pt[0], u.y - G.pt[1]) < 60).length;
+      if (!ws.length || there >= 0.75 * ws.length || g.t - G.t0 > 100 || ws.some((u) => u.lastHitT != null && g.t - u.lastHitT < 2)) { this.gather = null; if (ws.length) W.orderGroup(ws, { type: 'attackMove', x: G.tgt[0], y: G.tgt[1] }); }
+      return;
     }
     // waves that ran out of targets push on to the next structure we know about (or look for one)
     // across water, also count as done: aircraft circling on their point and units standing on it with nothing to shoot
