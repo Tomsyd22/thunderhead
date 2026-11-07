@@ -1,21 +1,21 @@
 ID,Faction,Unit,Category,Cost,HP,Armour class,Build seconds,Speed m/s,Sight m,Weapon,Damage per projectile,Burst,Cycle seconds,Base DPS,Infantry DPS,Light DPS,Heavy DPS,Building DPS,Air DPS,Naval DPS,Range m,Splash radius m
-H01,IRON LEGION,Conscript,Infantry,100,125,infantry,5,4.4,32,Service rifle,12,1,0.8,15.0,15.0,3.75,1.2,3.0,-,-,18,0
+H01,IRON LEGION,Conscript,Infantry,100,90,infantry,5,4.4,32,Service rifle,9,1,0.82,10.98,10.98,2.74,0.88,2.2,-,-,18,0
 H02,IRON LEGION,Rocket Trooper,Infantry,300,110,infantry,10,3.8,36,Anti-armour rocket,90,1,3,30.0,-,30.0,30.0,19.5,-,24.0,36,0
 H02,IRON LEGION,Rocket Trooper,Infantry,300,110,infantry,10,3.8,36,Air-defence rocket,70,1,2.5,28.0,-,-,-,-,28.0,-,45,0
 H03,IRON LEGION,Bastion Heavy Tank,Tank,900,950,heavy,22,7.8,44,Heavy cannon,100,1,2.5,40.0,10.0,46.0,40.0,34.0,-,30.0,42,0
 H04,IRON LEGION,Hammer Assault Helicopter,Air,1200,650,air,28,19,52,Twin attack rockets,42,2,2.8,30.0,-,30.0,30.0,21.0,-,25.5,45,0
 H05,IRON LEGION,Bulwark Armoured Gunboat,Sea,950,1150,naval,25,10,58,Naval assault gun,110,1,2.5,44.0,11.0,44.0,37.4,39.6,-,44.0,50,0
 A01,VANGUARD ALLIANCE,Ranger,Infantry,200,130,infantry,7,4.6,34,Carbine - mobile,10,1,0.8,12.5,12.5,3.12,1.0,2.25,-,-,18,0
-A01,VANGUARD ALLIANCE,Ranger,Infantry,200,130,infantry,7,4.6,34,Machine gun - deployed,15,1,0.45,33.33,33.33,10.0,4.0,8.33,-,-,25,0
+A01,VANGUARD ALLIANCE,Ranger,Infantry,200,130,infantry,7,4.6,34,Machine gun - deployed,13,1,0.46,28.26,28.26,8.48,3.39,7.07,-,-,25,0
 A02,VANGUARD ALLIANCE,Missile Specialist,Infantry,350,115,infantry,11,4.2,38,Air-intercept missile,75,1,2.5,30.0,-,-,-,-,30.0,-,48,0
 A02,VANGUARD ALLIANCE,Missile Specialist,Infantry,350,115,infantry,11,4.2,38,Deployed anti-tank missile,110,1,3,36.67,-,36.67,36.67,22.0,-,27.5,40,0
 A03,VANGUARD ALLIANCE,Lancer Medium Tank,Tank,700,700,heavy,18,10,44,Precision cannon,80,1,2.2,36.36,9.09,41.82,36.36,27.27,-,23.64,40,0
 A04,VANGUARD ALLIANCE,Kestrel Strike Jet,Air,1400,550,air,30,35,58,Precision bomb pair,180,2,14,25.71,11.57,25.71,25.71,25.71,-,20.57,35,5
 A05,VANGUARD ALLIANCE,Sentinel Missile Frigate,Sea,1300,1000,naval,30,9,86,Anti-ship missile salvo,90,2,5,36.0,-,-,-,-,-,36.0,80,0
 A05,VANGUARD ALLIANCE,Sentinel Missile Frigate,Sea,1300,1000,naval,30,9,86,Defensive AA missile,55,1,1.8,30.56,-,-,-,-,30.56,-,50,0
-T01,NOVA DIRECTIVE,Pulse Trooper,Infantry,250,100,infantry,8,5.4,38,Pulse carbine,16,1,0.8,20.0,20.0,6.0,2.0,4.0,-,-,23,0
+T01,NOVA DIRECTIVE,Pulse Trooper,Infantry,150,100,infantry,8,5.4,38,Pulse carbine,16,1,0.8,20.0,20.0,6.0,2.0,4.0,-,-,23,0
 T02,NOVA DIRECTIVE,Disruptor,Infantry,400,100,infantry,12,5,40,Disruption lance - ground,50,1,2,25.0,-,25.0,25.0,10.0,-,18.75,32,0
-T02,NOVA DIRECTIVE,Disruptor,Infantry,400,100,infantry,12,5,40,Disruption lance - air,20,1,2,10.0,-,-,-,-,10.0,-,38,0
+T02,NOVA DIRECTIVE,Disruptor,Infantry,400,100,infantry,12,5,40,Disruption lance - air,50,1,2,25.0,-,-,-,-,25.0,-,45,0
 T03,NOVA DIRECTIVE,Wisp Hover Tank,Tank,950,600,light,24,13,50,Accelerator cannon,95,1,2.5,38.0,7.6,38.0,38.0,24.7,-,24.7,46,0
 T04,NOVA DIRECTIVE,Mote Recon Drone,Air,650,230,air,18,22,60,Light pulse emitter,8,1,0.4,20.0,20.0,4.0,-,-,-,-,26,0
 T05,NOVA DIRECTIVE,Spectre Drone Corvette,Sea,1100,700,naval,27,15,72,Guided raider missile - sea,75,1,2.2,34.09,-,-,-,-,-,34.09,65,0

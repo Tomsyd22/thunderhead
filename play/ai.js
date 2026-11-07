@@ -2,7 +2,7 @@
 // Base layout: the map's own base-kit slots for this start (instances with the team flag), then a spiral search for the rest.
 // Economy: keeps power ahead of demand, two refineries, about two harvesters per refinery.
 // Army: mixed production, rallies at a staging point toward the enemy, defends structures under attack, attacks in waves
-// that grow over time.
+// that grow over time. Round 3: Helix Rangers set up their machine guns when an enemy is in range (deployMicro).
 // Fog of war (round 2): it only knows the enemy structures its own side has seen (World.visible) plus public map info (the
 // start pads, ore fields, dock sites and the map's land / water regions). Waves go for the nearest enemy structure it knows
 // about, else the enemy's start pad, and sweep the enemy's side of the map when they run out of known targets.
@@ -17,8 +17,8 @@
 // a wave far from its target comes home when the base starts losing structures. In 1v1 and as one of a pair it plays as before.
 // Anti-air (round 3): production lists hold anti-air-only units (Helix's Halo) and dual-role ones (Rocket Troopers, Nullifiers).
 // The round-robin skips anti-air-only units until enemy aircraft have been seen, and while the anti-air it owns is worth less
-// than the enemy aircraft it has seen lately (credit for credit, at most half its army, plus a token amount once an enemy
-// airpad is known) the next pick in a list that has an anti-air unit is that unit. Fog of war only: aircraft our side saw.
+// than the enemy aircraft it has seen lately (credit for credit, capped at half its army but never below $1,200) the next
+// pick in a list that has an anti-air unit is that unit. Fog of war only: aircraft our side saw.
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { MECH } from './engine/mech.js';
 
@@ -50,7 +50,7 @@ export class AI {
     const g = this.g, p = this.p; if (p.lost || g.over) return;
     this.seeEnemy(); this.crossCheck();
     if (p.ready) this.placeReady();
-    this.buildStructures(); this.produce(); this.repair(); this.army(); this.navyThink(); this.jetThink();
+    this.buildStructures(); this.produce(); this.repair(); this.army(); this.navyThink(); this.jetThink(); this.deployMicro();
   }
 
   // ── what our side knows: enemy structures it has seen, and which of our movement domains reach a point ──
@@ -62,21 +62,21 @@ export class AI {
     const A = this.airSeen; for (const u of W.units) if (u.alive && u.dom === 'air' && u.team !== me && u.sys.length && W.visible(me, u)) A.set(u.id, { x: u.x, y: u.y, cost: u.sp.cost, t });
     for (const [id, s] of A) { const u = W.byId.get(id); if (t - s.t > 240 || ((!u || !u.alive) && this.looksAt(s.x, s.y))) A.delete(id); }
   }
-  /** credits of enemy aircraft seen lately (+ a token amount once an enemy airpad is known: aircraft are coming) */
-  airThreatValue() { let v = 0; for (const s of this.airSeen.values()) v += s.cost; if (!v && [...this.known.values()].some((s) => s.kind === 'airpad')) v = 600; return v; }
-  /** can this unit type shoot aircraft / only aircraft */
+  /** credits of enemy aircraft seen lately (an enemy airpad alone does not count: anti-air with nothing to shoot is wasted money) */
+  airThreatValue() { let v = 0; for (const s of this.airSeen.values()) v += s.cost; return v; }
+  /** can this unit type shoot aircraft / is it an anti-air specialist */
   hitsAir(k) { const sp = this.g.world.spec[k]; return !!sp && sp.weapons.some((w) => w.targets.includes('air')); }
-  aaOnly(k) { const sp = this.g.world.spec[k]; return !!sp && sp.weapons.length > 0 && sp.weapons.every((w) => w.targets.length === 1 && w.targets[0] === 'air'); }
+  aaOnly(k) { const sp = this.g.world.spec[k]; return this.hitsAir(k) && !sp.weapons.some((w) => !w.targets.includes('air') && ['heavy', 'building', 'naval'].some((c) => w.targets.includes(c))); }   // anti-air specialist: its ground mode (if any) can't fight tanks, structures or ships (Halo)
   /** true while the anti-air we own (and have queued) is worth less than the enemy air seen, capped at half the army */
   wantAA() {
     const air = this.airThreatValue(); if (!air) return false; const p = this.p, mine = this.g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer);
     let aa = 0, army = 0; for (const u of mine) { army += u.sp.cost; if (this.hitsAir(u.uid)) aa += u.sp.cost; }
     for (const cat of ['infantry', 'vehicle', 'air', 'naval']) for (const it of p.queues[cat] || []) if (it.key !== 'HV' && this.hitsAir(it.key)) aa += it.cost;
-    return aa < Math.min(air, Math.max(1200, army * 0.5));
+    return aa < Math.min(air * (this.aaShare ?? 1), Math.max(1200, army * 0.5));
   }
   /** the next unit from a production list: anti-air-only units only against seen aircraft; anti-air first while short of it */
   pickUnit(list) {
-    if (!list.length) return null; const aaL = list.filter((k) => this.hitsAir(k));
+    if (!list.length) return null; const aaL = list.filter((k) => (this.aaDual === false ? this.aaOnly(k) : this.hitsAir(k)));   // Easy: only specialists answer aircraft
     if (aaL.length && this.wantAA()) return aaL[(this.next++) % aaL.length];
     const ground = list.filter((k) => !this.aaOnly(k)); if (!ground.length) return null;
     return ground[(this.next++) % ground.length];
@@ -194,10 +194,22 @@ export class AI {
     const strikers = mine.filter((u) => goesX(u) && hitsB(u.uid)).length, support = mine.filter((u) => u.dom === 'air' && !hitsB(u.uid)).length;   // support aircraft: at most one per striker
     keep('air', armedAir.filter((k) => hitsB(k) || support < Math.max(3, strikers)), 1); if (ships < (armedAir.length || vehX.length ? 4 : 8)) keep('naval', F.naval.filter((k) => W.spec[k] && W.spec[k].weapons.length), 1);
   }
+  // ── deployable infantry (round 3; Helix Rangers): set up when a visible enemy ground unit the machine gun can hurt is
+  // inside its range; a set-up gun that is shooting (or shot in the last 3 s) gets no new orders, and the next order after
+  // that packs it up (the engine queues the order behind the pack-up). Plain moves and garrison orders never set up.
+  deployMicro() {
+    const W = this.g.world;
+    for (const u of this.g.unitsOf(this.p)) { if (!u.m.deploy || u.deploy !== 'mobile' || u.garrisonIn || u.rollOut || u.order.type === 'move' || u.order.type === 'garrison') continue;
+      const set = u.m.deploy.deployed.map((i) => u.sp.weapons[i]).filter(Boolean);
+      for (const e of W.units) { if (!e.alive || e.team === u.team || e.hidden || e.dom === 'air' || !W.visible(u.team, e)) continue;
+        const r = Math.max(0, ...set.filter((w) => w.targets.includes(e.sp.armor) && W.mult(w, e) > 0).map((w) => w.range_m));
+        if (r > 0 && W.surfDist(u, e) <= r) { W.order(u, { type: 'deploy' }); break; } } }
+  }
+  gunBusy(u) { return !!u.deploy && (u.deploy === 'deploying' || (u.deploy === 'deployed' && (u.target != null || this.g.world.t - (u.sys[0] ? u.sys[0].lastFire : -99) < 3))); }
   // ── army ──
   army() {
     const g = this.g, W = g.world, p = this.p;
-    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer && !u.rollOut);
+    const units = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer && !u.rollOut && !this.gunBusy(u));   // a set-up gun in a fight is left alone
     const free = units.filter((u) => !this.wave.has(u.id) && (u.order.type === 'idle' || u.order.type === 'attackMove' && Math.hypot(u.x - this.stage[0], u.y - this.stage[1]) < 60));
     // defend: anything hitting our structures or harvesters near the base draws the free units
     const threat = g.events.filter((e) => e.type === 'under_attack' && e.player === p.id && g.t - e.t < 3 && this.nearMe([e.x, e.y], 450)).pop();
@@ -232,13 +244,13 @@ export class AI {
     }
     if (this.gather) {
       const G = this.gather, ws = [...this.wave].map((id) => W.byId.get(id)).filter((u) => u && u.alive), there = ws.filter((u) => Math.hypot(u.x - G.pt[0], u.y - G.pt[1]) < 60).length;
-      if (!ws.length || there >= 0.75 * ws.length || g.t - G.t0 > 100 || ws.some((u) => u.lastHitT != null && g.t - u.lastHitT < 2)) { this.gather = null; if (ws.length) W.orderGroup(ws, { type: 'attackMove', x: G.tgt[0], y: G.tgt[1] }); }
+      if (!ws.length || there >= 0.75 * ws.length || g.t - G.t0 > 100 || ws.some((u) => u.lastHitT != null && g.t - u.lastHitT < 2)) { this.gather = null; if (ws.length) W.orderGroup(ws.filter((u) => !this.gunBusy(u)), { type: 'attackMove', x: G.tgt[0], y: G.tgt[1] }); }
       return;
     }
     // waves that ran out of targets push on to the next structure we know about (or look for one)
     // across water, also count as done: aircraft circling on their point and units standing on it with nothing to shoot
     const done = (u) => u.order.type === 'idle' || (this.cross && u.target == null && u.order.type === 'attackMove' && (u.dom === 'air' ? Math.hypot(u.order.x - u.x, u.order.y - u.y) < 20 : !u.path && Math.hypot(u.order.x - u.x, u.order.y - u.y) < 10));
-    const idle = [...this.wave].map((id) => W.byId.get(id)).filter((u) => u && done(u));
+    const idle = [...this.wave].map((id) => W.byId.get(id)).filter((u) => u && done(u) && !this.gunBusy(u));   // a set-up gun still shooting stays put
     if (idle.length) { this.markSwept(idle); const c = [idle.reduce((a, u) => a + u.x, 0) / idle.length, idle.reduce((a, u) => a + u.y, 0) / idle.length];
       const s = this.targetFor(enemy, c); if (s) for (const u of idle) W.order(u, { type: 'attackMove', x: s[0], y: s[1] }); }
   }

@@ -23,5 +23,5 @@ const A = tally(RES), B = BEFORE ? tally(BEFORE) : null, md = ['# Faction win ra
 const table = (T, title) => { md.push(`## ${title}`, '', '| faction | 1v1 all | 1v1 Normal vs Normal | 1v1 as Hard (vs Normal) | 1v1 as Normal (vs Hard) | 2v1 all | 2v1 as the single AI | 2v1 in the pair |', '|---|---|---|---|---|---|---|---|');
   for (const f of FAC) { const t = T[f]; md.push(`| ${NAME[f]} | ${cell(t.all1)} | ${cell(t.nn)} | ${cell(t.hard)} | ${cell(t.normalVsHard)} | ${cell(t.all2)} | ${cell(t.solo)} | ${cell(t.pair)} |`); } md.push(''); };
 table(A, 'After this pass');
-if (B) table(B, 'Before this pass (the results that were in play/results before the re-run)');
+if (B) table(B, 'Before this pass (the batch results that were in play/results before this pass; ai_seed2 and ai_2v1_seed2 came from an earlier version of the harness)');
 fs.writeFileSync(path.join(RES, 'faction_winrates.md'), md.join('\n') + '\n'); console.log(md.join('\n'));

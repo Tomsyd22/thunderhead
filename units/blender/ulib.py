@@ -21,7 +21,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 OUT = os.path.join(ROOT, 'out'); BLEND = os.path.join(ROOT, 'blend'); PREV = os.path.join(ROOT, 'preview')
 for d in (OUT, BLEND, PREV): os.makedirs(d, exist_ok=True)
 SPEC = {u['id']: u for u in json.load(open(os.path.join(ROOT, 'data', 'unit_specs.json')))['units']}
-for _u in json.load(open(os.path.join(ROOT, 'data', 'pending_specs.json')))['units']: SPEC.setdefault(_u['id'], _u)   # units not yet in unit_specs.json
+_pend = os.path.join(ROOT, 'data', 'pending_specs.json')
+for _u in (json.load(open(_pend))['units'] if os.path.exists(_pend) else []): SPEC.setdefault(_u['id'], _u)   # units not yet in unit_specs.json
 FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed-Bold.ttf'
 
 def reset(seed=7):

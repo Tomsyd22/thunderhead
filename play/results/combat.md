@@ -32,7 +32,7 @@ With the tank firing back: Conscript ×5 vs Bastion: tank wins with 73 % HP left
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **Conscript** | 3 | 4 | 150 | — | 5 | 141 | 100 | 4 | 4 | 150 | — |
 | **Rocket Trooper** | — | — | 13 | 9 | — | 9 | 5 | — | — | 8 | 3 |
-| **Bastion** | 4 | 4 | 13 | — | 5 | 10 | 8 | 4 | 4 | 13 | — |
+| **Bastion** | 4 | 4 | 13 | — | 5 | 10 | 8 | 4 | 4 | 12 | — |
 | **Hammer** | — | — | 13 | — | — | 9 | 5 | — | — | 8 | — |
 | **Ranger** | 3 | 3 | 133 | — | 4 | 126 | 90 | 3 | 3 | 135 | — |
 | **Arbiter** | 4 | 4 | 15 | — | 5 | 13 | 10 | 4 | 4 | 15 | — |
@@ -52,8 +52,8 @@ With the tank firing back: Conscript ×5 vs Bastion: tank wins with 73 % HP left
 ✓ Nullifiers beat their cost in Arbiters — 2× Nullifier vs 1× Arbiter: Nullifier wins in 7 s (T02 21%)
 ✓ Rocket Troopers beat their cost in Wisps — 3× Rocket Trooper vs 1× Wisp: Rocket Trooper wins in 4 s (H02 20%, H02 73%, H02 100%)
 ✓ Halos beat their cost in Hammers — 4× Halo vs 2× Hammer: Halo wins in 2 s (A06 79%, A06 79%, A06 100%, A06 100%)
-✓ Rocket Troopers beat their cost in Halos — 2× Rocket Trooper vs 1× Halo: Rocket Trooper wins in 4 s (H02 67%, H02 100%)
-✓ Conscripts beat their cost in Halos — 7× Conscript vs 1× Halo: Conscript wins in 19 s (H01 100%, H01 100%, H01 100%, H01 17%, H01 100%)
+✓ Rocket Troopers beat their cost in Halos — 2× Rocket Trooper vs 1× Halo: Rocket Trooper wins in 4 s (H02 65%, H02 100%)
+✓ Conscripts beat their cost in Halos — 7× Conscript vs 1× Halo: Conscript wins in 19 s (H01 100%, H01 100%, H01 100%, H01 13%, H01 100%)
 ✓ Conscripts beat their cost in Rocket Troopers — 6× Conscript vs 2× Rocket Trooper: Conscript wins in 3 s (H01 100%, H01 100%, H01 100%, H01 100%, H01 100%, H01 100%)
 ✓ Pulse Troopers beat their cost in Nullifiers — 8× Pulse Trooper vs 5× Nullifier: Pulse Trooper wins in 2 s (T01 100%, T01 100%, T01 100%, T01 100%, T01 100%, T01 100%, T01 100%, T01 100%)
 

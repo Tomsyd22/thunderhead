@@ -1,0 +1,7841 @@
+{
+ "tag": "after",
+ "date": "2026-11-07",
+ "game_speed": 2.4,
+ "runs": 20,
+ "units": {
+  "H01": {
+   "name": "Conscript",
+   "cost": 100,
+   "hp": 90,
+   "speed": 4.4,
+   "weapons": [
+    {
+     "name": "Service rifle",
+     "damage": 9,
+     "cycle": 0.82,
+     "range": 18,
+     "type": "rifle",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "H02": {
+   "name": "Rocket Trooper",
+   "cost": 300,
+   "hp": 110,
+   "speed": 3.8,
+   "weapons": [
+    {
+     "name": "Anti-armour rocket",
+     "damage": 90,
+     "cycle": 3,
+     "range": 36,
+     "type": "at_rocket",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    },
+    {
+     "name": "Air-defence rocket",
+     "damage": 70,
+     "cycle": 2.5,
+     "range": 45,
+     "type": "aa_rocket",
+     "targets": [
+      "air"
+     ]
+    }
+   ]
+  },
+  "H03": {
+   "name": "Bastion",
+   "cost": 900,
+   "hp": 950,
+   "speed": 7.8,
+   "weapons": [
+    {
+     "name": "Heavy cannon",
+     "damage": 100,
+     "cycle": 2.5,
+     "range": 42,
+     "type": "cannon_heavy",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "H04": {
+   "name": "Hammer",
+   "cost": 1200,
+   "hp": 650,
+   "speed": 19,
+   "weapons": [
+    {
+     "name": "Twin attack rockets",
+     "damage": 42,
+     "cycle": 2.8,
+     "range": 45,
+     "type": "attack_rocket",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "A01": {
+   "name": "Ranger",
+   "cost": 200,
+   "hp": 130,
+   "speed": 4.6,
+   "weapons": [
+    {
+     "name": "Carbine - mobile",
+     "damage": 10,
+     "cycle": 0.8,
+     "range": 18,
+     "type": "carbine",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    },
+    {
+     "name": "Machine gun - deployed",
+     "damage": 13,
+     "cycle": 0.46,
+     "range": 25,
+     "type": "mg",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "A03": {
+   "name": "Arbiter",
+   "cost": 700,
+   "hp": 700,
+   "speed": 10,
+   "weapons": [
+    {
+     "name": "Precision cannon",
+     "damage": 80,
+     "cycle": 2.2,
+     "range": 40,
+     "type": "cannon_precision",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "A06": {
+   "name": "Halo",
+   "cost": 650,
+   "hp": 400,
+   "speed": 11,
+   "weapons": [
+    {
+     "name": "Twin coil-laser - air",
+     "damage": 12,
+     "cycle": 0.2,
+     "range": 50,
+     "type": "aa_laser",
+     "targets": [
+      "air"
+     ]
+    },
+    {
+     "name": "Coil-laser - ground",
+     "damage": 6,
+     "cycle": 0.5,
+     "range": 30,
+     "type": "aa_laser",
+     "targets": [
+      "infantry",
+      "light"
+     ]
+    }
+   ]
+  },
+  "T01": {
+   "name": "Pulse Trooper",
+   "cost": 150,
+   "hp": 100,
+   "speed": 5.4,
+   "weapons": [
+    {
+     "name": "Pulse carbine",
+     "damage": 16,
+     "cycle": 0.8,
+     "range": 23,
+     "type": "pulse",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "T02": {
+   "name": "Nullifier",
+   "cost": 400,
+   "hp": 100,
+   "speed": 5,
+   "weapons": [
+    {
+     "name": "Disruption lance - ground",
+     "damage": 50,
+     "cycle": 2,
+     "range": 32,
+     "type": "lance",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    },
+    {
+     "name": "Disruption lance - air",
+     "damage": 50,
+     "cycle": 2,
+     "range": 45,
+     "type": "lance_aa",
+     "targets": [
+      "air"
+     ]
+    }
+   ]
+  },
+  "T03": {
+   "name": "Wisp",
+   "cost": 950,
+   "hp": 600,
+   "speed": 13,
+   "weapons": [
+    {
+     "name": "Accelerator cannon",
+     "damage": 95,
+     "cycle": 2.5,
+     "range": 46,
+     "type": "accelerator",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  }
+ },
+ "a": [
+  {
+   "name": "a:Conscript|Pulse Trooper",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.4,
+   "winB": 0.6,
+   "draws": 0,
+   "t": 5.597222222222237,
+   "tMin": 4.763888888888873,
+   "tMax": 6.569444444444516,
+   "valWinner": 180.5050505050505,
+   "valLoser": 40,
+   "valA": 36.79959595959596,
+   "valB": 183.70545454545453,
+   "wonBy": "B",
+   "flag": false,
+   "runs": [
+    {
+     "win": "A",
+     "t": 5.97,
+     "valA": 69,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 6.46,
+     "valA": 0,
+     "valB": 150
+    },
+    {
+     "win": "B",
+     "t": 6.21,
+     "valA": 0,
+     "valB": 169
+    },
+    {
+     "win": "B",
+     "t": 5.4,
+     "valA": 0,
+     "valB": 252
+    },
+    {
+     "win": "A",
+     "t": 5.83,
+     "valA": 107,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 5.21,
+     "valA": 0,
+     "valB": 279
+    },
+    {
+     "win": "B",
+     "t": 6.21,
+     "valA": 0,
+     "valB": 168
+    },
+    {
+     "win": "A",
+     "t": 6.57,
+     "valA": 28,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 4.76,
+     "valA": 0,
+     "valB": 294
+    },
+    {
+     "win": "A",
+     "t": 5.72,
+     "valA": 160,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 5.19,
+     "valA": 0,
+     "valB": 265
+    },
+    {
+     "win": "A",
+     "t": 5.24,
+     "valA": 140,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 5.33,
+     "valA": 0,
+     "valB": 161
+    },
+    {
+     "win": "B",
+     "t": 4.89,
+     "valA": 0,
+     "valB": 252
+    },
+    {
+     "win": "B",
+     "t": 5.22,
+     "valA": 0,
+     "valB": 289
+    },
+    {
+     "win": "B",
+     "t": 5.08,
+     "valA": 0,
+     "valB": 319
+    },
+    {
+     "win": "A",
+     "t": 5.9,
+     "valA": 89,
+     "valB": 100
+    },
+    {
+     "win": "A",
+     "t": 5.31,
+     "valA": 104,
+     "valB": 100
+    },
+    {
+     "win": "A",
+     "t": 5.97,
+     "valA": 39,
+     "valB": 100
+    },
+    {
+     "win": "B",
+     "t": 5.46,
+     "valA": 0,
+     "valB": 279
+    }
+   ]
+  },
+  {
+   "name": "a:Conscript|Ranger (moving)",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (moving)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 1,
+   "winB": 0,
+   "draws": 0,
+   "t": 2.9208333333333227,
+   "tMin": 2.708333333333324,
+   "tMax": 3.1944444444444335,
+   "valWinner": 686.6666666666665,
+   "valLoser": 0,
+   "valA": 686.6666666666665,
+   "valB": 0,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 3.19,
+     "valA": 656,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.83,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.01,
+     "valA": 678,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.07,
+     "valA": 689,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.96,
+     "valA": 678,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.72,
+     "valA": 711,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 711,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.04,
+     "valA": 678,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.82,
+     "valA": 689,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.87,
+     "valA": 689,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.76,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.99,
+     "valA": 678,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.01,
+     "valA": 667,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.93,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.92,
+     "valA": 689,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.14,
+     "valA": 678,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.74,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.9,
+     "valA": 689,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.86,
+     "valA": 667,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.93,
+     "valA": 689,
+     "valB": 0
+    }
+   ]
+  },
+  {
+   "name": "a:Conscript|Ranger (set up)",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (set up)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 3.0111111111111013,
+   "tMin": 2.7916666666666567,
+   "tMax": 3.152777777777767,
+   "valWinner": 641.6923076923077,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 641.6923076923077,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.11,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 2.87,
+     "valA": 0,
+     "valB": 640
+    },
+    {
+     "win": "B",
+     "t": 2.94,
+     "valA": 0,
+     "valB": 662
+    },
+    {
+     "win": "B",
+     "t": 3.08,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 3.11,
+     "valA": 0,
+     "valB": 592
+    },
+    {
+     "win": "B",
+     "t": 2.85,
+     "valA": 0,
+     "valB": 682
+    },
+    {
+     "win": "B",
+     "t": 3.03,
+     "valA": 0,
+     "valB": 662
+    },
+    {
+     "win": "B",
+     "t": 3.06,
+     "valA": 0,
+     "valB": 648
+    },
+    {
+     "win": "B",
+     "t": 3.08,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 2.82,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 2.79,
+     "valA": 0,
+     "valB": 682
+    },
+    {
+     "win": "B",
+     "t": 3.1,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 3.06,
+     "valA": 0,
+     "valB": 620
+    },
+    {
+     "win": "B",
+     "t": 3.15,
+     "valA": 0,
+     "valB": 606
+    },
+    {
+     "win": "B",
+     "t": 3.07,
+     "valA": 0,
+     "valB": 648
+    },
+    {
+     "win": "B",
+     "t": 2.99,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 3.04,
+     "valA": 0,
+     "valB": 620
+    },
+    {
+     "win": "B",
+     "t": 3.03,
+     "valA": 0,
+     "valB": 662
+    },
+    {
+     "win": "B",
+     "t": 3.08,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 2.96,
+     "valA": 0,
+     "valB": 675
+    }
+   ]
+  },
+  {
+   "name": "a:Conscript|Ranger (in battle)",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (in battle)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0.5,
+   "winB": 0.5,
+   "draws": 0,
+   "t": 4.894444444444451,
+   "tMin": 3.555555555555543,
+   "tMax": 5.9861111111111605,
+   "valWinner": 188.08494172494173,
+   "valLoser": 0,
+   "valA": 85.53333333333333,
+   "valB": 102.5516083916084,
+   "wonBy": "A",
+   "flag": false,
+   "runs": [
+    {
+     "win": "A",
+     "t": 4.18,
+     "valA": 286,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 5.72,
+     "valA": 0,
+     "valB": 87
+    },
+    {
+     "win": "B",
+     "t": 5.65,
+     "valA": 0,
+     "valB": 130
+    },
+    {
+     "win": "A",
+     "t": 4.96,
+     "valA": 168,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 3.56,
+     "valA": 0,
+     "valB": 365
+    },
+    {
+     "win": "B",
+     "t": 4.68,
+     "valA": 0,
+     "valB": 200
+    },
+    {
+     "win": "A",
+     "t": 4.76,
+     "valA": 156,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 5.18,
+     "valA": 151,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 4.15,
+     "valA": 257,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 5.94,
+     "valA": 0,
+     "valB": 94
+    },
+    {
+     "win": "B",
+     "t": 3.67,
+     "valA": 0,
+     "valB": 337
+    },
+    {
+     "win": "A",
+     "t": 5.07,
+     "valA": 151,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 5.99,
+     "valA": 53,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 4.46,
+     "valA": 0,
+     "valB": 262
+    },
+    {
+     "win": "B",
+     "t": 3.67,
+     "valA": 0,
+     "valB": 295
+    },
+    {
+     "win": "A",
+     "t": 4.9,
+     "valA": 124,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 5.65,
+     "valA": 0,
+     "valB": 144
+    },
+    {
+     "win": "A",
+     "t": 4.85,
+     "valA": 213,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 5.57,
+     "valA": 0,
+     "valB": 138
+    },
+    {
+     "win": "A",
+     "t": 5.28,
+     "valA": 151,
+     "valB": 0
+    }
+   ]
+  },
+  {
+   "name": "a:Pulse Trooper|Ranger (moving)",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (moving)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 1,
+   "winB": 0,
+   "draws": 0,
+   "t": 2.6513888888888792,
+   "tMin": 2.4027777777777697,
+   "tMax": 2.8333333333333237,
+   "valWinner": 686.5,
+   "valLoser": 0,
+   "valA": 686.5,
+   "valB": 0,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 2.67,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.67,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.4,
+     "valA": 730,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.47,
+     "valA": 715,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.5,
+     "valA": 700,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.49,
+     "valA": 715,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.67,
+     "valA": 685,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.79,
+     "valA": 625,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.68,
+     "valA": 685,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 715,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 640,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.58,
+     "valA": 655,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.83,
+     "valA": 670,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.67,
+     "valA": 685,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.81,
+     "valA": 685,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 640,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.69,
+     "valA": 685,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.57,
+     "valA": 715,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 2.71,
+     "valA": 685,
+     "valB": 0
+    }
+   ]
+  },
+  {
+   "name": "a:Pulse Trooper|Ranger (set up)",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (set up)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 2.202777777777771,
+   "tMin": 1.9861111111111045,
+   "tMax": 2.555555555555547,
+   "valWinner": 536.7692307692307,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 536.7692307692307,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 2.33,
+     "valA": 100,
+     "valB": 526
+    },
+    {
+     "win": "B",
+     "t": 2.44,
+     "valA": 100,
+     "valB": 526
+    },
+    {
+     "win": "B",
+     "t": 2.11,
+     "valA": 100,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 2.07,
+     "valA": 100,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 2.37,
+     "valA": 100,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 2.11,
+     "valA": 100,
+     "valB": 529
+    },
+    {
+     "win": "B",
+     "t": 2.15,
+     "valA": 100,
+     "valB": 505
+    },
+    {
+     "win": "B",
+     "t": 2.42,
+     "valA": 100,
+     "valB": 477
+    },
+    {
+     "win": "B",
+     "t": 2.1,
+     "valA": 100,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 2.11,
+     "valA": 100,
+     "valB": 505
+    },
+    {
+     "win": "B",
+     "t": 2.12,
+     "valA": 100,
+     "valB": 529
+    },
+    {
+     "win": "B",
+     "t": 2.06,
+     "valA": 100,
+     "valB": 603
+    },
+    {
+     "win": "B",
+     "t": 2.12,
+     "valA": 100,
+     "valB": 529
+    },
+    {
+     "win": "B",
+     "t": 2.19,
+     "valA": 100,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 2.32,
+     "valA": 100,
+     "valB": 502
+    },
+    {
+     "win": "B",
+     "t": 2.56,
+     "valA": 100,
+     "valB": 452
+    },
+    {
+     "win": "B",
+     "t": 2.11,
+     "valA": 100,
+     "valB": 529
+    },
+    {
+     "win": "B",
+     "t": 2.04,
+     "valA": 100,
+     "valB": 652
+    },
+    {
+     "win": "B",
+     "t": 1.99,
+     "valA": 100,
+     "valB": 578
+    },
+    {
+     "win": "B",
+     "t": 2.32,
+     "valA": 100,
+     "valB": 526
+    }
+   ]
+  },
+  {
+   "name": "a:Pulse Trooper|Ranger (in battle)",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Ranger (in battle)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0.35,
+   "winB": 0.65,
+   "draws": 0,
+   "t": 3.5958333333333217,
+   "tMin": 2.4305555555555474,
+   "tMax": 4.847222222222206,
+   "valWinner": 230.75854545454544,
+   "valLoser": 65,
+   "valA": 156.304,
+   "valB": 139.45454545454547,
+   "wonBy": "B",
+   "flag": false,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.24,
+     "valA": 100,
+     "valB": 203
+    },
+    {
+     "win": "B",
+     "t": 3.04,
+     "valA": 100,
+     "valB": 252
+    },
+    {
+     "win": "B",
+     "t": 2.99,
+     "valA": 100,
+     "valB": 255
+    },
+    {
+     "win": "A",
+     "t": 4.85,
+     "valA": 119,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 2.62,
+     "valA": 100,
+     "valB": 305
+    },
+    {
+     "win": "B",
+     "t": 4.19,
+     "valA": 100,
+     "valB": 81
+    },
+    {
+     "win": "B",
+     "t": 4.57,
+     "valA": 100,
+     "valB": 52
+    },
+    {
+     "win": "A",
+     "t": 3.72,
+     "valA": 283,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 3.07,
+     "valA": 414,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 100,
+     "valB": 326
+    },
+    {
+     "win": "A",
+     "t": 3.87,
+     "valA": 283,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 2.83,
+     "valA": 100,
+     "valB": 280
+    },
+    {
+     "win": "B",
+     "t": 3.9,
+     "valA": 100,
+     "valB": 175
+    },
+    {
+     "win": "B",
+     "t": 3.46,
+     "valA": 100,
+     "valB": 200
+    },
+    {
+     "win": "A",
+     "t": 3.24,
+     "valA": 400,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 2.43,
+     "valA": 100,
+     "valB": 378
+    },
+    {
+     "win": "B",
+     "t": 4.68,
+     "valA": 100,
+     "valB": 77
+    },
+    {
+     "win": "A",
+     "t": 4.78,
+     "valA": 119,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 3.37,
+     "valA": 100,
+     "valB": 203
+    },
+    {
+     "win": "A",
+     "t": 4.15,
+     "valA": 209,
+     "valB": 0
+    }
+   ]
+  }
+ ],
+ "b": [
+  {
+   "name": "b:Conscript|H03",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 10.709722222222451,
+   "tMin": 7.861111111111207,
+   "tMax": 12.194444444444738,
+   "valWinner": 746.1430578947394,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 746.1430578947394,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 11.1,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 10.19,
+     "valA": 0,
+     "valB": 759
+    },
+    {
+     "win": "B",
+     "t": 12.07,
+     "valA": 0,
+     "valB": 698
+    },
+    {
+     "win": "B",
+     "t": 12.14,
+     "valA": 0,
+     "valB": 724
+    },
+    {
+     "win": "B",
+     "t": 10.93,
+     "valA": 0,
+     "valB": 761
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 741
+    },
+    {
+     "win": "B",
+     "t": 11.15,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 7.86,
+     "valA": 0,
+     "valB": 777
+    },
+    {
+     "win": "B",
+     "t": 12.19,
+     "valA": 0,
+     "valB": 736
+    },
+    {
+     "win": "B",
+     "t": 9.89,
+     "valA": 0,
+     "valB": 759
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 710
+    },
+    {
+     "win": "B",
+     "t": 7.93,
+     "valA": 0,
+     "valB": 767
+    },
+    {
+     "win": "B",
+     "t": 11.13,
+     "valA": 0,
+     "valB": 749
+    },
+    {
+     "win": "B",
+     "t": 11.28,
+     "valA": 0,
+     "valB": 749
+    },
+    {
+     "win": "B",
+     "t": 11.4,
+     "valA": 0,
+     "valB": 745
+    },
+    {
+     "win": "B",
+     "t": 10.03,
+     "valA": 0,
+     "valB": 757
+    },
+    {
+     "win": "B",
+     "t": 10.89,
+     "valA": 0,
+     "valB": 751
+    },
+    {
+     "win": "B",
+     "t": 11.06,
+     "valA": 0,
+     "valB": 759
+    },
+    {
+     "win": "B",
+     "t": 9.78,
+     "valA": 0,
+     "valB": 753
+    },
+    {
+     "win": "B",
+     "t": 11.13,
+     "valA": 0,
+     "valB": 736
+    }
+   ],
+   "passiveT": 15.076388888888903,
+   "squad": false,
+   "rifle": "H01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Conscript ×5|H03",
+   "A": {
+    "label": "Conscript ×5",
+    "ids": {
+     "H01": 5
+    },
+    "spent": 500,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 9.864583333333517,
+   "tMin": 7.027777777777817,
+   "tMax": 13.402777777778052,
+   "valWinner": 823.7360273684222,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 823.7360273684222,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 10.36,
+     "valA": 0,
+     "valB": 826
+    },
+    {
+     "win": "B",
+     "t": 10.17,
+     "valA": 0,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 10.1,
+     "valA": 0,
+     "valB": 826
+    },
+    {
+     "win": "B",
+     "t": 11.18,
+     "valA": 0,
+     "valB": 820
+    },
+    {
+     "win": "B",
+     "t": 9.13,
+     "valA": 0,
+     "valB": 830
+    },
+    {
+     "win": "B",
+     "t": 10,
+     "valA": 0,
+     "valB": 824
+    },
+    {
+     "win": "B",
+     "t": 9.28,
+     "valA": 0,
+     "valB": 835
+    },
+    {
+     "win": "B",
+     "t": 10.18,
+     "valA": 0,
+     "valB": 826
+    },
+    {
+     "win": "B",
+     "t": 10.08,
+     "valA": 0,
+     "valB": 824
+    },
+    {
+     "win": "B",
+     "t": 13.4,
+     "valA": 0,
+     "valB": 771
+    },
+    {
+     "win": "B",
+     "t": 10.25,
+     "valA": 0,
+     "valB": 824
+    },
+    {
+     "win": "B",
+     "t": 12.17,
+     "valA": 0,
+     "valB": 800
+    },
+    {
+     "win": "B",
+     "t": 9.76,
+     "valA": 0,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 8.89,
+     "valA": 0,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 9.13,
+     "valA": 0,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 7.03,
+     "valA": 0,
+     "valB": 833
+    },
+    {
+     "win": "B",
+     "t": 9.99,
+     "valA": 0,
+     "valB": 826
+    },
+    {
+     "win": "B",
+     "t": 8.99,
+     "valA": 0,
+     "valB": 833
+    },
+    {
+     "win": "B",
+     "t": 10.15,
+     "valA": 0,
+     "valB": 826
+    },
+    {
+     "win": "B",
+     "t": 7.07,
+     "valA": 0,
+     "valB": 835
+    }
+   ],
+   "passiveT": 30.069444444443622,
+   "squad": true,
+   "rifle": "H01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Conscript|A03",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 16.179166666666625,
+   "tMin": 9.138888888889033,
+   "tMax": 30.097222222221543,
+   "valWinner": 532.2120099999984,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 532.2120099999984,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 9.14,
+     "valA": 0,
+     "valB": 556
+    },
+    {
+     "win": "B",
+     "t": 29.19,
+     "valA": 0,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 10.07,
+     "valA": 0,
+     "valB": 549
+    },
+    {
+     "win": "B",
+     "t": 9.26,
+     "valA": 0,
+     "valB": 547
+    },
+    {
+     "win": "B",
+     "t": 12.21,
+     "valA": 0,
+     "valB": 442
+    },
+    {
+     "win": "B",
+     "t": 29.93,
+     "valA": 0,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 10.29,
+     "valA": 0,
+     "valB": 539
+    },
+    {
+     "win": "B",
+     "t": 9.25,
+     "valA": 0,
+     "valB": 571
+    },
+    {
+     "win": "B",
+     "t": 11.21,
+     "valA": 0,
+     "valB": 491
+    },
+    {
+     "win": "B",
+     "t": 10.93,
+     "valA": 0,
+     "valB": 535
+    },
+    {
+     "win": "B",
+     "t": 11.29,
+     "valA": 0,
+     "valB": 506
+    },
+    {
+     "win": "B",
+     "t": 10.15,
+     "valA": 0,
+     "valB": 547
+    },
+    {
+     "win": "B",
+     "t": 28.94,
+     "valA": 0,
+     "valB": 561
+    },
+    {
+     "win": "B",
+     "t": 29.28,
+     "valA": 0,
+     "valB": 539
+    },
+    {
+     "win": "B",
+     "t": 11.24,
+     "valA": 0,
+     "valB": 508
+    },
+    {
+     "win": "B",
+     "t": 11.21,
+     "valA": 0,
+     "valB": 515
+    },
+    {
+     "win": "B",
+     "t": 28.31,
+     "valA": 0,
+     "valB": 563
+    },
+    {
+     "win": "B",
+     "t": 10.29,
+     "valA": 0,
+     "valB": 547
+    },
+    {
+     "win": "B",
+     "t": 30.1,
+     "valA": 0,
+     "valB": 506
+    },
+    {
+     "win": "B",
+     "t": 11.29,
+     "valA": 0,
+     "valB": 517
+    }
+   ],
+   "passiveT": 14.101388888888962,
+   "squad": false,
+   "rifle": "H01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Conscript ×5|A03",
+   "A": {
+    "label": "Conscript ×5",
+    "ids": {
+     "H01": 5
+    },
+    "spent": 500,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 11.513888888888985,
+   "tMin": 8.166666666666762,
+   "tMax": 28.138888888888303,
+   "valWinner": 623.4472599999993,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 623.4472599999993,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 8.49,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 8.39,
+     "valA": 0,
+     "valB": 641
+    },
+    {
+     "win": "B",
+     "t": 10.1,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 9.38,
+     "valA": 0,
+     "valB": 600
+    },
+    {
+     "win": "B",
+     "t": 16.58,
+     "valA": 0,
+     "valB": 619
+    },
+    {
+     "win": "B",
+     "t": 8.17,
+     "valA": 0,
+     "valB": 642
+    },
+    {
+     "win": "B",
+     "t": 9.42,
+     "valA": 0,
+     "valB": 625
+    },
+    {
+     "win": "B",
+     "t": 15.92,
+     "valA": 0,
+     "valB": 620
+    },
+    {
+     "win": "B",
+     "t": 12.07,
+     "valA": 0,
+     "valB": 591
+    },
+    {
+     "win": "B",
+     "t": 10.06,
+     "valA": 0,
+     "valB": 620
+    },
+    {
+     "win": "B",
+     "t": 20.22,
+     "valA": 0,
+     "valB": 605
+    },
+    {
+     "win": "B",
+     "t": 10.29,
+     "valA": 0,
+     "valB": 630
+    },
+    {
+     "win": "B",
+     "t": 9.42,
+     "valA": 0,
+     "valB": 627
+    },
+    {
+     "win": "B",
+     "t": 10.28,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 8.17,
+     "valA": 0,
+     "valB": 639
+    },
+    {
+     "win": "B",
+     "t": 8.22,
+     "valA": 0,
+     "valB": 637
+    },
+    {
+     "win": "B",
+     "t": 28.14,
+     "valA": 0,
+     "valB": 634
+    },
+    {
+     "win": "B",
+     "t": 8.35,
+     "valA": 0,
+     "valB": 627
+    },
+    {
+     "win": "B",
+     "t": 8.49,
+     "valA": 0,
+     "valB": 632
+    },
+    {
+     "win": "B",
+     "t": 10.15,
+     "valA": 0,
+     "valB": 632
+    }
+   ],
+   "passiveT": 28.0972222222215,
+   "squad": true,
+   "rifle": "H01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Conscript|T03",
+   "A": {
+    "label": "Conscript",
+    "ids": {
+     "H01": 10
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.05,
+   "winB": 0.95,
+   "draws": 0,
+   "t": 19.55972222222207,
+   "tMin": 9.694444444444617,
+   "tMax": 34.58333333333241,
+   "valWinner": 698.8834546741626,
+   "valLoser": 0,
+   "valA": 18.207860924166116,
+   "valB": 680.6755937499966,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 28.36,
+     "valA": 0,
+     "valB": 734
+    },
+    {
+     "win": "A",
+     "t": 20.24,
+     "valA": 364,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 13.47,
+     "valA": 0,
+     "valB": 719
+    },
+    {
+     "win": "B",
+     "t": 31.37,
+     "valA": 0,
+     "valB": 730
+    },
+    {
+     "win": "B",
+     "t": 9.69,
+     "valA": 0,
+     "valB": 769
+    },
+    {
+     "win": "B",
+     "t": 28.61,
+     "valA": 0,
+     "valB": 771
+    },
+    {
+     "win": "B",
+     "t": 11.64,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 11.1,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 33.46,
+     "valA": 0,
+     "valB": 693
+    },
+    {
+     "win": "B",
+     "t": 32.49,
+     "valA": 0,
+     "valB": 715
+    },
+    {
+     "win": "B",
+     "t": 15.72,
+     "valA": 0,
+     "valB": 622
+    },
+    {
+     "win": "B",
+     "t": 10.01,
+     "valA": 0,
+     "valB": 766
+    },
+    {
+     "win": "B",
+     "t": 15.06,
+     "valA": 0,
+     "valB": 622
+    },
+    {
+     "win": "B",
+     "t": 16.64,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 10.56,
+     "valA": 0,
+     "valB": 758
+    },
+    {
+     "win": "B",
+     "t": 9.74,
+     "valA": 0,
+     "valB": 743
+    },
+    {
+     "win": "B",
+     "t": 30.5,
+     "valA": 0,
+     "valB": 749
+    },
+    {
+     "win": "B",
+     "t": 16.1,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 11.86,
+     "valA": 0,
+     "valB": 756
+    },
+    {
+     "win": "B",
+     "t": 34.58,
+     "valA": 0,
+     "valB": 650
+    }
+   ],
+   "passiveT": 15.091666666666688,
+   "squad": false,
+   "rifle": "H01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Conscript ×5|T03",
+   "A": {
+    "label": "Conscript ×5",
+    "ids": {
+     "H01": 5
+    },
+    "spent": 500,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 13.702777777777888,
+   "tMin": 8.597222222222344,
+   "tMax": 30.06944444444376,
+   "valWinner": 839.7894312499966,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 839.7894312499966,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 11.25,
+     "valA": 0,
+     "valB": 855
+    },
+    {
+     "win": "B",
+     "t": 16.29,
+     "valA": 0,
+     "valB": 879
+    },
+    {
+     "win": "B",
+     "t": 10.26,
+     "valA": 0,
+     "valB": 859
+    },
+    {
+     "win": "B",
+     "t": 13.56,
+     "valA": 0,
+     "valB": 818
+    },
+    {
+     "win": "B",
+     "t": 8.6,
+     "valA": 0,
+     "valB": 879
+    },
+    {
+     "win": "B",
+     "t": 17.32,
+     "valA": 0,
+     "valB": 883
+    },
+    {
+     "win": "B",
+     "t": 12.38,
+     "valA": 0,
+     "valB": 842
+    },
+    {
+     "win": "B",
+     "t": 11.42,
+     "valA": 0,
+     "valB": 838
+    },
+    {
+     "win": "B",
+     "t": 12.35,
+     "valA": 0,
+     "valB": 833
+    },
+    {
+     "win": "B",
+     "t": 29.46,
+     "valA": 0,
+     "valB": 855
+    },
+    {
+     "win": "B",
+     "t": 9.18,
+     "valA": 0,
+     "valB": 857
+    },
+    {
+     "win": "B",
+     "t": 15.63,
+     "valA": 0,
+     "valB": 754
+    },
+    {
+     "win": "B",
+     "t": 9.36,
+     "valA": 0,
+     "valB": 838
+    },
+    {
+     "win": "B",
+     "t": 13.49,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 11.43,
+     "valA": 0,
+     "valB": 831
+    },
+    {
+     "win": "B",
+     "t": 30.07,
+     "valA": 0,
+     "valB": 853
+    },
+    {
+     "win": "B",
+     "t": 13.33,
+     "valA": 0,
+     "valB": 786
+    },
+    {
+     "win": "B",
+     "t": 10.28,
+     "valA": 0,
+     "valB": 844
+    },
+    {
+     "win": "B",
+     "t": 9.11,
+     "valA": 0,
+     "valB": 853
+    },
+    {
+     "win": "B",
+     "t": 9.31,
+     "valA": 0,
+     "valB": 842
+    }
+   ],
+   "passiveT": 30.06944444444361,
+   "squad": true,
+   "rifle": "H01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Pulse Trooper|H03",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 10.34930555555575,
+   "tMin": 8.73611111111124,
+   "tMax": 14.25000000000022,
+   "valWinner": 772.9397052631596,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 772.9397052631596,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 100,
+     "valB": 774
+    },
+    {
+     "win": "B",
+     "t": 9.01,
+     "valA": 100,
+     "valB": 787
+    },
+    {
+     "win": "B",
+     "t": 13.19,
+     "valA": 100,
+     "valB": 729
+    },
+    {
+     "win": "B",
+     "t": 10.74,
+     "valA": 100,
+     "valB": 772
+    },
+    {
+     "win": "B",
+     "t": 8.74,
+     "valA": 100,
+     "valB": 791
+    },
+    {
+     "win": "B",
+     "t": 10,
+     "valA": 100,
+     "valB": 785
+    },
+    {
+     "win": "B",
+     "t": 9.9,
+     "valA": 100,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 10.21,
+     "valA": 100,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 9.88,
+     "valA": 100,
+     "valB": 782
+    },
+    {
+     "win": "B",
+     "t": 11.1,
+     "valA": 100,
+     "valB": 763
+    },
+    {
+     "win": "B",
+     "t": 10.26,
+     "valA": 100,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 14.25,
+     "valA": 100,
+     "valB": 699
+    },
+    {
+     "win": "B",
+     "t": 8.75,
+     "valA": 100,
+     "valB": 791
+    },
+    {
+     "win": "B",
+     "t": 10.08,
+     "valA": 100,
+     "valB": 785
+    },
+    {
+     "win": "B",
+     "t": 9.9,
+     "valA": 100,
+     "valB": 770
+    },
+    {
+     "win": "B",
+     "t": 10,
+     "valA": 100,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 9.92,
+     "valA": 100,
+     "valB": 782
+    },
+    {
+     "win": "B",
+     "t": 9,
+     "valA": 100,
+     "valB": 789
+    },
+    {
+     "win": "B",
+     "t": 10.92,
+     "valA": 100,
+     "valB": 757
+    },
+    {
+     "win": "B",
+     "t": 10.17,
+     "valA": 100,
+     "valB": 782
+    }
+   ],
+   "passiveT": 23.356944444444057,
+   "squad": false,
+   "rifle": "T01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Pulse Trooper ×5|H03",
+   "A": {
+    "label": "Pulse Trooper ×5",
+    "ids": {
+     "T01": 5
+    },
+    "spent": 750,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 9.330555555555708,
+   "tMin": 7.2083333333333695,
+   "tMax": 12.138888888889182,
+   "valWinner": 799.5486315789485,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 799.5486315789485,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 9.82,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 10.11,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 9.74,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 10.19,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 7.96,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 12.14,
+     "valA": 0,
+     "valB": 746
+    },
+    {
+     "win": "B",
+     "t": 8.76,
+     "valA": 0,
+     "valB": 808
+    },
+    {
+     "win": "B",
+     "t": 11.26,
+     "valA": 0,
+     "valB": 782
+    },
+    {
+     "win": "B",
+     "t": 11.04,
+     "valA": 0,
+     "valB": 778
+    },
+    {
+     "win": "B",
+     "t": 8.25,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 10.33,
+     "valA": 0,
+     "valB": 793
+    },
+    {
+     "win": "B",
+     "t": 7.96,
+     "valA": 0,
+     "valB": 808
+    },
+    {
+     "win": "B",
+     "t": 7.78,
+     "valA": 0,
+     "valB": 815
+    },
+    {
+     "win": "B",
+     "t": 10.29,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 7.21,
+     "valA": 0,
+     "valB": 815
+    },
+    {
+     "win": "B",
+     "t": 10.19,
+     "valA": 0,
+     "valB": 793
+    },
+    {
+     "win": "B",
+     "t": 7.9,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 7.94,
+     "valA": 0,
+     "valB": 815
+    },
+    {
+     "win": "B",
+     "t": 7.75,
+     "valA": 0,
+     "valB": 815
+    },
+    {
+     "win": "B",
+     "t": 9.97,
+     "valA": 0,
+     "valB": 800
+    }
+   ],
+   "passiveT": 28.03194444444379,
+   "squad": true,
+   "rifle": "T01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Pulse Trooper|A03",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 10.165972222222411,
+   "tMin": 8.20833333333343,
+   "tMax": 12.84722222222252,
+   "valWinner": 573.9155200000014,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 573.9155200000014,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 8.21,
+     "valA": 100,
+     "valB": 601
+    },
+    {
+     "win": "B",
+     "t": 9.21,
+     "valA": 100,
+     "valB": 603
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 100,
+     "valB": 564
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 100,
+     "valB": 523
+    },
+    {
+     "win": "B",
+     "t": 8.21,
+     "valA": 100,
+     "valB": 586
+    },
+    {
+     "win": "B",
+     "t": 9.21,
+     "valA": 100,
+     "valB": 577
+    },
+    {
+     "win": "B",
+     "t": 11.5,
+     "valA": 100,
+     "valB": 555
+    },
+    {
+     "win": "B",
+     "t": 10.19,
+     "valA": 100,
+     "valB": 575
+    },
+    {
+     "win": "B",
+     "t": 9.22,
+     "valA": 100,
+     "valB": 581
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 100,
+     "valB": 555
+    },
+    {
+     "win": "B",
+     "t": 12.85,
+     "valA": 100,
+     "valB": 553
+    },
+    {
+     "win": "B",
+     "t": 10.03,
+     "valA": 100,
+     "valB": 590
+    },
+    {
+     "win": "B",
+     "t": 9.14,
+     "valA": 100,
+     "valB": 573
+    },
+    {
+     "win": "B",
+     "t": 11.01,
+     "valA": 100,
+     "valB": 575
+    },
+    {
+     "win": "B",
+     "t": 10.03,
+     "valA": 100,
+     "valB": 586
+    },
+    {
+     "win": "B",
+     "t": 11.01,
+     "valA": 100,
+     "valB": 555
+    },
+    {
+     "win": "B",
+     "t": 9.31,
+     "valA": 100,
+     "valB": 601
+    },
+    {
+     "win": "B",
+     "t": 10.1,
+     "valA": 100,
+     "valB": 581
+    },
+    {
+     "win": "B",
+     "t": 10.06,
+     "valA": 100,
+     "valB": 573
+    },
+    {
+     "win": "B",
+     "t": 9.15,
+     "valA": 100,
+     "valB": 570
+    }
+   ],
+   "passiveT": 20.766666666666417,
+   "squad": false,
+   "rifle": "T01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Pulse Trooper ×5|A03",
+   "A": {
+    "label": "Pulse Trooper ×5",
+    "ids": {
+     "T01": 5
+    },
+    "spent": 750,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 10.099305555555746,
+   "tMin": 8.152777777777878,
+   "tMax": 11.930555555555834,
+   "valWinner": 598.4992000000011,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 598.4992000000011,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 10.11,
+     "valA": 0,
+     "valB": 611
+    },
+    {
+     "win": "B",
+     "t": 9.15,
+     "valA": 0,
+     "valB": 594
+    },
+    {
+     "win": "B",
+     "t": 9.22,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 9.14,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 596
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 581
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 581
+    },
+    {
+     "win": "B",
+     "t": 8.21,
+     "valA": 0,
+     "valB": 612
+    },
+    {
+     "win": "B",
+     "t": 10.11,
+     "valA": 0,
+     "valB": 594
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 581
+    },
+    {
+     "win": "B",
+     "t": 8.15,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 10.1,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 10.14,
+     "valA": 0,
+     "valB": 612
+    },
+    {
+     "win": "B",
+     "t": 8.31,
+     "valA": 0,
+     "valB": 624
+    },
+    {
+     "win": "B",
+     "t": 10.14,
+     "valA": 0,
+     "valB": 607
+    },
+    {
+     "win": "B",
+     "t": 10.19,
+     "valA": 0,
+     "valB": 601
+    },
+    {
+     "win": "B",
+     "t": 11.01,
+     "valA": 0,
+     "valB": 592
+    },
+    {
+     "win": "B",
+     "t": 10.03,
+     "valA": 0,
+     "valB": 599
+    }
+   ],
+   "passiveT": 24.99999999999951,
+   "squad": true,
+   "rifle": "T01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Pulse Trooper|T03",
+   "A": {
+    "label": "Pulse Trooper",
+    "ids": {
+     "T01": 6
+    },
+    "spent": 900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 13.693055555555754,
+   "tMin": 9.819444444444615,
+   "tMax": 20.236111111110993,
+   "valWinner": 737.4216666666701,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 737.4216666666701,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 100,
+     "valB": 766
+    },
+    {
+     "win": "B",
+     "t": 12.46,
+     "valA": 100,
+     "valB": 770
+    },
+    {
+     "win": "B",
+     "t": 18.1,
+     "valA": 100,
+     "valB": 664
+    },
+    {
+     "win": "B",
+     "t": 15.04,
+     "valA": 100,
+     "valB": 728
+    },
+    {
+     "win": "B",
+     "t": 13.99,
+     "valA": 100,
+     "valB": 731
+    },
+    {
+     "win": "B",
+     "t": 10.94,
+     "valA": 100,
+     "valB": 777
+    },
+    {
+     "win": "B",
+     "t": 12.99,
+     "valA": 100,
+     "valB": 733
+    },
+    {
+     "win": "B",
+     "t": 20.24,
+     "valA": 100,
+     "valB": 615
+    },
+    {
+     "win": "B",
+     "t": 14.11,
+     "valA": 100,
+     "valB": 733
+    },
+    {
+     "win": "B",
+     "t": 9.82,
+     "valA": 100,
+     "valB": 793
+    },
+    {
+     "win": "B",
+     "t": 16.03,
+     "valA": 100,
+     "valB": 717
+    },
+    {
+     "win": "B",
+     "t": 11.9,
+     "valA": 100,
+     "valB": 748
+    },
+    {
+     "win": "B",
+     "t": 16.14,
+     "valA": 100,
+     "valB": 684
+    },
+    {
+     "win": "B",
+     "t": 11.92,
+     "valA": 100,
+     "valB": 759
+    },
+    {
+     "win": "B",
+     "t": 10.86,
+     "valA": 100,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 13.08,
+     "valA": 100,
+     "valB": 751
+    },
+    {
+     "win": "B",
+     "t": 15.03,
+     "valA": 100,
+     "valB": 731
+    },
+    {
+     "win": "B",
+     "t": 14.53,
+     "valA": 100,
+     "valB": 748
+    },
+    {
+     "win": "B",
+     "t": 13.83,
+     "valA": 100,
+     "valB": 742
+    },
+    {
+     "win": "B",
+     "t": 10.93,
+     "valA": 100,
+     "valB": 762
+    }
+   ],
+   "passiveT": 23.71805555555513,
+   "squad": false,
+   "rifle": "T01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Pulse Trooper ×5|T03",
+   "A": {
+    "label": "Pulse Trooper ×5",
+    "ids": {
+     "T01": 5
+    },
+    "spent": 750,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 12.679861111111354,
+   "tMin": 10.833333333333554,
+   "tMax": 17.069444444444496,
+   "valWinner": 779.538333333336,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 779.538333333336,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 11.42,
+     "valA": 0,
+     "valB": 799
+    },
+    {
+     "win": "B",
+     "t": 13.08,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 13.97,
+     "valA": 0,
+     "valB": 748
+    },
+    {
+     "win": "B",
+     "t": 12.89,
+     "valA": 0,
+     "valB": 766
+    },
+    {
+     "win": "B",
+     "t": 12.88,
+     "valA": 0,
+     "valB": 782
+    },
+    {
+     "win": "B",
+     "t": 10.85,
+     "valA": 0,
+     "valB": 801
+    },
+    {
+     "win": "B",
+     "t": 11.97,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 12.01,
+     "valA": 0,
+     "valB": 797
+    },
+    {
+     "win": "B",
+     "t": 11.89,
+     "valA": 0,
+     "valB": 806
+    },
+    {
+     "win": "B",
+     "t": 10.83,
+     "valA": 0,
+     "valB": 813
+    },
+    {
+     "win": "B",
+     "t": 15.04,
+     "valA": 0,
+     "valB": 768
+    },
+    {
+     "win": "B",
+     "t": 12.94,
+     "valA": 0,
+     "valB": 788
+    },
+    {
+     "win": "B",
+     "t": 10.88,
+     "valA": 0,
+     "valB": 775
+    },
+    {
+     "win": "B",
+     "t": 12.94,
+     "valA": 0,
+     "valB": 786
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 790
+    },
+    {
+     "win": "B",
+     "t": 16.22,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 17.07,
+     "valA": 0,
+     "valB": 715
+    },
+    {
+     "win": "B",
+     "t": 11.88,
+     "valA": 0,
+     "valB": 806
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 782
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 799
+    }
+   ],
+   "passiveT": 28.431944444443765,
+   "squad": true,
+   "rifle": "T01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (moving)|H03",
+   "A": {
+    "label": "Ranger (moving)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 12.187500000000222,
+   "tMin": 9.027777777777914,
+   "tMax": 17.08333333333338,
+   "valWinner": 775.4257894736844,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 775.4257894736844,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 12,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 12.29,
+     "valA": 0,
+     "valB": 776
+    },
+    {
+     "win": "B",
+     "t": 11.04,
+     "valA": 0,
+     "valB": 801
+    },
+    {
+     "win": "B",
+     "t": 11.22,
+     "valA": 0,
+     "valB": 805
+    },
+    {
+     "win": "B",
+     "t": 12.35,
+     "valA": 0,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 13.17,
+     "valA": 0,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 13.01,
+     "valA": 0,
+     "valB": 753
+    },
+    {
+     "win": "B",
+     "t": 9.03,
+     "valA": 0,
+     "valB": 819
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 801
+    },
+    {
+     "win": "B",
+     "t": 15.32,
+     "valA": 0,
+     "valB": 699
+    },
+    {
+     "win": "B",
+     "t": 10.11,
+     "valA": 0,
+     "valB": 814
+    },
+    {
+     "win": "B",
+     "t": 12.38,
+     "valA": 0,
+     "valB": 778
+    },
+    {
+     "win": "B",
+     "t": 13.1,
+     "valA": 0,
+     "valB": 749
+    },
+    {
+     "win": "B",
+     "t": 11.17,
+     "valA": 0,
+     "valB": 801
+    },
+    {
+     "win": "B",
+     "t": 9.86,
+     "valA": 0,
+     "valB": 803
+    },
+    {
+     "win": "B",
+     "t": 17.08,
+     "valA": 0,
+     "valB": 688
+    },
+    {
+     "win": "B",
+     "t": 10.36,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 11,
+     "valA": 0,
+     "valB": 799
+    },
+    {
+     "win": "B",
+     "t": 17.03,
+     "valA": 0,
+     "valB": 708
+    },
+    {
+     "win": "B",
+     "t": 11.26,
+     "valA": 0,
+     "valB": 794
+    }
+   ],
+   "passiveT": 26.48472222222161,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (moving) ×5|H03",
+   "A": {
+    "label": "Ranger (moving) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 12.98472222222244,
+   "tMin": 10.02777777777798,
+   "tMax": 18.27777777777776,
+   "valWinner": 758.064315789474,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 758.064315789474,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 12.47,
+     "valA": 0,
+     "valB": 792
+    },
+    {
+     "win": "B",
+     "t": 14.11,
+     "valA": 0,
+     "valB": 729
+    },
+    {
+     "win": "B",
+     "t": 18.28,
+     "valA": 0,
+     "valB": 724
+    },
+    {
+     "win": "B",
+     "t": 11.03,
+     "valA": 0,
+     "valB": 783
+    },
+    {
+     "win": "B",
+     "t": 11.1,
+     "valA": 0,
+     "valB": 801
+    },
+    {
+     "win": "B",
+     "t": 11.07,
+     "valA": 0,
+     "valB": 774
+    },
+    {
+     "win": "B",
+     "t": 13.15,
+     "valA": 0,
+     "valB": 765
+    },
+    {
+     "win": "B",
+     "t": 11.38,
+     "valA": 0,
+     "valB": 774
+    },
+    {
+     "win": "B",
+     "t": 10.99,
+     "valA": 0,
+     "valB": 769
+    },
+    {
+     "win": "B",
+     "t": 15.01,
+     "valA": 0,
+     "valB": 704
+    },
+    {
+     "win": "B",
+     "t": 13.11,
+     "valA": 0,
+     "valB": 756
+    },
+    {
+     "win": "B",
+     "t": 16.13,
+     "valA": 0,
+     "valB": 688
+    },
+    {
+     "win": "B",
+     "t": 10.31,
+     "valA": 0,
+     "valB": 790
+    },
+    {
+     "win": "B",
+     "t": 12.71,
+     "valA": 0,
+     "valB": 785
+    },
+    {
+     "win": "B",
+     "t": 14.14,
+     "valA": 0,
+     "valB": 762
+    },
+    {
+     "win": "B",
+     "t": 12.11,
+     "valA": 0,
+     "valB": 760
+    },
+    {
+     "win": "B",
+     "t": 13.1,
+     "valA": 0,
+     "valB": 783
+    },
+    {
+     "win": "B",
+     "t": 10.03,
+     "valA": 0,
+     "valB": 799
+    },
+    {
+     "win": "B",
+     "t": 14.28,
+     "valA": 0,
+     "valB": 697
+    },
+    {
+     "win": "B",
+     "t": 15.21,
+     "valA": 0,
+     "valB": 729
+    }
+   ],
+   "passiveT": 26.50416666666605,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (moving)|A03",
+   "A": {
+    "label": "Ranger (moving)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 11.618055555555815,
+   "tMin": 10.013888888889085,
+   "tMax": 13.6805555555558,
+   "valWinner": 583.6390000000013,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 583.6390000000013,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 576
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 580
+    },
+    {
+     "win": "B",
+     "t": 11.94,
+     "valA": 0,
+     "valB": 574
+    },
+    {
+     "win": "B",
+     "t": 10.99,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 578
+    },
+    {
+     "win": "B",
+     "t": 10.22,
+     "valA": 0,
+     "valB": 598
+    },
+    {
+     "win": "B",
+     "t": 11.86,
+     "valA": 0,
+     "valB": 582
+    },
+    {
+     "win": "B",
+     "t": 11.86,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 11.94,
+     "valA": 0,
+     "valB": 587
+    },
+    {
+     "win": "B",
+     "t": 11.93,
+     "valA": 0,
+     "valB": 587
+    },
+    {
+     "win": "B",
+     "t": 10.96,
+     "valA": 0,
+     "valB": 589
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 11.96,
+     "valA": 0,
+     "valB": 573
+    },
+    {
+     "win": "B",
+     "t": 13.68,
+     "valA": 0,
+     "valB": 571
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 580
+    },
+    {
+     "win": "B",
+     "t": 10.01,
+     "valA": 0,
+     "valB": 617
+    },
+    {
+     "win": "B",
+     "t": 11.86,
+     "valA": 0,
+     "valB": 584
+    },
+    {
+     "win": "B",
+     "t": 12.76,
+     "valA": 0,
+     "valB": 567
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 593
+    },
+    {
+     "win": "B",
+     "t": 10.96,
+     "valA": 0,
+     "valB": 580
+    }
+   ],
+   "passiveT": 25.14861111111056,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (moving) ×5|A03",
+   "A": {
+    "label": "Ranger (moving) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 11.580555555555803,
+   "tMin": 9.986111111111306,
+   "tMax": 14.611111111111303,
+   "valWinner": 579.5756000000014,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 579.5756000000014,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 591
+    },
+    {
+     "win": "B",
+     "t": 11.88,
+     "valA": 0,
+     "valB": 561
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 587
+    },
+    {
+     "win": "B",
+     "t": 10.13,
+     "valA": 0,
+     "valB": 593
+    },
+    {
+     "win": "B",
+     "t": 12.76,
+     "valA": 0,
+     "valB": 573
+    },
+    {
+     "win": "B",
+     "t": 10.97,
+     "valA": 0,
+     "valB": 600
+    },
+    {
+     "win": "B",
+     "t": 11.94,
+     "valA": 0,
+     "valB": 582
+    },
+    {
+     "win": "B",
+     "t": 12.04,
+     "valA": 0,
+     "valB": 587
+    },
+    {
+     "win": "B",
+     "t": 10.06,
+     "valA": 0,
+     "valB": 582
+    },
+    {
+     "win": "B",
+     "t": 12.88,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 13.78,
+     "valA": 0,
+     "valB": 547
+    },
+    {
+     "win": "B",
+     "t": 10.13,
+     "valA": 0,
+     "valB": 608
+    },
+    {
+     "win": "B",
+     "t": 10,
+     "valA": 0,
+     "valB": 574
+    },
+    {
+     "win": "B",
+     "t": 12,
+     "valA": 0,
+     "valB": 552
+    },
+    {
+     "win": "B",
+     "t": 11.85,
+     "valA": 0,
+     "valB": 593
+    },
+    {
+     "win": "B",
+     "t": 14.61,
+     "valA": 0,
+     "valB": 556
+    },
+    {
+     "win": "B",
+     "t": 9.99,
+     "valA": 0,
+     "valB": 563
+    }
+   ],
+   "passiveT": 25.11805555555501,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (moving)|T03",
+   "A": {
+    "label": "Ranger (moving)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 15.138194444444597,
+   "tMin": 11.88888888888917,
+   "tMax": 29.16666666666604,
+   "valWinner": 751.7708624999967,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 751.7708624999967,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 20.9,
+     "valA": 0,
+     "valB": 788
+    },
+    {
+     "win": "B",
+     "t": 12.31,
+     "valA": 0,
+     "valB": 739
+    },
+    {
+     "win": "B",
+     "t": 13.18,
+     "valA": 0,
+     "valB": 772
+    },
+    {
+     "win": "B",
+     "t": 13.17,
+     "valA": 0,
+     "valB": 779
+    },
+    {
+     "win": "B",
+     "t": 13.47,
+     "valA": 0,
+     "valB": 767
+    },
+    {
+     "win": "B",
+     "t": 12.26,
+     "valA": 0,
+     "valB": 765
+    },
+    {
+     "win": "B",
+     "t": 29.17,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 15.35,
+     "valA": 0,
+     "valB": 758
+    },
+    {
+     "win": "B",
+     "t": 13.35,
+     "valA": 0,
+     "valB": 774
+    },
+    {
+     "win": "B",
+     "t": 15.25,
+     "valA": 0,
+     "valB": 744
+    },
+    {
+     "win": "B",
+     "t": 12.19,
+     "valA": 0,
+     "valB": 746
+    },
+    {
+     "win": "B",
+     "t": 12.21,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 20.61,
+     "valA": 0,
+     "valB": 613
+    },
+    {
+     "win": "B",
+     "t": 14.31,
+     "valA": 0,
+     "valB": 765
+    },
+    {
+     "win": "B",
+     "t": 11.89,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 12.04,
+     "valA": 0,
+     "valB": 793
+    },
+    {
+     "win": "B",
+     "t": 14.19,
+     "valA": 0,
+     "valB": 767
+    },
+    {
+     "win": "B",
+     "t": 15.24,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 12.13,
+     "valA": 0,
+     "valB": 772
+    },
+    {
+     "win": "B",
+     "t": 19.56,
+     "valA": 0,
+     "valB": 650
+    }
+   ],
+   "passiveT": 26.999999999999357,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (moving) ×5|T03",
+   "A": {
+    "label": "Ranger (moving) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 17.67638888888891,
+   "tMin": 12.13888888888917,
+   "tMax": 31.555555555554786,
+   "valWinner": 762.4258249999967,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 762.4258249999967,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 13.17,
+     "valA": 0,
+     "valB": 758
+    },
+    {
+     "win": "B",
+     "t": 14.71,
+     "valA": 0,
+     "valB": 777
+    },
+    {
+     "win": "B",
+     "t": 16.29,
+     "valA": 0,
+     "valB": 739
+    },
+    {
+     "win": "B",
+     "t": 14.18,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 31.56,
+     "valA": 0,
+     "valB": 788
+    },
+    {
+     "win": "B",
+     "t": 30.37,
+     "valA": 0,
+     "valB": 777
+    },
+    {
+     "win": "B",
+     "t": 13.15,
+     "valA": 0,
+     "valB": 735
+    },
+    {
+     "win": "B",
+     "t": 14.13,
+     "valA": 0,
+     "valB": 753
+    },
+    {
+     "win": "B",
+     "t": 14.83,
+     "valA": 0,
+     "valB": 777
+    },
+    {
+     "win": "B",
+     "t": 13.15,
+     "valA": 0,
+     "valB": 742
+    },
+    {
+     "win": "B",
+     "t": 22.97,
+     "valA": 0,
+     "valB": 767
+    },
+    {
+     "win": "B",
+     "t": 12.43,
+     "valA": 0,
+     "valB": 802
+    },
+    {
+     "win": "B",
+     "t": 13.06,
+     "valA": 0,
+     "valB": 772
+    },
+    {
+     "win": "B",
+     "t": 17.33,
+     "valA": 0,
+     "valB": 713
+    },
+    {
+     "win": "B",
+     "t": 12.14,
+     "valA": 0,
+     "valB": 758
+    },
+    {
+     "win": "B",
+     "t": 14.31,
+     "valA": 0,
+     "valB": 779
+    },
+    {
+     "win": "B",
+     "t": 29.17,
+     "valA": 0,
+     "valB": 802
+    },
+    {
+     "win": "B",
+     "t": 14.28,
+     "valA": 0,
+     "valB": 786
+    },
+    {
+     "win": "B",
+     "t": 13.15,
+     "valA": 0,
+     "valB": 795
+    },
+    {
+     "win": "B",
+     "t": 29.15,
+     "valA": 0,
+     "valB": 725
+    }
+   ],
+   "passiveT": 26.999999999999346,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (set up)|H03",
+   "A": {
+    "label": "Ranger (set up)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 1,
+   "winB": 0,
+   "draws": 0,
+   "t": 33.818055555554636,
+   "tMin": 32.638888888888026,
+   "tMax": 38.77777777777656,
+   "valWinner": 477.6472588042605,
+   "valLoser": 0,
+   "valA": 477.6472588042605,
+   "valB": 0,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 32.71,
+     "valA": 522,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.03,
+     "valA": 518,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.64,
+     "valA": 526,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.76,
+     "valA": 435,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.14,
+     "valA": 578,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.1,
+     "valA": 473,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.24,
+     "valA": 426,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.03,
+     "valA": 594,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33,
+     "valA": 503,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 38.46,
+     "valA": 410,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 38.57,
+     "valA": 428,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.37,
+     "valA": 419,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.64,
+     "valA": 380,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 38.78,
+     "valA": 304,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33,
+     "valA": 350,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.9,
+     "valA": 563,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.06,
+     "valA": 489,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.06,
+     "valA": 423,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.03,
+     "valA": 577,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.86,
+     "valA": 634,
+     "valB": 0
+    }
+   ],
+   "passiveT": 26.497222222221684,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (set up) ×5|H03",
+   "A": {
+    "label": "Ranger (set up) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 1,
+   "winB": 0,
+   "draws": 0,
+   "t": 33.69027777777687,
+   "tMin": 32.708333333332455,
+   "tMax": 39.12499999999879,
+   "valWinner": 476.1612444069745,
+   "valLoser": 0,
+   "valA": 476.1612444069745,
+   "valB": 0,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 33.11,
+     "valA": 420,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.15,
+     "valA": 484,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.24,
+     "valA": 486,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.85,
+     "valA": 509,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 39.12,
+     "valA": 400,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 38.81,
+     "valA": 455,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.22,
+     "valA": 492,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.92,
+     "valA": 454,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.87,
+     "valA": 512,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.01,
+     "valA": 454,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.03,
+     "valA": 447,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.03,
+     "valA": 481,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.17,
+     "valA": 637,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.22,
+     "valA": 527,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.71,
+     "valA": 489,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.4,
+     "valA": 493,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.28,
+     "valA": 440,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.49,
+     "valA": 451,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 33.42,
+     "valA": 428,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 32.76,
+     "valA": 463,
+     "valB": 0
+    }
+   ],
+   "passiveT": 26.499999999999453,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (set up)|A03",
+   "A": {
+    "label": "Ranger (set up)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.65,
+   "winB": 0,
+   "draws": 7,
+   "t": 67.23290598290316,
+   "tMin": 53.23611111110912,
+   "tMax": 74.86111111110786,
+   "valWinner": 247.09650074202958,
+   "valLoser": 0,
+   "valA": 192.3945633795688,
+   "valB": 69.42914999999833,
+   "wonBy": "A",
+   "flag": false,
+   "runs": [
+    {
+     "win": "A",
+     "t": 72.08,
+     "valA": 367,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 147,
+     "valB": 197
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 31,
+     "valB": 206
+    },
+    {
+     "win": "A",
+     "t": 72.44,
+     "valA": 126,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 39,
+     "valB": 204
+    },
+    {
+     "win": "A",
+     "t": 72.76,
+     "valA": 211,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 53.24,
+     "valA": 409,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 74.86,
+     "valA": 190,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 37,
+     "valB": 201
+    },
+    {
+     "win": "A",
+     "t": 53.54,
+     "valA": 322,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 73.25,
+     "valA": 177,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 161,
+     "valB": 199
+    },
+    {
+     "win": "A",
+     "t": 70.9,
+     "valA": 311,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 90,
+     "valB": 202
+    },
+    {
+     "win": "A",
+     "t": 58.35,
+     "valA": 112,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 130,
+     "valB": 180
+    },
+    {
+     "win": "A",
+     "t": 53.56,
+     "valA": 393,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 72.57,
+     "valA": 213,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 73.93,
+     "valA": 176,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 72.54,
+     "valA": 205,
+     "valB": 0
+    }
+   ],
+   "passiveT": 25.11111111111066,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (set up) ×5|A03",
+   "A": {
+    "label": "Ranger (set up) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.8,
+   "winB": 0.05,
+   "draws": 3,
+   "t": 65.29166666666397,
+   "tMin": 20.09722222222208,
+   "tMax": 77.26388888888552,
+   "valWinner": 254.56687912734293,
+   "valLoser": 0,
+   "valA": 198.99394229323758,
+   "valB": 61.873639999999156,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 77.11,
+     "valA": 60,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 76.99,
+     "valA": 141,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 53.17,
+     "valA": 394,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 73.11,
+     "valA": 197,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 74.06,
+     "valA": 211,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 72.42,
+     "valA": 229,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 69.97,
+     "valA": 341,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 20.1,
+     "valA": 0,
+     "valB": 641
+    },
+    {
+     "win": "A",
+     "t": 77.26,
+     "valA": 126,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 43.36,
+     "valA": 270,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 71.69,
+     "valA": 249,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 73.17,
+     "valA": 119,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 52.6,
+     "valA": 370,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 72.81,
+     "valA": 191,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 147,
+     "valB": 205
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 77,
+     "valB": 189
+    },
+    {
+     "win": "A",
+     "t": 72.33,
+     "valA": 274,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 52.86,
+     "valA": 393,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 76.96,
+     "valA": 122,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 69,
+     "valB": 203
+    }
+   ],
+   "passiveT": 25.11111111111066,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (set up)|T03",
+   "A": {
+    "label": "Ranger (set up)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.8,
+   "winB": 0.1,
+   "draws": 2,
+   "t": 56.96604938271384,
+   "tMin": 23.388888888888584,
+   "tMax": 81.01388888888529,
+   "valWinner": 407.8247378466828,
+   "valLoser": 0,
+   "valA": 283.57050139675647,
+   "valB": 124.04070833333137,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 56.57,
+     "valA": 390,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 55.71,
+     "valA": 402,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.39,
+     "valA": 419,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 46.1,
+     "valA": 314,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 77.01,
+     "valA": 356,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 55.21,
+     "valA": 383,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 55.72,
+     "valA": 412,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.33,
+     "valA": 276,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.18,
+     "valA": 363,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 56,
+     "valB": 357
+    },
+    {
+     "win": "A",
+     "t": 56.4,
+     "valA": 319,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 80.43,
+     "valA": 221,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 23.39,
+     "valA": 0,
+     "valB": 887
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 41,
+     "valB": 357
+    },
+    {
+     "win": "A",
+     "t": 56.33,
+     "valA": 444,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.14,
+     "valA": 361,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 76.47,
+     "valA": 323,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 81.01,
+     "valA": 184,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.04,
+     "valA": 407,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 23.94,
+     "valA": 0,
+     "valB": 879
+    }
+   ],
+   "passiveT": 27.22222222222166,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (set up) ×5|T03",
+   "A": {
+    "label": "Ranger (set up) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "setup"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0.9,
+   "winB": 0.05,
+   "draws": 1,
+   "t": 59.67251461988069,
+   "tMin": 23.277777777777466,
+   "tMax": 78.08333333332995,
+   "valWinner": 384.88875176972715,
+   "valLoser": 0,
+   "valA": 329.4621651427793,
+   "valB": 60.61554166666569,
+   "wonBy": "A",
+   "flag": true,
+   "runs": [
+    {
+     "win": "A",
+     "t": 46.61,
+     "valA": 370,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.42,
+     "valA": 346,
+     "valB": 0
+    },
+    {
+     "win": "B",
+     "t": 23.28,
+     "valA": 0,
+     "valB": 890
+    },
+    {
+     "win": "A",
+     "t": 55.58,
+     "valA": 383,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.43,
+     "valA": 478,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 57.07,
+     "valA": 304,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 78.04,
+     "valA": 220,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 77.19,
+     "valA": 363,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.36,
+     "valA": 441,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 55.92,
+     "valA": 404,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 78.08,
+     "valA": 384,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.28,
+     "valA": 429,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.15,
+     "valA": 356,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 76.86,
+     "valA": 324,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.99,
+     "valA": 196,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.42,
+     "valA": 380,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 76.81,
+     "valA": 365,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 57.18,
+     "valA": 178,
+     "valB": 0
+    },
+    {
+     "win": "A",
+     "t": 56.11,
+     "valA": 501,
+     "valB": 0
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 166,
+     "valB": 323
+    }
+   ],
+   "passiveT": 27.22222222222166,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (in battle)|H03",
+   "A": {
+    "label": "Ranger (in battle)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 0.95,
+   "draws": 1,
+   "t": 16.45906432748546,
+   "tMin": 13.597222222222474,
+   "tMax": 20.94444444444426,
+   "valWinner": 715.1853739612209,
+   "valLoser": 0,
+   "valA": 1.2993095407766266,
+   "valB": 687.100395789476,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 16.42,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 16.56,
+     "valA": 0,
+     "valB": 762
+    },
+    {
+     "win": "B",
+     "t": 20.94,
+     "valA": 0,
+     "valB": 633
+    },
+    {
+     "win": "B",
+     "t": 15.67,
+     "valA": 0,
+     "valB": 704
+    },
+    {
+     "win": "B",
+     "t": 16.85,
+     "valA": 0,
+     "valB": 659
+    },
+    {
+     "win": "B",
+     "t": 14.64,
+     "valA": 0,
+     "valB": 753
+    },
+    {
+     "win": "B",
+     "t": 16.83,
+     "valA": 0,
+     "valB": 713
+    },
+    {
+     "win": "B",
+     "t": 17.43,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 19.85,
+     "valA": 0,
+     "valB": 663
+    },
+    {
+     "win": "B",
+     "t": 16.78,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 15.74,
+     "valA": 0,
+     "valB": 731
+    },
+    {
+     "win": "B",
+     "t": 16.67,
+     "valA": 0,
+     "valB": 679
+    },
+    {
+     "win": "B",
+     "t": 14.4,
+     "valA": 0,
+     "valB": 762
+    },
+    {
+     "win": "B",
+     "t": 17.54,
+     "valA": 0,
+     "valB": 731
+    },
+    {
+     "win": "B",
+     "t": 16.46,
+     "valA": 0,
+     "valB": 734
+    },
+    {
+     "win": "B",
+     "t": 13.6,
+     "valA": 0,
+     "valB": 740
+    },
+    {
+     "win": "B",
+     "t": 15.63,
+     "valA": 0,
+     "valB": 679
+    },
+    {
+     "win": "B",
+     "t": 14.39,
+     "valA": 0,
+     "valB": 760
+    },
+    {
+     "win": "B",
+     "t": 16.35,
+     "valA": 0,
+     "valB": 735
+    },
+    {
+     "win": "none",
+     "t": null,
+     "valA": 26,
+     "valB": 153
+    }
+   ],
+   "passiveT": 26.566666666666066,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (in battle) ×5|H03",
+   "A": {
+    "label": "Ranger (in battle) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Bastion",
+    "ids": {
+     "H03": 1
+    },
+    "spent": 900,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 16.371527777777867,
+   "tMin": 12.680555555555866,
+   "tMax": 20.888888888888733,
+   "valWinner": 720.9796547368442,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 720.9796547368442,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 15.57,
+     "valA": 0,
+     "valB": 739
+    },
+    {
+     "win": "B",
+     "t": 14.26,
+     "valA": 0,
+     "valB": 765
+    },
+    {
+     "win": "B",
+     "t": 16.89,
+     "valA": 0,
+     "valB": 685
+    },
+    {
+     "win": "B",
+     "t": 18.78,
+     "valA": 0,
+     "valB": 688
+    },
+    {
+     "win": "B",
+     "t": 12.68,
+     "valA": 0,
+     "valB": 770
+    },
+    {
+     "win": "B",
+     "t": 13.53,
+     "valA": 0,
+     "valB": 752
+    },
+    {
+     "win": "B",
+     "t": 16.85,
+     "valA": 0,
+     "valB": 714
+    },
+    {
+     "win": "B",
+     "t": 15.81,
+     "valA": 0,
+     "valB": 689
+    },
+    {
+     "win": "B",
+     "t": 17.82,
+     "valA": 0,
+     "valB": 724
+    },
+    {
+     "win": "B",
+     "t": 17.63,
+     "valA": 0,
+     "valB": 704
+    },
+    {
+     "win": "B",
+     "t": 18.71,
+     "valA": 0,
+     "valB": 705
+    },
+    {
+     "win": "B",
+     "t": 18.61,
+     "valA": 0,
+     "valB": 649
+    },
+    {
+     "win": "B",
+     "t": 13.61,
+     "valA": 0,
+     "valB": 744
+    },
+    {
+     "win": "B",
+     "t": 18.46,
+     "valA": 0,
+     "valB": 709
+    },
+    {
+     "win": "B",
+     "t": 17.71,
+     "valA": 0,
+     "valB": 702
+    },
+    {
+     "win": "B",
+     "t": 20.89,
+     "valA": 0,
+     "valB": 661
+    },
+    {
+     "win": "B",
+     "t": 15.65,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 13.67,
+     "valA": 0,
+     "valB": 766
+    },
+    {
+     "win": "B",
+     "t": 15.63,
+     "valA": 0,
+     "valB": 741
+    },
+    {
+     "win": "B",
+     "t": 14.69,
+     "valA": 0,
+     "valB": 775
+    }
+   ],
+   "passiveT": 26.524999999999388,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "H03"
+  },
+  {
+   "name": "b:Ranger (in battle)|A03",
+   "A": {
+    "label": "Ranger (in battle)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 17.35208333333337,
+   "tMin": 13.013888888889172,
+   "tMax": 23.361111111110798,
+   "valWinner": 535.3095399999934,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 535.3095399999934,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 22.18,
+     "valA": 0,
+     "valB": 497
+    },
+    {
+     "win": "B",
+     "t": 15.76,
+     "valA": 0,
+     "valB": 525
+    },
+    {
+     "win": "B",
+     "t": 19.47,
+     "valA": 0,
+     "valB": 543
+    },
+    {
+     "win": "B",
+     "t": 14.08,
+     "valA": 0,
+     "valB": 549
+    },
+    {
+     "win": "B",
+     "t": 16.19,
+     "valA": 0,
+     "valB": 585
+    },
+    {
+     "win": "B",
+     "t": 13.01,
+     "valA": 0,
+     "valB": 593
+    },
+    {
+     "win": "B",
+     "t": 16.96,
+     "valA": 0,
+     "valB": 570
+    },
+    {
+     "win": "B",
+     "t": 14.39,
+     "valA": 0,
+     "valB": 605
+    },
+    {
+     "win": "B",
+     "t": 13.85,
+     "valA": 0,
+     "valB": 553
+    },
+    {
+     "win": "B",
+     "t": 23.36,
+     "valA": 0,
+     "valB": 477
+    },
+    {
+     "win": "B",
+     "t": 19.49,
+     "valA": 0,
+     "valB": 497
+    },
+    {
+     "win": "B",
+     "t": 19.35,
+     "valA": 0,
+     "valB": 493
+    },
+    {
+     "win": "B",
+     "t": 18.68,
+     "valA": 0,
+     "valB": 537
+    },
+    {
+     "win": "B",
+     "t": 18.68,
+     "valA": 0,
+     "valB": 554
+    },
+    {
+     "win": "B",
+     "t": 14.67,
+     "valA": 0,
+     "valB": 539
+    },
+    {
+     "win": "B",
+     "t": 15.54,
+     "valA": 0,
+     "valB": 473
+    },
+    {
+     "win": "B",
+     "t": 20.18,
+     "valA": 0,
+     "valB": 499
+    },
+    {
+     "win": "B",
+     "t": 15.76,
+     "valA": 0,
+     "valB": 536
+    },
+    {
+     "win": "B",
+     "t": 16,
+     "valA": 0,
+     "valB": 582
+    },
+    {
+     "win": "B",
+     "t": 19.43,
+     "valA": 0,
+     "valB": 500
+    }
+   ],
+   "passiveT": 25.11388888888835,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (in battle) ×5|A03",
+   "A": {
+    "label": "Ranger (in battle) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Arbiter",
+    "ids": {
+     "A03": 1
+    },
+    "spent": 700,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 16.754166666666737,
+   "tMin": 14.013888888889106,
+   "tMax": 20.70833333333317,
+   "valWinner": 555.025829999994,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 555.025829999994,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 17.9,
+     "valA": 0,
+     "valB": 560
+    },
+    {
+     "win": "B",
+     "t": 19.33,
+     "valA": 0,
+     "valB": 512
+    },
+    {
+     "win": "B",
+     "t": 16.6,
+     "valA": 0,
+     "valB": 529
+    },
+    {
+     "win": "B",
+     "t": 14.04,
+     "valA": 0,
+     "valB": 586
+    },
+    {
+     "win": "B",
+     "t": 14.01,
+     "valA": 0,
+     "valB": 580
+    },
+    {
+     "win": "B",
+     "t": 20.47,
+     "valA": 0,
+     "valB": 544
+    },
+    {
+     "win": "B",
+     "t": 15.76,
+     "valA": 0,
+     "valB": 559
+    },
+    {
+     "win": "B",
+     "t": 14.85,
+     "valA": 0,
+     "valB": 564
+    },
+    {
+     "win": "B",
+     "t": 14.29,
+     "valA": 0,
+     "valB": 605
+    },
+    {
+     "win": "B",
+     "t": 15.6,
+     "valA": 0,
+     "valB": 546
+    },
+    {
+     "win": "B",
+     "t": 17.35,
+     "valA": 0,
+     "valB": 592
+    },
+    {
+     "win": "B",
+     "t": 18.81,
+     "valA": 0,
+     "valB": 509
+    },
+    {
+     "win": "B",
+     "t": 14.85,
+     "valA": 0,
+     "valB": 566
+    },
+    {
+     "win": "B",
+     "t": 16.33,
+     "valA": 0,
+     "valB": 588
+    },
+    {
+     "win": "B",
+     "t": 14.17,
+     "valA": 0,
+     "valB": 544
+    },
+    {
+     "win": "B",
+     "t": 17.03,
+     "valA": 0,
+     "valB": 544
+    },
+    {
+     "win": "B",
+     "t": 16.76,
+     "valA": 0,
+     "valB": 547
+    },
+    {
+     "win": "B",
+     "t": 18.31,
+     "valA": 0,
+     "valB": 575
+    },
+    {
+     "win": "B",
+     "t": 17.92,
+     "valA": 0,
+     "valB": 543
+    },
+    {
+     "win": "B",
+     "t": 20.71,
+     "valA": 0,
+     "valB": 505
+    }
+   ],
+   "passiveT": 25.151388888888352,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "A03"
+  },
+  {
+   "name": "b:Ranger (in battle)|T03",
+   "A": {
+    "label": "Ranger (in battle)",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 19.337499999999935,
+   "tMin": 16.22222222222232,
+   "tMax": 24.944444444444066,
+   "valWinner": 722.0858166666594,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 722.0858166666594,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 17.32,
+     "valA": 0,
+     "valB": 749
+    },
+    {
+     "win": "B",
+     "t": 17.25,
+     "valA": 0,
+     "valB": 728
+    },
+    {
+     "win": "B",
+     "t": 16.28,
+     "valA": 0,
+     "valB": 771
+    },
+    {
+     "win": "B",
+     "t": 16.22,
+     "valA": 0,
+     "valB": 811
+    },
+    {
+     "win": "B",
+     "t": 21,
+     "valA": 0,
+     "valB": 743
+    },
+    {
+     "win": "B",
+     "t": 18.92,
+     "valA": 0,
+     "valB": 747
+    },
+    {
+     "win": "B",
+     "t": 17.39,
+     "valA": 0,
+     "valB": 779
+    },
+    {
+     "win": "B",
+     "t": 18.67,
+     "valA": 0,
+     "valB": 711
+    },
+    {
+     "win": "B",
+     "t": 17.65,
+     "valA": 0,
+     "valB": 727
+    },
+    {
+     "win": "B",
+     "t": 21.83,
+     "valA": 0,
+     "valB": 553
+    },
+    {
+     "win": "B",
+     "t": 19.89,
+     "valA": 0,
+     "valB": 677
+    },
+    {
+     "win": "B",
+     "t": 19.76,
+     "valA": 0,
+     "valB": 733
+    },
+    {
+     "win": "B",
+     "t": 17.94,
+     "valA": 0,
+     "valB": 775
+    },
+    {
+     "win": "B",
+     "t": 18.75,
+     "valA": 0,
+     "valB": 793
+    },
+    {
+     "win": "B",
+     "t": 17.04,
+     "valA": 0,
+     "valB": 756
+    },
+    {
+     "win": "B",
+     "t": 24.94,
+     "valA": 0,
+     "valB": 674
+    },
+    {
+     "win": "B",
+     "t": 21.86,
+     "valA": 0,
+     "valB": 677
+    },
+    {
+     "win": "B",
+     "t": 17.36,
+     "valA": 0,
+     "valB": 764
+    },
+    {
+     "win": "B",
+     "t": 24.89,
+     "valA": 0,
+     "valB": 633
+    },
+    {
+     "win": "B",
+     "t": 21.78,
+     "valA": 0,
+     "valB": 642
+    }
+   ],
+   "passiveT": 27.306944444443797,
+   "squad": false,
+   "rifle": "A01",
+   "tank": "T03"
+  },
+  {
+   "name": "b:Ranger (in battle) ×5|T03",
+   "A": {
+    "label": "Ranger (in battle) ×5",
+    "ids": {
+     "A01": 5
+    },
+    "spent": 1000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "B": {
+    "label": "Wisp",
+    "ids": {
+     "T03": 1
+    },
+    "spent": 950,
+    "left": 0,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 19.118055555555507,
+   "tMin": 15.291666666666835,
+   "tMax": 23.180555555555276,
+   "valWinner": 726.383933333326,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 726.383933333326,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 21.78,
+     "valA": 0,
+     "valB": 681
+    },
+    {
+     "win": "B",
+     "t": 23.18,
+     "valA": 0,
+     "valB": 666
+    },
+    {
+     "win": "B",
+     "t": 21.85,
+     "valA": 0,
+     "valB": 693
+    },
+    {
+     "win": "B",
+     "t": 15.33,
+     "valA": 0,
+     "valB": 786
+    },
+    {
+     "win": "B",
+     "t": 19.69,
+     "valA": 0,
+     "valB": 642
+    },
+    {
+     "win": "B",
+     "t": 15.58,
+     "valA": 0,
+     "valB": 780
+    },
+    {
+     "win": "B",
+     "t": 20.74,
+     "valA": 0,
+     "valB": 709
+    },
+    {
+     "win": "B",
+     "t": 19.74,
+     "valA": 0,
+     "valB": 727
+    },
+    {
+     "win": "B",
+     "t": 16.61,
+     "valA": 0,
+     "valB": 765
+    },
+    {
+     "win": "B",
+     "t": 15.57,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 22.89,
+     "valA": 0,
+     "valB": 685
+    },
+    {
+     "win": "B",
+     "t": 20.96,
+     "valA": 0,
+     "valB": 744
+    },
+    {
+     "win": "B",
+     "t": 18.86,
+     "valA": 0,
+     "valB": 685
+    },
+    {
+     "win": "B",
+     "t": 16.63,
+     "valA": 0,
+     "valB": 784
+    },
+    {
+     "win": "B",
+     "t": 17.44,
+     "valA": 0,
+     "valB": 775
+    },
+    {
+     "win": "B",
+     "t": 20.76,
+     "valA": 0,
+     "valB": 735
+    },
+    {
+     "win": "B",
+     "t": 19.81,
+     "valA": 0,
+     "valB": 694
+    },
+    {
+     "win": "B",
+     "t": 15.29,
+     "valA": 0,
+     "valB": 775
+    },
+    {
+     "win": "B",
+     "t": 19.89,
+     "valA": 0,
+     "valB": 743
+    },
+    {
+     "win": "B",
+     "t": 19.76,
+     "valA": 0,
+     "valB": 721
+    }
+   ],
+   "passiveT": 27.25416666666601,
+   "squad": true,
+   "rifle": "A01",
+   "tank": "T03"
+  }
+ ],
+ "c": [
+  {
+   "name": "c:compact|lattice",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 4.145833333333319,
+   "tMin": 3.9166666666666528,
+   "tMax": 4.458333333333319,
+   "valWinner": 870.5090909090908,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 870.5090909090908,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 4.46,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 3.92,
+     "valA": 0,
+     "valB": 907
+    },
+    {
+     "win": "B",
+     "t": 4.15,
+     "valA": 0,
+     "valB": 882
+    },
+    {
+     "win": "B",
+     "t": 4.08,
+     "valA": 0,
+     "valB": 866
+    },
+    {
+     "win": "B",
+     "t": 4.06,
+     "valA": 0,
+     "valB": 933
+    },
+    {
+     "win": "B",
+     "t": 4.22,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 4.1,
+     "valA": 0,
+     "valB": 892
+    },
+    {
+     "win": "B",
+     "t": 4.17,
+     "valA": 0,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 4.26,
+     "valA": 0,
+     "valB": 850
+    },
+    {
+     "win": "B",
+     "t": 4.22,
+     "valA": 0,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 4.07,
+     "valA": 0,
+     "valB": 869
+    },
+    {
+     "win": "B",
+     "t": 4.12,
+     "valA": 0,
+     "valB": 907
+    },
+    {
+     "win": "B",
+     "t": 4.01,
+     "valA": 0,
+     "valB": 919
+    },
+    {
+     "win": "B",
+     "t": 4.14,
+     "valA": 0,
+     "valB": 866
+    },
+    {
+     "win": "B",
+     "t": 3.99,
+     "valA": 0,
+     "valB": 933
+    },
+    {
+     "win": "B",
+     "t": 4.06,
+     "valA": 0,
+     "valB": 879
+    },
+    {
+     "win": "B",
+     "t": 4.26,
+     "valA": 0,
+     "valB": 838
+    },
+    {
+     "win": "B",
+     "t": 4.35,
+     "valA": 0,
+     "valB": 798
+    },
+    {
+     "win": "B",
+     "t": 4.19,
+     "valA": 0,
+     "valB": 865
+    },
+    {
+     "win": "B",
+     "t": 4.08,
+     "valA": 0,
+     "valB": 881
+    }
+   ]
+  },
+  {
+   "name": "c:compact|helix",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers + Halo",
+    "ids": {
+     "A06": 1,
+     "A01": 6
+    },
+    "spent": 1850,
+    "left": 150,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0.1,
+   "winB": 0.9,
+   "draws": 0,
+   "t": 6.2145833333333576,
+   "tMin": 5.472222222222206,
+   "tMax": 7.91666666666678,
+   "valWinner": 557.2608547008547,
+   "valLoser": 15,
+   "valA": 19.337777777777777,
+   "valB": 552.9230769230769,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 5.47,
+     "valA": 0,
+     "valB": 718
+    },
+    {
+     "win": "B",
+     "t": 6.14,
+     "valA": 0,
+     "valB": 561
+    },
+    {
+     "win": "B",
+     "t": 5.6,
+     "valA": 0,
+     "valB": 688
+    },
+    {
+     "win": "B",
+     "t": 6.21,
+     "valA": 0,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 5.6,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 7.5,
+     "valA": 0,
+     "valB": 259
+    },
+    {
+     "win": "A",
+     "t": 7.11,
+     "valA": 251,
+     "valB": 150
+    },
+    {
+     "win": "B",
+     "t": 5.54,
+     "valA": 0,
+     "valB": 750
+    },
+    {
+     "win": "B",
+     "t": 6.5,
+     "valA": 0,
+     "valB": 500
+    },
+    {
+     "win": "B",
+     "t": 5.76,
+     "valA": 0,
+     "valB": 686
+    },
+    {
+     "win": "B",
+     "t": 5.64,
+     "valA": 0,
+     "valB": 686
+    },
+    {
+     "win": "B",
+     "t": 6.33,
+     "valA": 0,
+     "valB": 550
+    },
+    {
+     "win": "B",
+     "t": 6.86,
+     "valA": 0,
+     "valB": 437
+    },
+    {
+     "win": "B",
+     "t": 5.87,
+     "valA": 0,
+     "valB": 589
+    },
+    {
+     "win": "B",
+     "t": 5.78,
+     "valA": 0,
+     "valB": 712
+    },
+    {
+     "win": "A",
+     "t": 7.92,
+     "valA": 135,
+     "valB": 150
+    },
+    {
+     "win": "B",
+     "t": 5.96,
+     "valA": 0,
+     "valB": 662
+    },
+    {
+     "win": "B",
+     "t": 7.39,
+     "valA": 0,
+     "valB": 323
+    },
+    {
+     "win": "B",
+     "t": 5.53,
+     "valA": 0,
+     "valB": 644
+    },
+    {
+     "win": "B",
+     "t": 5.58,
+     "valA": 0,
+     "valB": 705
+    }
+   ]
+  },
+  {
+   "name": "c:lattice|helix",
+   "A": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers + Halo",
+    "ids": {
+     "A06": 1,
+     "A01": 6
+    },
+    "spent": 1850,
+    "left": 150,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 5.179861111111104,
+   "tMin": 3.902777777777765,
+   "tMax": 6.291666666666677,
+   "valWinner": 1380.862980769231,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 1380.862980769231,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 6.04,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.08,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 3.9,
+     "valA": 100,
+     "valB": 1450
+    },
+    {
+     "win": "B",
+     "t": 6.29,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.03,
+     "valA": 100,
+     "valB": 1325
+    },
+    {
+     "win": "B",
+     "t": 4.07,
+     "valA": 100,
+     "valB": 1446
+    },
+    {
+     "win": "B",
+     "t": 3.9,
+     "valA": 100,
+     "valB": 1453
+    },
+    {
+     "win": "B",
+     "t": 4.43,
+     "valA": 100,
+     "valB": 1369
+    },
+    {
+     "win": "B",
+     "t": 4.75,
+     "valA": 100,
+     "valB": 1374
+    },
+    {
+     "win": "B",
+     "t": 4.35,
+     "valA": 100,
+     "valB": 1448
+    },
+    {
+     "win": "B",
+     "t": 5.57,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.15,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.74,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.76,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.14,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 4.96,
+     "valA": 100,
+     "valB": 1356
+    },
+    {
+     "win": "B",
+     "t": 3.94,
+     "valA": 100,
+     "valB": 1446
+    },
+    {
+     "win": "B",
+     "t": 3.9,
+     "valA": 100,
+     "valB": 1450
+    },
+    {
+     "win": "B",
+     "t": 6.03,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.56,
+     "valA": 100,
+     "valB": 1350
+    }
+   ]
+  },
+  {
+   "name": "c:compact|helixR",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers only",
+    "ids": {
+     "A01": 10
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 3.0618055555555452,
+   "tMin": 2.7638888888888795,
+   "tMax": 3.555555555555543,
+   "valWinner": 1200.6153846153843,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 1200.6153846153843,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.39,
+     "valA": 0,
+     "valB": 1158
+    },
+    {
+     "win": "B",
+     "t": 3.56,
+     "valA": 0,
+     "valB": 1089
+    },
+    {
+     "win": "B",
+     "t": 2.96,
+     "valA": 0,
+     "valB": 1200
+    },
+    {
+     "win": "B",
+     "t": 3.33,
+     "valA": 0,
+     "valB": 1117
+    },
+    {
+     "win": "B",
+     "t": 2.83,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 0,
+     "valB": 1137
+    },
+    {
+     "win": "B",
+     "t": 2.87,
+     "valA": 0,
+     "valB": 1295
+    },
+    {
+     "win": "B",
+     "t": 3.17,
+     "valA": 0,
+     "valB": 1158
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 3.08,
+     "valA": 0,
+     "valB": 1186
+    },
+    {
+     "win": "B",
+     "t": 3.24,
+     "valA": 0,
+     "valB": 1117
+    },
+    {
+     "win": "B",
+     "t": 2.85,
+     "valA": 0,
+     "valB": 1200
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 0,
+     "valB": 1145
+    },
+    {
+     "win": "B",
+     "t": 2.94,
+     "valA": 0,
+     "valB": 1234
+    },
+    {
+     "win": "B",
+     "t": 2.82,
+     "valA": 0,
+     "valB": 1248
+    },
+    {
+     "win": "B",
+     "t": 2.89,
+     "valA": 0,
+     "valB": 1317
+    },
+    {
+     "win": "B",
+     "t": 3.5,
+     "valA": 0,
+     "valB": 978
+    },
+    {
+     "win": "B",
+     "t": 2.85,
+     "valA": 0,
+     "valB": 1303
+    },
+    {
+     "win": "B",
+     "t": 2.76,
+     "valA": 0,
+     "valB": 1345
+    }
+   ]
+  },
+  {
+   "name": "c:lattice|helixR",
+   "A": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers only",
+    "ids": {
+     "A01": 10
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 3.2430555555555443,
+   "tMin": 2.708333333333324,
+   "tMax": 3.9444444444444304,
+   "valWinner": 735.062937062937,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 735.062937062937,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.31,
+     "valA": 100,
+     "valB": 778
+    },
+    {
+     "win": "B",
+     "t": 2.99,
+     "valA": 100,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 2.71,
+     "valA": 100,
+     "valB": 926
+    },
+    {
+     "win": "B",
+     "t": 3.87,
+     "valA": 100,
+     "valB": 528
+    },
+    {
+     "win": "B",
+     "t": 3.82,
+     "valA": 100,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 3.89,
+     "valA": 100,
+     "valB": 531
+    },
+    {
+     "win": "B",
+     "t": 3.06,
+     "valA": 100,
+     "valB": 803
+    },
+    {
+     "win": "B",
+     "t": 2.78,
+     "valA": 100,
+     "valB": 926
+    },
+    {
+     "win": "B",
+     "t": 3.35,
+     "valA": 100,
+     "valB": 677
+    },
+    {
+     "win": "B",
+     "t": 3.94,
+     "valA": 100,
+     "valB": 479
+    },
+    {
+     "win": "B",
+     "t": 3.26,
+     "valA": 100,
+     "valB": 751
+    },
+    {
+     "win": "B",
+     "t": 2.94,
+     "valA": 100,
+     "valB": 803
+    },
+    {
+     "win": "B",
+     "t": 3.31,
+     "valA": 100,
+     "valB": 726
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 100,
+     "valB": 800
+    },
+    {
+     "win": "B",
+     "t": 3.43,
+     "valA": 100,
+     "valB": 628
+    },
+    {
+     "win": "B",
+     "t": 2.89,
+     "valA": 100,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 2.71,
+     "valA": 100,
+     "valB": 880
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 100,
+     "valB": 877
+    },
+    {
+     "win": "B",
+     "t": 3.42,
+     "valA": 100,
+     "valB": 606
+    },
+    {
+     "win": "B",
+     "t": 3.1,
+     "valA": 100,
+     "valB": 751
+    }
+   ]
+  }
+ ],
+ "d": [
+  {
+   "name": "14 Hammers vs an undefended yard",
+   "nH": 14,
+   "hammerCost": 16800,
+   "defenders": {},
+   "defCost": 0,
+   "n": 10,
+   "defWin": 0,
+   "hWin": 1,
+   "tGame": 8.780000000000044,
+   "tReal": 3.658333333333352,
+   "yardHp": 0,
+   "hLeft": 14,
+   "defVal": 0,
+   "runs": [
+    {
+     "win": "A",
+     "tGame": 8.77,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.83,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.77,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.77,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.83,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.73,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.83,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.73,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.77,
+     "yardHp": 0,
+     "hLeft": 14
+    },
+    {
+     "win": "A",
+     "tGame": 8.77,
+     "yardHp": 0,
+     "hLeft": 14
+    }
+   ]
+  },
+  {
+   "name": "14 Hammers vs 26 Nullifiers",
+   "nH": 14,
+   "hammerCost": 16800,
+   "defenders": {
+    "T02": 26
+   },
+   "defCost": 10400,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 15.806666666666928,
+   "tReal": 6.5861111111112205,
+   "yardHp": 0.21305999999999803,
+   "hLeft": 0,
+   "defVal": 10400,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 15.37,
+     "yardHp": 0.255,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.83,
+     "yardHp": 0.275,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.93,
+     "yardHp": 0.177,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.87,
+     "yardHp": 0.206,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.93,
+     "yardHp": 0.206,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.57,
+     "yardHp": 0.236,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.97,
+     "yardHp": 0.216,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 15.5,
+     "yardHp": 0.216,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 16.1,
+     "yardHp": 0.206,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 16,
+     "yardHp": 0.138,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "3 Hammers ($3,600) vs 8 Nullifiers ($3,200)",
+   "nH": 3,
+   "hammerCost": 3600,
+   "defenders": {
+    "T02": 8
+   },
+   "defCost": 3200,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 10.12666666666666,
+   "tReal": 4.2194444444444414,
+   "yardHp": 0.8618199999999996,
+   "hLeft": 0,
+   "defVal": 3200,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 10.1,
+     "yardHp": 0.882,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.23,
+     "yardHp": 0.843,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.47,
+     "yardHp": 0.882,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 11.03,
+     "yardHp": 0.853,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.97,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.53,
+     "yardHp": 0.873,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.93,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.57,
+     "yardHp": 0.843,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.43,
+     "yardHp": 0.853,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "3 Hammers ($3,600) vs 9 Nullifiers ($3,600)",
+   "nH": 3,
+   "hammerCost": 3600,
+   "defenders": {
+    "T02": 9
+   },
+   "defCost": 3600,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 8.846666666666641,
+   "tReal": 3.6861111111111007,
+   "yardHp": 0.8735799999999998,
+   "hLeft": 0,
+   "defVal": 3600,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 9.1,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.77,
+     "yardHp": 0.843,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.07,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.13,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.2,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.17,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.53,
+     "yardHp": 0.882,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.4,
+     "yardHp": 0.892,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.7,
+     "yardHp": 0.863,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.4,
+     "yardHp": 0.863,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "14 Hammers ($16,800) vs 42 Nullifiers ($16,800)",
+   "nH": 14,
+   "hammerCost": 16800,
+   "defenders": {
+    "T02": 42
+   },
+   "defCost": 16800,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 10.489999999999997,
+   "tReal": 4.370833333333332,
+   "yardHp": 0.5148999999999985,
+   "hLeft": 0,
+   "defVal": 16800,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 10.93,
+     "yardHp": 0.471,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.97,
+     "yardHp": 0.539,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.17,
+     "yardHp": 0.52,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.63,
+     "yardHp": 0.471,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.2,
+     "yardHp": 0.53,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.67,
+     "yardHp": 0.51,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.3,
+     "yardHp": 0.53,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.97,
+     "yardHp": 0.49,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.13,
+     "yardHp": 0.559,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.93,
+     "yardHp": 0.53,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "3 Hammers ($3,600) vs 12 Rocket Troopers ($3,600)",
+   "nH": 3,
+   "hammerCost": 3600,
+   "defenders": {
+    "H02": 12
+   },
+   "defCost": 3600,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 6.439999999999978,
+   "tReal": 2.6833333333333242,
+   "yardHp": 0.9098399999999996,
+   "hLeft": 0,
+   "defVal": 3600,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 7.13,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 5.43,
+     "yardHp": 0.922,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.93,
+     "yardHp": 0.922,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.1,
+     "yardHp": 0.931,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.87,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 7.57,
+     "yardHp": 0.892,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.1,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.67,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 5.73,
+     "yardHp": 0.922,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 5.87,
+     "yardHp": 0.902,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "14 Hammers ($16,800) vs 56 Rocket Troopers ($16,800)",
+   "nH": 14,
+   "hammerCost": 16800,
+   "defenders": {
+    "H02": 56
+   },
+   "defCost": 16800,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 9.653333333333322,
+   "tReal": 4.022222222222218,
+   "yardHp": 0.5374399999999986,
+   "hLeft": 0,
+   "defVal": 16800,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 8.9,
+     "yardHp": 0.559,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.2,
+     "yardHp": 0.53,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.33,
+     "yardHp": 0.539,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.67,
+     "yardHp": 0.51,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.77,
+     "yardHp": 0.559,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.8,
+     "yardHp": 0.5,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.5,
+     "yardHp": 0.549,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.53,
+     "yardHp": 0.539,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.13,
+     "yardHp": 0.559,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.7,
+     "yardHp": 0.53,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "3 Hammers ($3,600) vs 5 Halos ($3,250)",
+   "nH": 3,
+   "hammerCost": 3600,
+   "defenders": {
+    "A06": 5
+   },
+   "defCost": 3250,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 9.626666666666633,
+   "tReal": 4.011111111111098,
+   "yardHp": 1,
+   "hLeft": 0,
+   "defVal": 2450.5,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 10.93,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.73,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.37,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.73,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.13,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.87,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.93,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.07,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.03,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 11.47,
+     "yardHp": 1,
+     "hLeft": 0
+    }
+   ]
+  },
+  {
+   "name": "14 Hammers ($16,800) vs 25 Halos ($16,250)",
+   "nH": 14,
+   "hammerCost": 16800,
+   "defenders": {
+    "A06": 25
+   },
+   "defCost": 16250,
+   "n": 10,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 9.969999999999967,
+   "tReal": 4.1541666666666535,
+   "yardHp": 1,
+   "hLeft": 0,
+   "defVal": 14165.45,
+   "runs": [
+    {
+     "win": "B",
+     "tGame": 9.7,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.33,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.23,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.3,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.3,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.5,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.9,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 8.43,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 9.7,
+     "yardHp": 1,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 10.3,
+     "yardHp": 1,
+     "hLeft": 0
+    }
+   ]
+  }
+ ],
+ "table": {
+  "rifle": {
+   "infantry": 1,
+   "light": 0.1515,
+   "medium": 0.1886,
+   "heavy": 0.2398,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.2
+  },
+  "at_rocket": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.8,
+   "structure": 0.65
+  },
+  "aa_rocket": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "cannon_heavy": {
+   "infantry": 0.22,
+   "light": 0.4782,
+   "medium": 0.6765,
+   "heavy": 0.75,
+   "aircraft": 0,
+   "ship": 0.75,
+   "structure": 0.85
+  },
+  "attack_rocket": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.85,
+   "structure": 0.7
+  },
+  "naval_gun": {
+   "infantry": 0.25,
+   "light": 1,
+   "medium": 0.85,
+   "heavy": 0.85,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0.9
+  },
+  "carbine": {
+   "infantry": 1,
+   "light": 0.1479,
+   "medium": 0.1847,
+   "heavy": 0.238,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.18
+  },
+  "mg": {
+   "infantry": 1,
+   "light": 0.065,
+   "medium": 0.0821,
+   "heavy": 0.1056,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.25
+  },
+  "cannon_precision": {
+   "infantry": 0.275,
+   "light": 0.445,
+   "medium": 0.6053,
+   "heavy": 0.7102,
+   "aircraft": 0,
+   "ship": 0.65,
+   "structure": 0.75
+  },
+  "bomb": {
+   "infantry": 0.45,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.8,
+   "structure": 1
+  },
+  "ship_missile": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0
+  },
+  "aa_missile": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "pulse": {
+   "infantry": 1,
+   "light": 0.0875,
+   "medium": 0.1164,
+   "heavy": 0.141,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.2
+  },
+  "lance": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.75,
+   "structure": 0.4
+  },
+  "lance_aa": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "accelerator": {
+   "infantry": 0.2316,
+   "light": 0.5,
+   "medium": 0.7024,
+   "heavy": 0.8086,
+   "aircraft": 0,
+   "ship": 0.65,
+   "structure": 0.65
+  },
+  "pulse_light": {
+   "infantry": 1,
+   "light": 0.2,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0
+  },
+  "raider_sea": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0
+  },
+  "raider_shore": {
+   "infantry": 0,
+   "light": 0.9,
+   "medium": 0.8,
+   "heavy": 0.8,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.7
+  },
+  "aa_laser": {
+   "infantry": 0.5,
+   "light": 0.4,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  }
+ }
+}

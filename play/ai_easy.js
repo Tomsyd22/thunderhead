@@ -4,8 +4,9 @@
 //   slow defence (answers an attack on its base at most every 20 s), first attack at 7 game minutes with 4 units,
 //   then every 4 minutes, growing by one. No repairs, no engineers. Same rules and economy as everyone else.
 // Round 2: the same fog of war as Normal (targets only enemy structures it has seen, else the enemy start pad) and only
-//   units that can get to the target go in a wave. Round 3: the same anti-air rule as Normal (AI.pickUnit): anti-air-only
-//   units only once enemy aircraft are seen, anti-air first while it owns less than the enemy air it has seen. When no enemy can be reached by land it adds a naval yard and keeps up
+//   units that can get to the target go in a wave. Round 3 (AI.pickUnit): anti-air-only units (the Halo) only once enemy
+//   aircraft are seen, and then only while it owns less than half the enemy air it has seen; unlike Normal it does not switch its
+//   dual-role infantry (Rocket Troopers, Nullifiers) to anti-air duty. When no enemy can be reached by land it adds a naval yard and keeps up
 //   to three ships, which sail out together (no aircraft, still no more than 12 units).
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { AI } from './ai.js';
@@ -13,7 +14,7 @@ import { AI } from './ai.js';
 const ORDER_EASY = ['power', 'refinery', 'barracks', 'power', 'factory', 'power'];
 
 export class EasyAI extends AI {
-  constructor(game, p, kitItems) { super(game, p, kitItems); this.level = 'easy'; this.tick2 = false; }
+  constructor(game, p, kitItems) { super(game, p, kitItems); this.level = 'easy'; this.tick2 = false; this.aaShare = 0.5; this.aaDual = false; }   // answers seen aircraft late and lightly: only anti-air specialists (Halo), half as much as Normal
   think() { this.tick2 = !this.tick2; if (this.tick2) return; const g = this.g, p = this.p; if (p.lost || g.over) return; this.seeEnemy(); this.crossCheck(); if (p.ready) this.placeReady(); this.buildStructures(); this.produce(); this.army(); this.navyThink(); }
   wantStructure() {
     const pw = this.p.power; if (this.p.queues.structure.length || this.p.ready) return null;

@@ -6142,146 +6142,146 @@
    "B": {
     "label": "Lattice: Pulse Troopers + Nullifiers",
     "ids": {
-     "T02": 2,
-     "T01": 4
+     "T02": 1,
+     "T01": 6
     },
-    "spent": 1800,
-    "left": 200,
+    "spent": 1900,
+    "left": 100,
     "mode": "moving"
    },
    "n": 20,
    "winA": 1,
    "winB": 0,
    "draws": 0,
-   "t": 2.0576388888888824,
-   "tMin": 1.9166666666666603,
-   "tMax": 2.2361111111111036,
-   "valWinner": 1334.7200000000003,
-   "valLoser": 200,
-   "valA": 1334.7200000000003,
-   "valB": 200,
+   "t": 2.3437499999999925,
+   "tMin": 2.194444444444437,
+   "tMax": 2.5138888888888804,
+   "valWinner": 1181.6872727272728,
+   "valLoser": 100,
+   "valA": 1181.6872727272728,
+   "valB": 100,
    "wonBy": "A",
    "flag": true,
    "runs": [
     {
      "win": "A",
-     "t": 2.1,
-     "valA": 1300,
-     "valB": 200
+     "t": 2.47,
+     "valA": 1149,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.15,
-     "valA": 1274,
-     "valB": 200
+     "t": 2.36,
+     "valA": 1159,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2,
-     "valA": 1337,
-     "valB": 200
+     "t": 2.28,
+     "valA": 1200,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2,
-     "valA": 1324,
-     "valB": 200
+     "t": 2.29,
+     "valA": 1210,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.06,
-     "valA": 1582,
-     "valB": 200
+     "t": 2.51,
+     "valA": 1165,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.07,
-     "valA": 1382,
-     "valB": 200
+     "t": 2.35,
+     "valA": 1185,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.24,
-     "valA": 1300,
-     "valB": 200
+     "t": 2.31,
+     "valA": 1200,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.04,
-     "valA": 1338,
-     "valB": 200
+     "t": 2.28,
+     "valA": 1198,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.11,
-     "valA": 1338,
-     "valB": 200
+     "t": 2.39,
+     "valA": 1160,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.08,
-     "valA": 1338,
-     "valB": 200
+     "t": 2.39,
+     "valA": 1174,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.04,
-     "valA": 1323,
-     "valB": 200
+     "t": 2.32,
+     "valA": 1185,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.14,
-     "valA": 1287,
-     "valB": 200
+     "t": 2.35,
+     "valA": 1174,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 1.99,
-     "valA": 1313,
-     "valB": 200
+     "t": 2.26,
+     "valA": 1172,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 1.92,
-     "valA": 1323,
-     "valB": 200
+     "t": 2.42,
+     "valA": 1200,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.1,
-     "valA": 1300,
-     "valB": 200
+     "t": 2.33,
+     "valA": 1185,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.01,
-     "valA": 1382,
-     "valB": 200
+     "t": 2.35,
+     "valA": 1185,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 1.99,
-     "valA": 1327,
-     "valB": 200
+     "t": 2.19,
+     "valA": 1199,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.03,
-     "valA": 1327,
-     "valB": 200
+     "t": 2.31,
+     "valA": 1199,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.04,
-     "valA": 1288,
-     "valB": 200
+     "t": 2.39,
+     "valA": 1163,
+     "valB": 100
     },
     {
      "win": "A",
-     "t": 2.06,
-     "valA": 1310,
-     "valB": 200
+     "t": 2.33,
+     "valA": 1172,
+     "valB": 100
     }
    ]
   },
@@ -6467,11 +6467,11 @@
    "A": {
     "label": "Lattice: Pulse Troopers + Nullifiers",
     "ids": {
-     "T02": 2,
-     "T01": 4
+     "T02": 1,
+     "T01": 6
     },
-    "spent": 1800,
-    "left": 200,
+    "spent": 1900,
+    "left": 100,
     "mode": "moving"
    },
    "B": {
@@ -6487,135 +6487,135 @@
    "winA": 0,
    "winB": 1,
    "draws": 0,
-   "t": 1.625694444444439,
-   "tMin": 1.4305555555555505,
-   "tMax": 2.111111111111104,
-   "valWinner": 1585.6923076923076,
-   "valLoser": 200,
-   "valA": 200,
-   "valB": 1585.6923076923076,
+   "t": 1.894444444444439,
+   "tMin": 1.6388888888888835,
+   "tMax": 2.27777777777777,
+   "valWinner": 1356.4615384615386,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 1356.4615384615386,
    "wonBy": "B",
    "flag": true,
    "runs": [
     {
      "win": "B",
-     "t": 1.5,
-     "valA": 200,
-     "valB": 1628
+     "t": 1.89,
+     "valA": 100,
+     "valB": 1305
     },
     {
      "win": "B",
-     "t": 1.43,
-     "valA": 200,
-     "valB": 1606
+     "t": 2.01,
+     "valA": 100,
+     "valB": 1351
     },
     {
      "win": "B",
-     "t": 1.58,
-     "valA": 200,
-     "valB": 1603
+     "t": 1.82,
+     "valA": 100,
+     "valB": 1357
     },
     {
      "win": "B",
-     "t": 1.65,
-     "valA": 200,
-     "valB": 1600
+     "t": 1.99,
+     "valA": 100,
+     "valB": 1302
     },
     {
      "win": "B",
-     "t": 1.94,
-     "valA": 200,
-     "valB": 1529
+     "t": 2.14,
+     "valA": 100,
+     "valB": 1277
     },
     {
      "win": "B",
      "t": 1.78,
-     "valA": 200,
-     "valB": 1529
+     "valA": 100,
+     "valB": 1354
     },
     {
      "win": "B",
-     "t": 1.51,
-     "valA": 200,
-     "valB": 1603
+     "t": 1.69,
+     "valA": 100,
+     "valB": 1382
     },
     {
      "win": "B",
-     "t": 1.46,
-     "valA": 200,
-     "valB": 1603
+     "t": 1.82,
+     "valA": 100,
+     "valB": 1354
     },
     {
      "win": "B",
-     "t": 1.49,
-     "valA": 200,
-     "valB": 1628
+     "t": 1.81,
+     "valA": 100,
+     "valB": 1375
     },
     {
      "win": "B",
-     "t": 1.61,
-     "valA": 200,
-     "valB": 1578
+     "t": 1.76,
+     "valA": 100,
+     "valB": 1403
     },
     {
      "win": "B",
-     "t": 1.61,
-     "valA": 200,
-     "valB": 1603
+     "t": 1.9,
+     "valA": 100,
+     "valB": 1351
     },
     {
      "win": "B",
-     "t": 1.53,
-     "valA": 200,
-     "valB": 1603
+     "t": 2.01,
+     "valA": 100,
+     "valB": 1351
     },
     {
      "win": "B",
-     "t": 1.65,
-     "valA": 200,
-     "valB": 1554
+     "t": 2.28,
+     "valA": 100,
+     "valB": 1252
     },
     {
      "win": "B",
-     "t": 1.47,
-     "valA": 200,
-     "valB": 1628
+     "t": 1.72,
+     "valA": 100,
+     "valB": 1452
     },
     {
      "win": "B",
-     "t": 2.11,
-     "valA": 200,
-     "valB": 1480
+     "t": 2.17,
+     "valA": 100,
+     "valB": 1277
     },
     {
      "win": "B",
-     "t": 1.61,
-     "valA": 200,
-     "valB": 1578
+     "t": 1.93,
+     "valA": 100,
+     "valB": 1354
+    },
+    {
+     "win": "B",
+     "t": 1.87,
+     "valA": 100,
+     "valB": 1329
     },
     {
      "win": "B",
      "t": 1.64,
-     "valA": 200,
-     "valB": 1578
+     "valA": 100,
+     "valB": 1477
     },
     {
      "win": "B",
-     "t": 1.49,
-     "valA": 200,
-     "valB": 1628
+     "t": 1.89,
+     "valA": 100,
+     "valB": 1400
     },
     {
      "win": "B",
-     "t": 1.96,
-     "valA": 200,
-     "valB": 1551
-    },
-    {
-     "win": "B",
-     "t": 1.49,
-     "valA": 200,
-     "valB": 1603
+     "t": 1.76,
+     "valA": 100,
+     "valB": 1428
     }
    ]
   }
@@ -6709,71 +6709,71 @@
    "n": 10,
    "defWin": 0,
    "hWin": 1,
-   "tGame": 10.74333333333338,
-   "tReal": 4.476388888888908,
+   "tGame": 12.433333333333431,
+   "tReal": 5.180555555555596,
    "yardHp": 0,
-   "hLeft": 12.4,
+   "hLeft": 11.7,
    "defVal": 10400,
    "runs": [
     {
      "win": "A",
-     "tGame": 10.9,
+     "tGame": 13.8,
+     "yardHp": 0,
+     "hLeft": 11
+    },
+    {
+     "win": "A",
+     "tGame": 13.83,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.93,
+     "tGame": 13.87,
+     "yardHp": 0,
+     "hLeft": 10
+    },
+    {
+     "win": "A",
+     "tGame": 13.67,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.8,
+     "tGame": 11.3,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.63,
+     "tGame": 11.57,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.53,
-     "yardHp": 0,
-     "hLeft": 13
-    },
-    {
-     "win": "A",
-     "tGame": 10.63,
+     "tGame": 11.53,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.6,
-     "yardHp": 0,
-     "hLeft": 13
-    },
-    {
-     "win": "A",
-     "tGame": 11.1,
+     "tGame": 11.7,
      "yardHp": 0,
      "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.37,
+     "tGame": 11.37,
      "yardHp": 0,
-     "hLeft": 13
+     "hLeft": 12
     },
     {
      "win": "A",
-     "tGame": 10.93,
+     "tGame": 11.7,
      "yardHp": 0,
-     "hLeft": 13
+     "hLeft": 12
     }
    ]
   },
@@ -6788,70 +6788,70 @@
    "n": 10,
    "defWin": 1,
    "hWin": 0,
-   "tGame": 51.29333333333259,
-   "tReal": 21.372222222221914,
-   "yardHp": 0.32575999999999816,
+   "tGame": 25.7066666666674,
+   "tReal": 10.711111111111416,
+   "yardHp": 0.6119199999999989,
    "hLeft": 0,
    "defVal": 3200,
    "runs": [
     {
      "win": "B",
-     "tGame": 60.03,
-     "yardHp": 0.294,
+     "tGame": 25.97,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 60.1,
-     "yardHp": 0.196,
+     "tGame": 26.03,
+     "yardHp": 0.579,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 46.6,
-     "yardHp": 0.432,
+     "tGame": 25.7,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 64.3,
-     "yardHp": 0.177,
+     "tGame": 26.4,
+     "yardHp": 0.608,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 42.03,
-     "yardHp": 0.412,
+     "tGame": 25.8,
+     "yardHp": 0.608,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 76.53,
-     "yardHp": 0.04,
+     "tGame": 25.43,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 41.87,
-     "yardHp": 0.432,
+     "tGame": 26.17,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 42.8,
-     "yardHp": 0.392,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 50.43,
-     "yardHp": 0.294,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 28.23,
+     "tGame": 25.97,
      "yardHp": 0.588,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 25.67,
+     "yardHp": 0.598,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 23.93,
+     "yardHp": 0.628,
      "hLeft": 0
     }
    ]
@@ -6865,72 +6865,72 @@
    },
    "defCost": 3600,
    "n": 10,
-   "defWin": 0.9,
-   "hWin": 0.1,
-   "tGame": 34.36333333333355,
-   "tReal": 14.318055555555647,
-   "yardHp": 0.4883999999999988,
-   "hLeft": 0.1,
+   "defWin": 1,
+   "hWin": 0,
+   "tGame": 22.600000000000623,
+   "tReal": 9.416666666666927,
+   "yardHp": 0.657979999999999,
+   "hLeft": 0,
    "defVal": 3600,
    "runs": [
     {
      "win": "B",
-     "tGame": 35.9,
-     "yardHp": 0.51,
+     "tGame": 22.9,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 31.87,
-     "yardHp": 0.51,
+     "tGame": 22.6,
+     "yardHp": 0.637,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 37.23,
-     "yardHp": 0.451,
-     "hLeft": 0
-    },
-    {
-     "win": "A",
-     "tGame": 62.4,
-     "yardHp": 0,
-     "hLeft": 1
-    },
-    {
-     "win": "B",
-     "tGame": 27.07,
-     "yardHp": 0.588,
+     "tGame": 22.5,
+     "yardHp": 0.647,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 25.97,
-     "yardHp": 0.608,
+     "tGame": 23.13,
+     "yardHp": 0.628,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 29.1,
-     "yardHp": 0.588,
+     "tGame": 22.03,
+     "yardHp": 0.696,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 26.77,
-     "yardHp": 0.588,
+     "tGame": 22.07,
+     "yardHp": 0.667,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 35.93,
-     "yardHp": 0.49,
+     "tGame": 22.33,
+     "yardHp": 0.667,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 31.4,
-     "yardHp": 0.549,
+     "tGame": 22.63,
+     "yardHp": 0.657,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 22.07,
+     "yardHp": 0.686,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 23.73,
+     "yardHp": 0.667,
      "hLeft": 0
     }
    ]
@@ -6946,71 +6946,71 @@
    "n": 10,
    "defWin": 0,
    "hWin": 1,
-   "tGame": 11.81333333333343,
-   "tReal": 4.9222222222222625,
+   "tGame": 14.000000000000174,
+   "tReal": 5.833333333333406,
    "yardHp": 0,
-   "hLeft": 10.8,
+   "hLeft": 8,
    "defVal": 16800,
    "runs": [
     {
      "win": "A",
-     "tGame": 11.03,
-     "yardHp": 0,
-     "hLeft": 12
-    },
-    {
-     "win": "A",
-     "tGame": 13.23,
+     "tGame": 14,
      "yardHp": 0,
      "hLeft": 10
     },
     {
      "win": "A",
-     "tGame": 11.13,
+     "tGame": 14.03,
      "yardHp": 0,
-     "hLeft": 11
+     "hLeft": 8
     },
     {
      "win": "A",
-     "tGame": 12.97,
+     "tGame": 14.23,
      "yardHp": 0,
-     "hLeft": 10
+     "hLeft": 7
     },
     {
      "win": "A",
-     "tGame": 10.77,
+     "tGame": 13.87,
      "yardHp": 0,
-     "hLeft": 12
+     "hLeft": 8
     },
     {
      "win": "A",
-     "tGame": 10.7,
+     "tGame": 14,
      "yardHp": 0,
-     "hLeft": 12
+     "hLeft": 7
     },
     {
      "win": "A",
-     "tGame": 10.83,
+     "tGame": 13.83,
      "yardHp": 0,
-     "hLeft": 11
+     "hLeft": 8
     },
     {
      "win": "A",
-     "tGame": 11.07,
+     "tGame": 13.97,
      "yardHp": 0,
-     "hLeft": 11
+     "hLeft": 7
     },
     {
      "win": "A",
-     "tGame": 13.17,
-     "yardHp": 0,
-     "hLeft": 10
-    },
-    {
-     "win": "A",
-     "tGame": 13.23,
+     "tGame": 14,
      "yardHp": 0,
      "hLeft": 9
+    },
+    {
+     "win": "A",
+     "tGame": 14,
+     "yardHp": 0,
+     "hLeft": 8
+    },
+    {
+     "win": "A",
+     "tGame": 14.07,
+     "yardHp": 0,
+     "hLeft": 8
     }
    ]
   },
@@ -7025,70 +7025,70 @@
    "n": 10,
    "defWin": 1,
    "hWin": 0,
-   "tGame": 8.173333333333318,
-   "tReal": 3.4055555555555492,
-   "yardHp": 0.8745599999999996,
+   "tGame": 6.439999999999978,
+   "tReal": 2.6833333333333242,
+   "yardHp": 0.9098399999999996,
    "hLeft": 0,
    "defVal": 3600,
    "runs": [
     {
      "win": "B",
-     "tGame": 9.53,
-     "yardHp": 0.863,
+     "tGame": 7.13,
+     "yardHp": 0.902,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 5.43,
+     "yardHp": 0.922,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.93,
+     "yardHp": 0.922,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.1,
+     "yardHp": 0.931,
+     "hLeft": 0
+    },
+    {
+     "win": "B",
+     "tGame": 6.87,
+     "yardHp": 0.902,
      "hLeft": 0
     },
     {
      "win": "B",
      "tGame": 7.57,
-     "yardHp": 0.882,
+     "yardHp": 0.892,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 7.9,
-     "yardHp": 0.882,
+     "tGame": 6.1,
+     "yardHp": 0.902,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 8.57,
-     "yardHp": 0.882,
+     "tGame": 6.67,
+     "yardHp": 0.902,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 7.6,
-     "yardHp": 0.882,
+     "tGame": 5.73,
+     "yardHp": 0.922,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 10,
-     "yardHp": 0.843,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 7.5,
-     "yardHp": 0.882,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 8.07,
-     "yardHp": 0.863,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 7.53,
-     "yardHp": 0.882,
-     "hLeft": 0
-    },
-    {
-     "win": "B",
-     "tGame": 7.47,
-     "yardHp": 0.882,
+     "tGame": 5.87,
+     "yardHp": 0.902,
      "hLeft": 0
     }
    ]
@@ -7104,70 +7104,70 @@
    "n": 10,
    "defWin": 1,
    "hWin": 0,
-   "tGame": 12.460000000000154,
-   "tReal": 5.191666666666731,
-   "yardHp": 0.36103999999999803,
+   "tGame": 9.653333333333322,
+   "tReal": 4.022222222222218,
+   "yardHp": 0.5374399999999986,
    "hLeft": 0,
    "defVal": 16800,
    "runs": [
     {
      "win": "B",
-     "tGame": 11.9,
-     "yardHp": 0.343,
+     "tGame": 8.9,
+     "yardHp": 0.559,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 12.8,
-     "yardHp": 0.353,
+     "tGame": 10.2,
+     "yardHp": 0.53,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 11.13,
-     "yardHp": 0.392,
+     "tGame": 10.33,
+     "yardHp": 0.539,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 11.67,
-     "yardHp": 0.383,
+     "tGame": 9.67,
+     "yardHp": 0.51,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 12.73,
-     "yardHp": 0.334,
+     "tGame": 8.77,
+     "yardHp": 0.559,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 11.3,
-     "yardHp": 0.441,
+     "tGame": 9.8,
+     "yardHp": 0.5,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 13.6,
-     "yardHp": 0.314,
+     "tGame": 9.5,
+     "yardHp": 0.549,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 15.33,
-     "yardHp": 0.314,
+     "tGame": 9.53,
+     "yardHp": 0.539,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 10.87,
-     "yardHp": 0.412,
+     "tGame": 10.13,
+     "yardHp": 0.559,
      "hLeft": 0
     },
     {
      "win": "B",
-     "tGame": 13.27,
-     "yardHp": 0.324,
+     "tGame": 9.7,
+     "yardHp": 0.53,
      "hLeft": 0
     }
    ]

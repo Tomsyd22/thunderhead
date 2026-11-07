@@ -169,6 +169,7 @@ function muzzleNames(u, e) {
   if (u.uid === 'A05') return e.sys === 1 ? ['muzzle_aa'] : ['muzzle_cell_' + e.muzzle, 'muzzle_cell_0'];
   if (u.uid === 'T05') return [e.muzzle === 0 ? 'muzzle_L' : 'muzzle_R'];
   if (u.uid === 'A02') return [e.w === 0 ? 'muzzle_aa' : 'muzzle_at', 'muzzle'];
+  if (u.uid === 'A06') return ['muzzle_' + (e.muzzle || 0), 'muzzle_0'];   // Halo: twin emitters fire alternately
   return ['muzzle'];
 }
 

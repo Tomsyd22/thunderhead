@@ -1,4 +1,4 @@
-✓ boot: page loads and the match starts — 15.3 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
+✓ boot: page loads and the match starts — 11.6 s, 12 units, 2 structures, 12 unit views, 26 portraits, audio true
 ✓ controls: drag box selects the infantry squad — 4 selected
 ✓ orders (2.4×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
 ✓ orders (1×): acknowledged in the same frame (marker, radio, voice) and units react within 2 frames — marker rings +2, sounds [order_ack], voices 1, 4/4 units turning or moving after 2 frames
@@ -31,13 +31,13 @@
 ✓ info: idle harvester indicator counts and selects it (I) — 1 idle
 ✓ info: tooltips show cost, build time and counters — Bastion | $900 | 16 s | 950 HP | 7.8 m/s | Durable frontline anti-armour attacker | Strong vs light vehicles, tanks | Weak vs Nullifier, Arbiter, Wisp | Click: 
 ✓ info: announcer lines fire for game events — building, construction_complete, new_options, construction_complete, new_options, unit_ready, unit_ready, unit_ready, insufficient_funds, new_options, new_options, construction_complete
-✓ combat: muzzle flash lights, hit reactions, camera shake — 172 flashes, 110 hit reactions, 179 shakes
-✓ combat: deaths throw debris and turrets — 7 kills, 70 debris pieces, 7 turrets tossed
+✓ combat: muzzle flash lights, hit reactions, camera shake — 173 flashes, 111 hit reactions, 179 shakes
+✓ combat: deaths throw debris and turrets — 7 kills, 70 debris pieces, 6 turrets tossed
 ✓ combat: no errors
 ✓ movement: a mixed group moves at the slowest speed and arrives in formation — 9/9 arrived in 54 game s, tanks held to 4.4 m/s (infantry 4.4), all within 15.6 m of the click
 ✓ movement: three harvesters share one refinery dock without jamming — 3 harvesters, 13 loads delivered in 360 game s (one alone ≈ 6), longest wait in a queue 29 s
 ✓ movement: ten tanks pass the narrowest point of the base-to-base route without jamming — choke at (579, 1278), clearance 4.3 m · 10/10 through in 34 game s (one tank alone ≈ 26 s for the 200 m)
 ✓ smoothness: interpolated motion has no snaps — 19767 unit-frames, worst 65 % of the speed limit, 123 distant-view switches
-✓ performance: simulation cost per tick — avg 0.28 ms, p99 5.1 ms with 33 units
-✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 110 s wall · helix: 4 structures, 4 units, 24 lost, $8000 mined | compact: 9 structures, 13 units, 14 lost, $6000 mined
+✓ performance: simulation cost per tick — avg 0.29 ms, p99 3.2 ms with 33 units
+✓ match: AI vs AI runs 10 game minutes in the client without errors — 10.2 min in 101 s wall · helix: 10 structures, 5 units, 23 lost, $8000 mined | compact: 9 structures, 12 units, 15 lost, $6000 mined
 42/42

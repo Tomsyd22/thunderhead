@@ -12,7 +12,7 @@ HERE = Path(__file__).resolve().parent; ROOT = HERE.parent
 (HERE / 'assets').mkdir(exist_ok=True); (HERE / 'data').mkdir(exist_ok=True)
 shutil.copy(ROOT / 'data' / 'unit_specs.json', HERE / 'data' / 'unit_specs.json')
 SPEC = {u['id']: u for u in json.loads((ROOT / 'data' / 'unit_specs.json').read_text())['units']}
-for _u in json.loads((ROOT / 'data' / 'pending_specs.json').read_text())['units']: SPEC.setdefault(_u['id'], _u)   # modelled, not yet in unit_specs.json
+for _u in (json.loads((ROOT / 'data' / 'pending_specs.json').read_text())['units'] if (ROOT / 'data' / 'pending_specs.json').exists() else []): SPEC.setdefault(_u['id'], _u)   # modelled, not yet in unit_specs.json
 
 def read_glb(p):
     b = p.read_bytes(); assert b[:4] == b'glTF'; off = 12; js = None; binc = b''

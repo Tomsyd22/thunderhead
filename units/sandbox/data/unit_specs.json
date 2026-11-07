@@ -1265,32 +1265,32 @@
           "range_m": 30
         }
       ],
-      "silhouette": "Low faceted six-wheel carrier with a tall slim turret mast carrying two coil-laser emitters side by side; reads as a vertical antenna stack, never as a tank gun.",
+      "silhouette": "Low faceted six-wheel carrier with a turret carrying two long coil-laser emitters side by side; reads as an anti-air mount, never as a tank gun.",
       "views": [
-        "Front: narrow wedge nose, slit sensor bar, twin emitter barrels stacked on the mast either side of a central radar lens.",
+        "Front: narrow wedge nose, slit sensor bar, twin emitters either side of the turret face.",
         "Back: power-cell bay with magenta coolant glow, two heat vents, tow eye.",
-        "Side: six road wheels in armoured skirts, mast set just behind mid-hull, emitters pitched up at rest.",
-        "Top: hexagonal turret ring, mast footprint and the flat rotating radar plate on the turret roof."
+        "Side: six road wheels in armoured skirts, turret just behind mid-hull, emitters level at rest.",
+        "Top: hexagonal turret ring, emitter yoke and the radar plate on the turret."
       ],
-      "wear": "Black-glass panels with clean edges, brushed titanium mast, light road dust on the skirts; emitter tips heat-tinted.",
-      "weapon_visual": "Two 1.4 m coil-laser emitters on one pitch yoke (\"barrel\"), one muzzle socket each (\"muzzle_0\" left, \"muzzle_1\" right); they fire alternately.",
+      "wear": "Black-glass panels with clean edges, brushed titanium emitters, light road dust on the skirts; emitter tips heat-tinted.",
+      "weapon_visual": "Two coil-laser emitters (2.95 m from trunnion to muzzle) on one pitch yoke (\"gun\") with a recoil node; one muzzle socket each (\"muzzle_0\" left, \"muzzle_1\" right); they fire alternately.",
       "projectile_visual": "Instant gameplay hit. Thin 0.05 s magenta-white beam per shot from the firing emitter, small spark on the target; ground mode uses the same beam at a lower rate.",
-      "ability": "No manual ability. Prefers aircraft: the air target always wins over a ground one. Ground mode (infantry and light vehicles only, 30 m) is a weak self-defence fallback.",
+      "ability": "No manual ability. Prefers aircraft: an air target always wins over a ground one. Ground mode (infantry and light vehicles only, 30 m) is a weak self-defence fallback.",
       "movement": "Acceleration 5 m/s2; hull turn 80 deg/s; turret 160 deg/s, emitter pitch -5 to +80 degrees at 90 deg/s. Fires while moving, aim tolerance 6 degrees.",
-      "rig": "Rigid hull root 'body', turret yaw node 'turret', emitter pitch node 'barrel' (child of turret), muzzle sockets 'muzzle_0' and 'muzzle_1' (children of barrel), hit socket 'hit'.",
+      "rig": "root > 'body' (hull) > 'turret' (yaw) > 'gun' (emitter pitch, level at 0) > 'recoil' > muzzle sockets 'muzzle_0' (left) and 'muzzle_1' (right); wheels 'wheel_L_0'..'wheel_L_2' and 'wheel_R_0'..'wheel_R_2' (r 0.56 m); 'radar' on the turret (cosmetic).",
       "animations": [
-        "Drive: wheels rotate, light suspension motion.",
+        "Drive: six wheels roll (r 0.56 m), light suspension motion.",
         "Turn: skid-steer pivot in place like the tracked units.",
-        "Fire: emitters alternate with a 0.03 m kick and a short coil glow pulse.",
-        "Idle: mast scans slowly with emitters raised 30 degrees.",
-        "Death 1.2 s: power-cell flash, mast topples; no damaging secondary explosion."
+        "Fire: emitters alternate with a 0.03 m kick on the recoil node and a short coil glow pulse.",
+        "Idle: emitters level (pitch 0); any raised idle pose comes from the view, not the model.",
+        "Death 1.2 s: power-cell flash; no damaging secondary explosion."
       ],
-      "geometry": "Mast and emitters must stay readable from the default RTS camera; keep the barrels thick enough to survive LOD reduction.",
-      "pivots": "Ground hull root 'body'; 'turret' at the turret ring centre; 'barrel' at the emitter yoke trunnions; 'muzzle_0' / 'muzzle_1' at the emitter tips.",
+      "geometry": "Emitters must stay readable from the default RTS camera; keep them thick enough to survive LOD reduction.",
+      "pivots": "Ground root; hull 'body'; 'turret' at the ring centre; 'gun' at the emitter yoke trunnions; 'muzzle_0' / 'muzzle_1' at the emitter tips (sockets.json: turret [0, -0.8, 1.66], gun [0, 0.15, 0.96], muzzles [-/+0.84, 2.95, 0], hitZ 1.3).",
       "budget": [
-        14000,
-        6500,
-        1700,
+        16000,
+        7500,
+        1900,
         3,
         2048
       ],
@@ -1307,7 +1307,7 @@
         "ground_blocking": true
       },
       "visual_reference": null,
-      "visual_state": "New unit (round 3); model in progress",
+      "visual_state": "New unit (round 3); modelled (units/out/A06.glb)",
       "weapons_dps": [
         {
           "weapon": "Twin coil-laser - air",
@@ -1508,7 +1508,7 @@
       "weapon_visual": "0.96 m twin-prong pulse lance. One emitter socket between prongs; small front charging ring.",
       "projectile_visual": "0.22 m cyan energy bolt with short ribbon trail. Homes within turn limit; direct-hit only. EMP has a distinct expanding ring, not a damage explosion.",
       "ability": "EMP: visible enemy vehicle, ship or aircraft within 30 m; 0.3 s wind-up; no damage. For 3 s, movement x0.70 and firing interval x1.25. Cooldown 20 s from release. Immune to EMP while affected and for 6 s after expiry.",
-      "movement": "Stops to fire after 0.20 s aim. AA and ground weapons share one firing lock (ground lance 2 s, AA lance 2 s). Cannot use EMP while moving or garrisoned.",
+      "movement": "Stops to fire after 0.20 s aim. AA and ground weapons share a 2 s firing lock. Cannot use EMP while moving or garrisoned.",
       "rig": "Humanoid base, lance charge ring, battery fan and left-hand IK. No tentacle or cable physics required.",
       "animations": [
         "Idle 2.5 s: slow emitter pulse and small head tracking.",

@@ -10,21 +10,21 @@
  "perf": {
   "fps": null,
   "p95": 0,
-  "tickAvg": 0.2786666666654249,
-  "tickP99": 5.100000000093132,
+  "tickAvg": 0.2884444444305781,
+  "tickP99": 3.199999999254942,
   "calls": 119,
   "tris": 122698,
   "units": 33,
   "t": 889.8666666665147,
   "errors": [],
   "present": {
-   "hitReactions": 110,
+   "hitReactions": 111,
    "debris": 70,
-   "tossed": 7,
-   "flashes": 172,
+   "tossed": 6,
+   "flashes": 173,
    "shakes": 179,
    "structsBuilt": 11,
-   "sfx": 329
+   "sfx": 328
   },
   "lod": [
    0,
@@ -37,33 +37,33 @@
  ],
  "match": {
   "t": 612.0000000001007,
-  "wall": 110.1541000000001,
+  "wall": 101.45490000000038,
   "errors": [],
   "over": null,
   "players": [
    {
     "f": "helix",
-    "s": 4,
-    "u": 4,
-    "lost": 24,
+    "s": 10,
+    "u": 5,
+    "lost": 23,
     "h": 8000
    },
    {
     "f": "compact",
     "s": 9,
-    "u": 13,
-    "lost": 14,
+    "u": 12,
+    "lost": 15,
     "h": 6000
    }
   ],
   "present": {
-   "hitReactions": 508,
-   "debris": 280,
-   "tossed": 1,
-   "flashes": 301,
-   "shakes": 204,
-   "structsBuilt": 16,
-   "sfx": 2082
+   "hitReactions": 1373,
+   "debris": 30,
+   "tossed": 3,
+   "flashes": 147,
+   "shakes": 48,
+   "structsBuilt": 17,
+   "sfx": 3716
   }
  }
 }

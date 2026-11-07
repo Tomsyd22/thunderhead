@@ -31,9 +31,10 @@ export const MECH = {
          death: 1.4, wreckNoCollide: 2, fade: 12, maxHullPitch: 3 },
   A03: { kind: 'tracked', accel: 4.5, hullTurn: 75, turretYaw: 110, pitch: [-8, 22], tol: 4, recoil: [0.16, 0.06, 0.25], wheels: 6,
          death: 1.2, wreckNoCollide: 2, fade: 12, maxHullPitch: 3, antenna: true },
-  // A06 Halo (Helix land anti-air, round 3; not in the pack, so every value here is assumed): skid-steer carrier with a
-  // turret mast and two coil-laser emitters on one pitch yoke that fire alternately (twin); it always prefers an air target
-  A06: { kind: 'tracked', accel: 5, hullTurn: 80, turretYaw: 160, pitch: [-5, 80], pitchRate: 90, tol: 6, recoil: [0.03, 0.02, 0.08], wheels: 6,
+  // A06 Halo (Helix land anti-air, round 3; not in the pack, so every value here is assumed): six-wheel skid-steer carrier;
+  // nodes body > turret (yaw) > gun (emitter pitch, level at 0) > recoil > muzzle_0 / muzzle_1, wheels wheel_L_0..2 /
+  // wheel_R_0..2 (r 0.56 m), radar (cosmetic). The two coil-laser emitters fire alternately (twin); it always prefers an air target
+  A06: { kind: 'tracked', accel: 5, hullTurn: 80, turretYaw: 160, pitch: [-5, 80], pitchRate: 90, tol: 6, recoil: [0.03, 0.02, 0.08], wheels: 6, wheelR: 0.56,
          death: 1.2, wreckNoCollide: 2, fade: 12, maxHullPitch: 3, preferAir: true, twin: true },
   T03: { kind: 'hover', accel: 5, hullTurn: 110, turretYaw: 140, pitch: [-6, 15] /* assumed */, tol: 4 /* assumed */, clearance: 0.45,
          precharge: 0.25, recovery: 0.35, chargeSpeed: 0.65, bank: 5, bob: [0.06, 1.8], death: 1.1, fade: 10, finSpread: 0.08 },
@@ -60,7 +61,7 @@ export const isAir = (u) => u.sp.armor === 'air';
 function defaultGeom(sp, m) {
   const L = sp.dimensions_m.length, W = sp.dimensions_m.width, H = sp.dimensions_m.height;
   if (m.kind === 'foot') return { muzzle: [[0.14, 0.78, 1.42]], eye: 1.65, hitZ: 1.15 };
-  if (m.twin) return { turret: [0, -0.1 * L, 0.6 * H], gun: [0, 0.1, 0.3 * H], muzzle: [[-0.45, 1.3, 0.0], [0.45, 1.3, 0.0]], eye: H, hitZ: 0.45 * H };   // mast with two emitters
+  if (m.twin) return { turret: [0, -0.8, 1.66], gun: [0, 0.15, 0.96], muzzle: [[-0.84, 2.95, 0.0], [0.84, 2.95, 0.0]], eye: H, hitZ: 1.3 };   // A06 twin emitters (the model's sockets)
   if (m.kind === 'tracked' || m.kind === 'hover') return { turret: [0, -0.06 * L, 0.68 * H], gun: [0, 0.18 * L, 0.12 * H], muzzle: [[0, 0.5 * L, 0.0]], eye: H, hitZ: 0.5 * H };
   if (m.kind === 'heli') return { muzzle: [[-1.8, 1.5, 0.6], [1.8, 1.5, 0.6]], eye: 2, hitZ: 1.6 };
   if (m.kind === 'jet') return { muzzle: [[-2.2, 0.5, 0.0], [2.2, 0.5, 0.0]], eye: 2, hitZ: 1.2 };

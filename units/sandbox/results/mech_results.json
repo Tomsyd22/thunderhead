@@ -1,7 +1,7 @@
 {
- "date": "2026-11-07T05:48:54.130Z",
- "pass": 303,
- "total": 303,
+ "date": "2026-11-07T07:26:54.665Z",
+ "pass": 304,
+ "total": 304,
  "checks": [
   {
    "group": "1 spec transcription",
@@ -50,6 +50,12 @@
    "name": "A03 10 sheet values match MECH",
    "ok": true,
    "detail": "accel,hullTurn,turretYaw,pitchMin,pitchMax,tol,recoil.dist,recoil.back,recoil.return,death"
+  },
+  {
+   "group": "1 spec transcription",
+   "name": "A06 7 sheet values match MECH",
+   "ok": true,
+   "detail": "accel,hullTurn,turretYaw,pitchMin,pitchMax,tol,death"
   },
   {
    "group": "1 spec transcription",
@@ -527,57 +533,57 @@
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle: roster row matches unit_specs (dmg 12, burst 1, cycle 0.8, range 18)",
+   "name": "H01 Service rifle: roster row matches unit_specs (dmg 9, burst 1, cycle 0.82, range 18)",
    "ok": true,
    "detail": ""
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs infantry: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "name": "H01 Service rifle vs infantry: mean cycle 0.820 s = 0.82 s (±1 %)",
    "ok": true,
-   "detail": "50 volleys"
+   "detail": "49 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs infantry: 12.0 dmg/volley → 15.00 DPS ≈ roster 15 (±2 %)",
+   "name": "H01 Service rifle vs infantry: 9.0 dmg/volley → 10.98 DPS ≈ roster 10.98 (±2 %)",
    "ok": true,
-   "detail": "600 dmg in 50 volleys; want 12/volley"
+   "detail": "441 dmg in 49 volleys; want 9/volley"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs light: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "name": "H01 Service rifle vs light: mean cycle 0.820 s = 0.82 s (±1 %)",
    "ok": true,
-   "detail": "50 volleys"
+   "detail": "49 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs light: 3.0 dmg/volley → 3.75 DPS ≈ roster 3.75 (±2 %)",
+   "name": "H01 Service rifle vs light: 2.3 dmg/volley → 2.74 DPS ≈ roster 2.74 (±2 %)",
    "ok": true,
-   "detail": "150 dmg in 50 volleys; want 3/volley"
+   "detail": "110 dmg in 49 volleys; want 2.25/volley"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs heavy: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "name": "H01 Service rifle vs heavy: mean cycle 0.820 s = 0.82 s (±1 %)",
    "ok": true,
-   "detail": "50 volleys"
+   "detail": "49 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs heavy: 1.0 dmg/volley → 1.20 DPS ≈ roster 1.2 (±2 %)",
+   "name": "H01 Service rifle vs heavy: 0.7 dmg/volley → 0.88 DPS ≈ roster 0.88 (±2 %)",
    "ok": true,
-   "detail": "48 dmg in 50 volleys; want 0.96/volley"
+   "detail": "35 dmg in 49 volleys; want 0.72/volley"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs building: mean cycle 0.800 s = 0.8 s (±1 %)",
+   "name": "H01 Service rifle vs building: mean cycle 0.820 s = 0.82 s (±1 %)",
    "ok": true,
-   "detail": "50 volleys"
+   "detail": "49 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "H01 Service rifle vs building: 2.4 dmg/volley → 3.00 DPS ≈ roster 3 (±2 %)",
+   "name": "H01 Service rifle vs building: 1.8 dmg/volley → 2.20 DPS ≈ roster 2.2 (±2 %)",
    "ok": true,
-   "detail": "120 dmg in 50 volleys; want 2.4000000000000004/volley"
+   "detail": "88 dmg in 49 volleys; want 1.8/volley"
   },
   {
    "group": "4 weapons",
@@ -917,57 +923,57 @@
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed: roster row matches unit_specs (dmg 15, burst 1, cycle 0.45, range 25)",
+   "name": "A01 Machine gun - deployed: roster row matches unit_specs (dmg 13, burst 1, cycle 0.46, range 25)",
    "ok": true,
    "detail": ""
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs infantry: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "name": "A01 Machine gun - deployed vs infantry: mean cycle 0.460 s = 0.46 s (±1 %)",
    "ok": true,
-   "detail": "89 volleys"
+   "detail": "87 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs infantry: 15.0 dmg/volley → 33.33 DPS ≈ roster 33.33 (±2 %)",
+   "name": "A01 Machine gun - deployed vs infantry: 13.0 dmg/volley → 28.26 DPS ≈ roster 28.26 (±2 %)",
    "ok": true,
-   "detail": "1335 dmg in 89 volleys; want 15/volley"
+   "detail": "1131 dmg in 87 volleys; want 13/volley"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs light: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "name": "A01 Machine gun - deployed vs light: mean cycle 0.460 s = 0.46 s (±1 %)",
    "ok": true,
-   "detail": "89 volleys"
+   "detail": "87 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs light: 4.5 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "name": "A01 Machine gun - deployed vs light: 3.9 dmg/volley → 8.48 DPS ≈ roster 8.48 (±2 %)",
    "ok": true,
-   "detail": "401 dmg in 89 volleys; want 4.5/volley"
+   "detail": "339 dmg in 87 volleys; want 3.9/volley"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs heavy: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "name": "A01 Machine gun - deployed vs heavy: mean cycle 0.460 s = 0.46 s (±1 %)",
    "ok": true,
-   "detail": "89 volleys"
+   "detail": "87 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs heavy: 1.8 dmg/volley → 4.00 DPS ≈ roster 4 (±2 %)",
+   "name": "A01 Machine gun - deployed vs heavy: 1.6 dmg/volley → 3.39 DPS ≈ roster 3.39 (±2 %)",
    "ok": true,
-   "detail": "160 dmg in 89 volleys; want 1.7999999999999998/volley"
+   "detail": "136 dmg in 87 volleys; want 1.56/volley"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs building: mean cycle 0.450 s = 0.45 s (±1 %)",
+   "name": "A01 Machine gun - deployed vs building: mean cycle 0.460 s = 0.46 s (±1 %)",
    "ok": true,
-   "detail": "89 volleys"
+   "detail": "87 volleys"
   },
   {
    "group": "4 weapons",
-   "name": "A01 Machine gun - deployed vs building: 3.8 dmg/volley → 8.33 DPS ≈ roster 8.33 (±2 %)",
+   "name": "A01 Machine gun - deployed vs building: 3.3 dmg/volley → 7.07 DPS ≈ roster 7.07 (±2 %)",
    "ok": true,
-   "detail": "334 dmg in 89 volleys; want 3.75/volley"
+   "detail": "283 dmg in 87 volleys; want 3.25/volley"
   },
   {
    "group": "4 weapons",
@@ -1259,7 +1265,7 @@
   },
   {
    "group": "4 weapons",
-   "name": "T02 Disruption lance - air: roster row matches unit_specs (dmg 20, burst 1, cycle 2, range 38)",
+   "name": "T02 Disruption lance - air: roster row matches unit_specs (dmg 50, burst 1, cycle 2, range 45)",
    "ok": true,
    "detail": ""
   },
@@ -1271,9 +1277,9 @@
   },
   {
    "group": "4 weapons",
-   "name": "T02 Disruption lance - air vs air: 20.0 dmg/volley → 10.00 DPS ≈ roster 10 (±2 %)",
+   "name": "T02 Disruption lance - air vs air: 50.0 dmg/volley → 25.00 DPS ≈ roster 25 (±2 %)",
    "ok": true,
-   "detail": "400 dmg in 20 volleys; want 20/volley"
+   "detail": "1000 dmg in 20 volleys; want 50/volley"
   },
   {
    "group": "4 weapons",
@@ -1757,9 +1763,9 @@
   },
   {
    "group": "8 collision & smoothness",
-   "name": "sim cost 0.559 ms per 30 Hz tick for 60 units in battle (budget 4 ms)",
+   "name": "sim cost 0.336 ms per 30 Hz tick for 60 units in battle (budget 4 ms)",
    "ok": true,
-   "detail": "1006 ms / 1800 ticks; shots 406, kills 27"
+   "detail": "605 ms / 1800 ticks; shots 528, kills 26"
   },
   {
    "group": "9 pace & harvester",
