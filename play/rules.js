@@ -41,7 +41,7 @@ export const STRUCTURES = {
 export const FACTIONS = {
   compact: { name: 'The Compact', theme: 'Cold War 2.0', pack: 'H', color: '#c4574d', infantry: ['H01', 'H02', 'HE'], vehicle: ['H03', 'HV'], air: ['H04'], naval: ['H05'] },
   lattice: { name: 'The Lattice', theme: 'Drones and AI', pack: 'T', color: '#2fb3a8', infantry: ['T01', 'T02', 'TE'], vehicle: ['T03', 'HV'], air: ['T04'], naval: ['T05'] },
-  helix:   { name: 'Helix Dynamics', theme: 'Cyberpunk megacorps', pack: 'A', color: '#b04fd6', infantry: ['A01', 'AE'], vehicle: ['A03', 'HV'], air: ['A04'], naval: ['A05'] },
+  helix:   { name: 'Helix Dynamics', theme: 'Cyberpunk megacorps', pack: 'A', color: '#b04fd6', infantry: ['A01', 'AE'], vehicle: ['A03', 'A06', 'HV'], air: ['A04'], naval: ['A05'] },
 };
 export const CATEGORY_OF = (uid, fac) => ['infantry', 'vehicle', 'air', 'naval'].find((c) => FACTIONS[fac][c].includes(uid));
 export const BUILDING_FOR = { infantry: 'barracks', vehicle: 'factory', air: 'airpad', naval: 'naval' };

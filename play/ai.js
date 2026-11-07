@@ -15,6 +15,10 @@
 // and factory before the radar / airpad / naval yard, no more than one infantry per vehicle (plus a few), the first wave
 // not before 9 game minutes and bigger, a third of the army stays home, production structures are the first targets, and
 // a wave far from its target comes home when the base starts losing structures. In 1v1 and as one of a pair it plays as before.
+// Anti-air (round 3): production lists hold anti-air-only units (Helix's Halo) and dual-role ones (Rocket Troopers, Nullifiers).
+// The round-robin skips anti-air-only units until enemy aircraft have been seen, and while the anti-air it owns is worth less
+// than the enemy aircraft it has seen lately (credit for credit, at most half its army, plus a token amount once an enemy
+// airpad is known) the next pick in a list that has an anti-air unit is that unit. Fog of war only: aircraft our side saw.
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { MECH } from './engine/mech.js';
 
@@ -36,7 +40,7 @@ export class AI {
     const c = p.start; const foes = game.players.filter((q) => q.team !== p.team), enemy = (foes.sort((a, b) => Math.hypot(a.start.x - c.x, a.start.y - c.y) - Math.hypot(b.start.x - c.x, b.start.y - c.y))[0] || game.players.find((q) => q.id !== p.id)).start;
     const dx = enemy.x - c.x, dy = enemy.y - c.y, L = Math.hypot(dx, dy) || 1; this.toward = [dx / L, dy / L];
     this.stage = [c.x + this.toward[0] * 150, c.y + this.toward[1] * 150];
-    this.known = new Map(); this.swept = new Map(); this.reachC = new Map(); this.cross = false; this.outnum = false; this.crossT = -99; this.navy = new Set(); this.navyT = -999; this.navyPts = new Map();
+    this.known = new Map(); this.airSeen = new Map(); this.swept = new Map(); this.reachC = new Map(); this.cross = false; this.outnum = false; this.crossT = -99; this.navy = new Set(); this.navyT = -999; this.navyPts = new Map();
   }
   get structs() { return this.g.structures(this.p); }
   /** living players on other teams, nearest start first (1v1: just the opponent) */
@@ -54,6 +58,28 @@ export class AI {
     const W = this.g.world, me = this.p.team, K = this.known, t = this.g.t;
     for (const b of W.buildings) if (b.alive && b.team !== me && b.team >= 0 && W.visible(me, b)) { const s = K.get(b.id); if (s) s.t = t; else K.set(b.id, { id: b.id, x: b.x, y: b.y, kind: b.kind, owner: b.owner, t }); }
     for (const [id, s] of K) { const b = W.byId.get(id); if ((!b || !b.alive) && this.looksAt(s.x, s.y)) K.delete(id); }   // gone when we look again
+    // enemy aircraft our side can see (armed ones), forgotten after 4 game minutes unseen or when we see the spot it died
+    const A = this.airSeen; for (const u of W.units) if (u.alive && u.dom === 'air' && u.team !== me && u.sys.length && W.visible(me, u)) A.set(u.id, { x: u.x, y: u.y, cost: u.sp.cost, t });
+    for (const [id, s] of A) { const u = W.byId.get(id); if (t - s.t > 240 || ((!u || !u.alive) && this.looksAt(s.x, s.y))) A.delete(id); }
+  }
+  /** credits of enemy aircraft seen lately (+ a token amount once an enemy airpad is known: aircraft are coming) */
+  airThreatValue() { let v = 0; for (const s of this.airSeen.values()) v += s.cost; if (!v && [...this.known.values()].some((s) => s.kind === 'airpad')) v = 600; return v; }
+  /** can this unit type shoot aircraft / only aircraft */
+  hitsAir(k) { const sp = this.g.world.spec[k]; return !!sp && sp.weapons.some((w) => w.targets.includes('air')); }
+  aaOnly(k) { const sp = this.g.world.spec[k]; return !!sp && sp.weapons.length > 0 && sp.weapons.every((w) => w.targets.length === 1 && w.targets[0] === 'air'); }
+  /** true while the anti-air we own (and have queued) is worth less than the enemy air seen, capped at half the army */
+  wantAA() {
+    const air = this.airThreatValue(); if (!air) return false; const p = this.p, mine = this.g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer);
+    let aa = 0, army = 0; for (const u of mine) { army += u.sp.cost; if (this.hitsAir(u.uid)) aa += u.sp.cost; }
+    for (const cat of ['infantry', 'vehicle', 'air', 'naval']) for (const it of p.queues[cat] || []) if (it.key !== 'HV' && this.hitsAir(it.key)) aa += it.cost;
+    return aa < Math.min(air, Math.max(1200, army * 0.5));
+  }
+  /** the next unit from a production list: anti-air-only units only against seen aircraft; anti-air first while short of it */
+  pickUnit(list) {
+    if (!list.length) return null; const aaL = list.filter((k) => this.hitsAir(k));
+    if (aaL.length && this.wantAA()) return aaL[(this.next++) % aaL.length];
+    const ground = list.filter((k) => !this.aaOnly(k)); if (!ground.length) return null;
+    return ground[(this.next++) % ground.length];
   }
   looksAt(x, y) { return this.g.unitsOf(this.p).some((u) => Math.hypot(u.x - x, u.y - y) < (u.sp.sight_m || 30) * 0.8) || this.structs.some((b) => Math.hypot(b.x - x, b.y - y) < 40); }
   /** land domains that can get from our base to pt (public map info: the nav regions) */
@@ -153,7 +179,7 @@ export class AI {
     if (harv + hvq < wantHv && p.credits < 1200) return;   // save up rather than starve the harvester
     const mine = g.unitsOf(p).filter((u) => u.uid !== 'HV' && !u.m.engineer), army = mine.length; if (army > 40) return;
     const sq = p.queues.structure[0]; if (sq && !p.ready && p.credits < Math.min(1500, sq.cost - sq.spent)) return;   // the base comes first
-    const keep = (cat, list, max) => { if (!list.length || !g.has(p, { infantry: 'barracks', vehicle: 'factory', air: 'airpad', naval: 'naval' }[cat])) return; if (p.queues[cat].length >= max) return; const k = list[(this.next++) % list.length]; if (g.available(p, cat, k) && p.credits > g.costOf(cat, k) + 300) g.enqueue(p, cat, k); };
+    const keep = (cat, list, max) => { if (!list.length || !g.has(p, { infantry: 'barracks', vehicle: 'factory', air: 'airpad', naval: 'naval' }[cat])) return; if (p.queues[cat].length >= max) return; const k = this.pickUnit(list); if (k && g.available(p, cat, k) && p.credits > g.costOf(cat, k) + 300) g.enqueue(p, cat, k); };
     const inf = F.infantry.filter((k) => W.spec[k] && W.spec[k].weapons.length), veh = F.vehicle.filter((u) => u !== 'HV');
     if (!this.cross) {   // outnumbered: tanks take the money before more infantry (infantry at most one per vehicle, plus a few)
       const nInf = mine.filter((u) => u.dom === 'foot').length, nVeh = mine.filter((u) => u.dom === 'veh' || u.dom === 'hover').length;

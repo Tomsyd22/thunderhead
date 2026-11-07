@@ -10,7 +10,8 @@ from mathutils import Vector
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 OUT, BLEND, PREV = os.path.join(ROOT, 'out'), os.path.join(ROOT, 'blend'), os.path.join(ROOT, 'preview')
 SPEC = {u['id']: u for u in json.load(open(os.path.join(ROOT, 'data', 'unit_specs.json')))['units']}
-ORDER = ['H01', 'H02', 'H03', 'H04', 'H05', 'A01', 'A02', 'A03', 'A04', 'A05', 'T01', 'T02', 'T03', 'T04', 'T05']
+for _u in json.load(open(os.path.join(ROOT, 'data', 'pending_specs.json')))['units']: SPEC.setdefault(_u['id'], _u)   # units not yet in unit_specs.json
+ORDER = ['H01', 'H02', 'H03', 'H04', 'H05', 'A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'T01', 'T02', 'T03', 'T04', 'T05']
 
 def tri_eval(o, dg):
     ev = o.evaluated_get(dg); me = ev.to_mesh(); n = sum(len(p.vertices) - 2 for p in me.polygons); ev.to_mesh_clear(); return n

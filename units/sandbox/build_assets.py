@@ -12,6 +12,7 @@ HERE = Path(__file__).resolve().parent; ROOT = HERE.parent
 (HERE / 'assets').mkdir(exist_ok=True); (HERE / 'data').mkdir(exist_ok=True)
 shutil.copy(ROOT / 'data' / 'unit_specs.json', HERE / 'data' / 'unit_specs.json')
 SPEC = {u['id']: u for u in json.loads((ROOT / 'data' / 'unit_specs.json').read_text())['units']}
+for _u in json.loads((ROOT / 'data' / 'pending_specs.json').read_text())['units']: SPEC.setdefault(_u['id'], _u)   # modelled, not yet in unit_specs.json
 
 def read_glb(p):
     b = p.read_bytes(); assert b[:4] == b'glTF'; off = 12; js = None; binc = b''
@@ -63,6 +64,7 @@ for uid in SPEC:
     if 'turret' in W and 'gun' in W:
         g['turret'] = r4(W['turret']); g['gun'] = sub(W['gun'], W['turret'])
         if 'muzzle' in W: g['muzzle'] = [sub(W['muzzle'], W['gun'])]
+        elif 'muzzle_0' in W: g['muzzle'] = [sub(W[f'muzzle_{k}'], W['gun']) for k in range(8) if f'muzzle_{k}' in W]   # A06: twin emitters
     elif uid == 'H04' and 'muzzle_L' in W: g['muzzle'] = [r4(W['muzzle_L']), r4(W['muzzle_R'])]
     elif uid == 'A04' and 'bomb_L' in W: g['muzzle'] = [r4(W['bomb_L']), r4(W['bomb_R'])]
     elif uid == 'A05': g['muzzle'] = [r4(W[f'muzzle_cell_{k}']) for k in range(4) if f'muzzle_cell_{k}' in W] or None; g['aa'] = r4(W['aa']) if 'aa' in W else None

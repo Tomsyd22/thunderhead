@@ -1,0 +1,1237 @@
+{
+ "tag": "dbg",
+ "date": "2026-11-07",
+ "game_speed": 2.4,
+ "runs": 20,
+ "units": {
+  "H01": {
+   "name": "Conscript",
+   "cost": 100,
+   "hp": 90,
+   "speed": 4.4,
+   "weapons": [
+    {
+     "name": "Service rifle",
+     "damage": 9,
+     "cycle": 0.82,
+     "range": 18,
+     "type": "rifle",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "H02": {
+   "name": "Rocket Trooper",
+   "cost": 300,
+   "hp": 110,
+   "speed": 3.8,
+   "weapons": [
+    {
+     "name": "Anti-armour rocket",
+     "damage": 90,
+     "cycle": 3,
+     "range": 36,
+     "type": "at_rocket",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    },
+    {
+     "name": "Air-defence rocket",
+     "damage": 70,
+     "cycle": 2.5,
+     "range": 45,
+     "type": "aa_rocket",
+     "targets": [
+      "air"
+     ]
+    }
+   ]
+  },
+  "H03": {
+   "name": "Bastion",
+   "cost": 900,
+   "hp": 950,
+   "speed": 7.8,
+   "weapons": [
+    {
+     "name": "Heavy cannon",
+     "damage": 100,
+     "cycle": 2.5,
+     "range": 42,
+     "type": "cannon_heavy",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "H04": {
+   "name": "Hammer",
+   "cost": 1200,
+   "hp": 650,
+   "speed": 19,
+   "weapons": [
+    {
+     "name": "Twin attack rockets",
+     "damage": 42,
+     "cycle": 2.8,
+     "range": 45,
+     "type": "attack_rocket",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "A01": {
+   "name": "Ranger",
+   "cost": 200,
+   "hp": 130,
+   "speed": 4.6,
+   "weapons": [
+    {
+     "name": "Carbine - mobile",
+     "damage": 10,
+     "cycle": 0.8,
+     "range": 18,
+     "type": "carbine",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    },
+    {
+     "name": "Machine gun - deployed",
+     "damage": 13,
+     "cycle": 0.46,
+     "range": 25,
+     "type": "mg",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "A03": {
+   "name": "Arbiter",
+   "cost": 700,
+   "hp": 700,
+   "speed": 10,
+   "weapons": [
+    {
+     "name": "Precision cannon",
+     "damage": 80,
+     "cycle": 2.2,
+     "range": 40,
+     "type": "cannon_precision",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  },
+  "A06": {
+   "name": "Halo",
+   "cost": 650,
+   "hp": 400,
+   "speed": 11,
+   "weapons": [
+    {
+     "name": "Twin coil-laser - air",
+     "damage": 12,
+     "cycle": 0.2,
+     "range": 50,
+     "type": "aa_laser",
+     "targets": [
+      "air"
+     ]
+    },
+    {
+     "name": "Coil-laser - ground",
+     "damage": 6,
+     "cycle": 0.5,
+     "range": 30,
+     "type": "aa_laser",
+     "targets": [
+      "infantry",
+      "light"
+     ]
+    }
+   ]
+  },
+  "T01": {
+   "name": "Pulse Trooper",
+   "cost": 150,
+   "hp": 100,
+   "speed": 5.4,
+   "weapons": [
+    {
+     "name": "Pulse carbine",
+     "damage": 16,
+     "cycle": 0.8,
+     "range": 23,
+     "type": "pulse",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building"
+     ]
+    }
+   ]
+  },
+  "T02": {
+   "name": "Nullifier",
+   "cost": 400,
+   "hp": 100,
+   "speed": 5,
+   "weapons": [
+    {
+     "name": "Disruption lance - ground",
+     "damage": 50,
+     "cycle": 2,
+     "range": 32,
+     "type": "lance",
+     "targets": [
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    },
+    {
+     "name": "Disruption lance - air",
+     "damage": 50,
+     "cycle": 2,
+     "range": 45,
+     "type": "lance_aa",
+     "targets": [
+      "air"
+     ]
+    }
+   ]
+  },
+  "T03": {
+   "name": "Wisp",
+   "cost": 950,
+   "hp": 600,
+   "speed": 13,
+   "weapons": [
+    {
+     "name": "Accelerator cannon",
+     "damage": 95,
+     "cycle": 2.5,
+     "range": 46,
+     "type": "accelerator",
+     "targets": [
+      "infantry",
+      "light",
+      "heavy",
+      "building",
+      "naval"
+     ]
+    }
+   ]
+  }
+ },
+ "a": [],
+ "b": [],
+ "c": [
+  {
+   "name": "c:compact|lattice",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 4.145833333333319,
+   "tMin": 3.9166666666666528,
+   "tMax": 4.458333333333319,
+   "valWinner": 870.5090909090908,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 870.5090909090908,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 4.46,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 3.92,
+     "valA": 0,
+     "valB": 907
+    },
+    {
+     "win": "B",
+     "t": 4.15,
+     "valA": 0,
+     "valB": 882
+    },
+    {
+     "win": "B",
+     "t": 4.08,
+     "valA": 0,
+     "valB": 866
+    },
+    {
+     "win": "B",
+     "t": 4.06,
+     "valA": 0,
+     "valB": 933
+    },
+    {
+     "win": "B",
+     "t": 4.22,
+     "valA": 0,
+     "valB": 812
+    },
+    {
+     "win": "B",
+     "t": 4.1,
+     "valA": 0,
+     "valB": 892
+    },
+    {
+     "win": "B",
+     "t": 4.17,
+     "valA": 0,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 4.26,
+     "valA": 0,
+     "valB": 850
+    },
+    {
+     "win": "B",
+     "t": 4.22,
+     "valA": 0,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 4.07,
+     "valA": 0,
+     "valB": 869
+    },
+    {
+     "win": "B",
+     "t": 4.12,
+     "valA": 0,
+     "valB": 907
+    },
+    {
+     "win": "B",
+     "t": 4.01,
+     "valA": 0,
+     "valB": 919
+    },
+    {
+     "win": "B",
+     "t": 4.14,
+     "valA": 0,
+     "valB": 866
+    },
+    {
+     "win": "B",
+     "t": 3.99,
+     "valA": 0,
+     "valB": 933
+    },
+    {
+     "win": "B",
+     "t": 4.06,
+     "valA": 0,
+     "valB": 879
+    },
+    {
+     "win": "B",
+     "t": 4.26,
+     "valA": 0,
+     "valB": 838
+    },
+    {
+     "win": "B",
+     "t": 4.35,
+     "valA": 0,
+     "valB": 798
+    },
+    {
+     "win": "B",
+     "t": 4.19,
+     "valA": 0,
+     "valB": 865
+    },
+    {
+     "win": "B",
+     "t": 4.08,
+     "valA": 0,
+     "valB": 881
+    }
+   ]
+  },
+  {
+   "name": "c:compact|helix",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers + Halo",
+    "ids": {
+     "A06": 1,
+     "A01": 6
+    },
+    "spent": 1850,
+    "left": 150,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0.1,
+   "winB": 0.9,
+   "draws": 0,
+   "t": 6.2145833333333576,
+   "tMin": 5.472222222222206,
+   "tMax": 7.91666666666678,
+   "valWinner": 557.2608547008547,
+   "valLoser": 15,
+   "valA": 19.337777777777777,
+   "valB": 552.9230769230769,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 5.47,
+     "valA": 0,
+     "valB": 718
+    },
+    {
+     "win": "B",
+     "t": 6.14,
+     "valA": 0,
+     "valB": 561
+    },
+    {
+     "win": "B",
+     "t": 5.6,
+     "valA": 0,
+     "valB": 688
+    },
+    {
+     "win": "B",
+     "t": 6.21,
+     "valA": 0,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 5.6,
+     "valA": 0,
+     "valB": 737
+    },
+    {
+     "win": "B",
+     "t": 7.5,
+     "valA": 0,
+     "valB": 259
+    },
+    {
+     "win": "A",
+     "t": 7.11,
+     "valA": 251,
+     "valB": 150
+    },
+    {
+     "win": "B",
+     "t": 5.54,
+     "valA": 0,
+     "valB": 750
+    },
+    {
+     "win": "B",
+     "t": 6.5,
+     "valA": 0,
+     "valB": 500
+    },
+    {
+     "win": "B",
+     "t": 5.76,
+     "valA": 0,
+     "valB": 686
+    },
+    {
+     "win": "B",
+     "t": 5.64,
+     "valA": 0,
+     "valB": 686
+    },
+    {
+     "win": "B",
+     "t": 6.33,
+     "valA": 0,
+     "valB": 550
+    },
+    {
+     "win": "B",
+     "t": 6.86,
+     "valA": 0,
+     "valB": 437
+    },
+    {
+     "win": "B",
+     "t": 5.87,
+     "valA": 0,
+     "valB": 589
+    },
+    {
+     "win": "B",
+     "t": 5.78,
+     "valA": 0,
+     "valB": 712
+    },
+    {
+     "win": "A",
+     "t": 7.92,
+     "valA": 135,
+     "valB": 150
+    },
+    {
+     "win": "B",
+     "t": 5.96,
+     "valA": 0,
+     "valB": 662
+    },
+    {
+     "win": "B",
+     "t": 7.39,
+     "valA": 0,
+     "valB": 323
+    },
+    {
+     "win": "B",
+     "t": 5.53,
+     "valA": 0,
+     "valB": 644
+    },
+    {
+     "win": "B",
+     "t": 5.58,
+     "valA": 0,
+     "valB": 705
+    }
+   ]
+  },
+  {
+   "name": "c:lattice|helix",
+   "A": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers + Halo",
+    "ids": {
+     "A06": 1,
+     "A01": 6
+    },
+    "spent": 1850,
+    "left": 150,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 5.206249999999993,
+   "tMin": 3.902777777777765,
+   "tMax": 6.291666666666677,
+   "valWinner": 1382.0937500000005,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 1382.0937500000005,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 6.04,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.08,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 3.9,
+     "valA": 100,
+     "valB": 1450
+    },
+    {
+     "win": "B",
+     "t": 6.29,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.03,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 4.07,
+     "valA": 100,
+     "valB": 1446
+    },
+    {
+     "win": "B",
+     "t": 3.97,
+     "valA": 100,
+     "valB": 1453
+    },
+    {
+     "win": "B",
+     "t": 4.43,
+     "valA": 100,
+     "valB": 1369
+    },
+    {
+     "win": "B",
+     "t": 4.89,
+     "valA": 100,
+     "valB": 1374
+    },
+    {
+     "win": "B",
+     "t": 4.35,
+     "valA": 100,
+     "valB": 1448
+    },
+    {
+     "win": "B",
+     "t": 5.64,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.15,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.74,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.76,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 6.14,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 4.96,
+     "valA": 100,
+     "valB": 1356
+    },
+    {
+     "win": "B",
+     "t": 4.07,
+     "valA": 100,
+     "valB": 1446
+    },
+    {
+     "win": "B",
+     "t": 4.03,
+     "valA": 100,
+     "valB": 1450
+    },
+    {
+     "win": "B",
+     "t": 6.03,
+     "valA": 100,
+     "valB": 1350
+    },
+    {
+     "win": "B",
+     "t": 5.56,
+     "valA": 100,
+     "valB": 1350
+    }
+   ]
+  },
+  {
+   "name": "c:compact|helixR",
+   "A": {
+    "label": "Compact: Conscripts + Rocket Troopers",
+    "ids": {
+     "H02": 2,
+     "H01": 14
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers only",
+    "ids": {
+     "A01": 10
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 3.0618055555555452,
+   "tMin": 2.7638888888888795,
+   "tMax": 3.555555555555543,
+   "valWinner": 1200.6153846153843,
+   "valLoser": 0,
+   "valA": 0,
+   "valB": 1200.6153846153843,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.39,
+     "valA": 0,
+     "valB": 1158
+    },
+    {
+     "win": "B",
+     "t": 3.56,
+     "valA": 0,
+     "valB": 1089
+    },
+    {
+     "win": "B",
+     "t": 2.96,
+     "valA": 0,
+     "valB": 1200
+    },
+    {
+     "win": "B",
+     "t": 3.33,
+     "valA": 0,
+     "valB": 1117
+    },
+    {
+     "win": "B",
+     "t": 2.83,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 0,
+     "valB": 1137
+    },
+    {
+     "win": "B",
+     "t": 2.87,
+     "valA": 0,
+     "valB": 1295
+    },
+    {
+     "win": "B",
+     "t": 3.17,
+     "valA": 0,
+     "valB": 1158
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 0,
+     "valB": 1262
+    },
+    {
+     "win": "B",
+     "t": 3.08,
+     "valA": 0,
+     "valB": 1186
+    },
+    {
+     "win": "B",
+     "t": 3.24,
+     "valA": 0,
+     "valB": 1117
+    },
+    {
+     "win": "B",
+     "t": 2.85,
+     "valA": 0,
+     "valB": 1200
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 0,
+     "valB": 1145
+    },
+    {
+     "win": "B",
+     "t": 2.94,
+     "valA": 0,
+     "valB": 1234
+    },
+    {
+     "win": "B",
+     "t": 2.82,
+     "valA": 0,
+     "valB": 1248
+    },
+    {
+     "win": "B",
+     "t": 2.89,
+     "valA": 0,
+     "valB": 1317
+    },
+    {
+     "win": "B",
+     "t": 3.5,
+     "valA": 0,
+     "valB": 978
+    },
+    {
+     "win": "B",
+     "t": 2.85,
+     "valA": 0,
+     "valB": 1303
+    },
+    {
+     "win": "B",
+     "t": 2.76,
+     "valA": 0,
+     "valB": 1345
+    }
+   ]
+  },
+  {
+   "name": "c:lattice|helixR",
+   "A": {
+    "label": "Lattice: Pulse Troopers + Nullifiers",
+    "ids": {
+     "T02": 1,
+     "T01": 10
+    },
+    "spent": 1900,
+    "left": 100,
+    "mode": "moving"
+   },
+   "B": {
+    "label": "Helix: Rangers only",
+    "ids": {
+     "A01": 10
+    },
+    "spent": 2000,
+    "left": 0,
+    "mode": "battle"
+   },
+   "n": 20,
+   "winA": 0,
+   "winB": 1,
+   "draws": 0,
+   "t": 3.2430555555555443,
+   "tMin": 2.708333333333324,
+   "tMax": 3.9444444444444304,
+   "valWinner": 735.062937062937,
+   "valLoser": 100,
+   "valA": 100,
+   "valB": 735.062937062937,
+   "wonBy": "B",
+   "flag": true,
+   "runs": [
+    {
+     "win": "B",
+     "t": 3.31,
+     "valA": 100,
+     "valB": 778
+    },
+    {
+     "win": "B",
+     "t": 2.99,
+     "valA": 100,
+     "valB": 828
+    },
+    {
+     "win": "B",
+     "t": 2.71,
+     "valA": 100,
+     "valB": 926
+    },
+    {
+     "win": "B",
+     "t": 3.87,
+     "valA": 100,
+     "valB": 528
+    },
+    {
+     "win": "B",
+     "t": 3.82,
+     "valA": 100,
+     "valB": 551
+    },
+    {
+     "win": "B",
+     "t": 3.89,
+     "valA": 100,
+     "valB": 531
+    },
+    {
+     "win": "B",
+     "t": 3.06,
+     "valA": 100,
+     "valB": 803
+    },
+    {
+     "win": "B",
+     "t": 2.78,
+     "valA": 100,
+     "valB": 926
+    },
+    {
+     "win": "B",
+     "t": 3.35,
+     "valA": 100,
+     "valB": 677
+    },
+    {
+     "win": "B",
+     "t": 3.94,
+     "valA": 100,
+     "valB": 479
+    },
+    {
+     "win": "B",
+     "t": 3.26,
+     "valA": 100,
+     "valB": 751
+    },
+    {
+     "win": "B",
+     "t": 2.94,
+     "valA": 100,
+     "valB": 803
+    },
+    {
+     "win": "B",
+     "t": 3.31,
+     "valA": 100,
+     "valB": 726
+    },
+    {
+     "win": "B",
+     "t": 3.19,
+     "valA": 100,
+     "valB": 800
+    },
+    {
+     "win": "B",
+     "t": 3.43,
+     "valA": 100,
+     "valB": 628
+    },
+    {
+     "win": "B",
+     "t": 2.89,
+     "valA": 100,
+     "valB": 852
+    },
+    {
+     "win": "B",
+     "t": 2.71,
+     "valA": 100,
+     "valB": 880
+    },
+    {
+     "win": "B",
+     "t": 2.9,
+     "valA": 100,
+     "valB": 877
+    },
+    {
+     "win": "B",
+     "t": 3.42,
+     "valA": 100,
+     "valB": 606
+    },
+    {
+     "win": "B",
+     "t": 3.1,
+     "valA": 100,
+     "valB": 751
+    }
+   ]
+  }
+ ],
+ "d": [],
+ "table": {
+  "rifle": {
+   "infantry": 1,
+   "light": 0.1515,
+   "medium": 0.1886,
+   "heavy": 0.2398,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.2
+  },
+  "at_rocket": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.8,
+   "structure": 0.65
+  },
+  "aa_rocket": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "cannon_heavy": {
+   "infantry": 0.22,
+   "light": 0.4782,
+   "medium": 0.6765,
+   "heavy": 0.75,
+   "aircraft": 0,
+   "ship": 0.75,
+   "structure": 0.85
+  },
+  "attack_rocket": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.85,
+   "structure": 0.7
+  },
+  "naval_gun": {
+   "infantry": 0.25,
+   "light": 1,
+   "medium": 0.85,
+   "heavy": 0.85,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0.9
+  },
+  "carbine": {
+   "infantry": 1,
+   "light": 0.1479,
+   "medium": 0.1847,
+   "heavy": 0.238,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.18
+  },
+  "mg": {
+   "infantry": 1,
+   "light": 0.065,
+   "medium": 0.0821,
+   "heavy": 0.1056,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.25
+  },
+  "cannon_precision": {
+   "infantry": 0.275,
+   "light": 0.445,
+   "medium": 0.6053,
+   "heavy": 0.7102,
+   "aircraft": 0,
+   "ship": 0.65,
+   "structure": 0.75
+  },
+  "bomb": {
+   "infantry": 0.45,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.8,
+   "structure": 1
+  },
+  "ship_missile": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0
+  },
+  "aa_missile": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "pulse": {
+   "infantry": 1,
+   "light": 0.0875,
+   "medium": 0.1164,
+   "heavy": 0.141,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.2
+  },
+  "lance": {
+   "infantry": 0,
+   "light": 1,
+   "medium": 1,
+   "heavy": 1,
+   "aircraft": 0,
+   "ship": 0.75,
+   "structure": 0.4
+  },
+  "lance_aa": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  },
+  "accelerator": {
+   "infantry": 0.2316,
+   "light": 0.5,
+   "medium": 0.7024,
+   "heavy": 0.8086,
+   "aircraft": 0,
+   "ship": 0.65,
+   "structure": 0.65
+  },
+  "pulse_light": {
+   "infantry": 1,
+   "light": 0.2,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0
+  },
+  "raider_sea": {
+   "infantry": 0,
+   "light": 0,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 0,
+   "ship": 1,
+   "structure": 0
+  },
+  "raider_shore": {
+   "infantry": 0,
+   "light": 0.9,
+   "medium": 0.8,
+   "heavy": 0.8,
+   "aircraft": 0,
+   "ship": 0,
+   "structure": 0.7
+  },
+  "aa_laser": {
+   "infantry": 0.5,
+   "light": 0.4,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
+  }
+ }
+}

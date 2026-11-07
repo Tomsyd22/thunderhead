@@ -1,12 +1,12 @@
 {
- "_doc": "Weapon type \u00d7 armour type damage table (play/combat.js). Damage per hit = weapon base damage \u00d7 table[type][armour] \u00d7 veterancy / ttk_scale. Cells for rifles vs tanks, tank cannons vs tanks and tank cannons vs infantry are fitted by play/test_combat.mjs --fit to the round-1 playtest targets (real seconds at the default game speed); the rest come from the pack's per-weapon multipliers. ttk_scale is the in-game time-to-kill slider (1 = these targets; 2 = fights last twice as long).",
+ "_doc": "Weapon type × armour type damage table (play/combat.js). Damage per hit = weapon base damage × table[type][armour] × veterancy / ttk_scale. Cells for rifles (and the Ranger's deployed machine gun) vs tanks, tank cannons vs tanks and tank cannons vs infantry are fitted by play/test_combat.mjs --fit to the round-1 playtest targets (real seconds at the default game speed); the rest come from the pack's per-weapon multipliers. ttk_scale is the in-game time-to-kill slider (1 = these targets; 2 = fights last twice as long).",
  "ttk_scale": 1,
  "table": {
   "rifle": {
    "infantry": 1,
-   "light": 0.1108,
-   "medium": 0.1374,
-   "heavy": 0.1755,
+   "light": 0.1515,
+   "medium": 0.1886,
+   "heavy": 0.2398,
    "aircraft": 0,
    "ship": 0,
    "structure": 0.2
@@ -30,9 +30,9 @@
    "structure": 0
   },
   "cannon_heavy": {
-   "infantry": 0.23,
-   "light": 0.456,
-   "medium": 0.6347,
+   "infantry": 0.22,
+   "light": 0.4782,
+   "medium": 0.6765,
    "heavy": 0.75,
    "aircraft": 0,
    "ship": 0.75,
@@ -67,17 +67,17 @@
   },
   "mg": {
    "infantry": 1,
-   "light": 0.3,
-   "medium": 0.12,
-   "heavy": 0.12,
+   "light": 0.065,
+   "medium": 0.0821,
+   "heavy": 0.1056,
    "aircraft": 0,
    "ship": 0,
    "structure": 0.25
   },
   "cannon_precision": {
-   "infantry": 0.2875,
+   "infantry": 0.275,
    "light": 0.445,
-   "medium": 0.6349,
+   "medium": 0.6053,
    "heavy": 0.7102,
    "aircraft": 0,
    "ship": 0.65,
@@ -112,9 +112,9 @@
   },
   "pulse": {
    "infantry": 1,
-   "light": 0.0969,
+   "light": 0.0875,
    "medium": 0.1164,
-   "heavy": 0.1554,
+   "heavy": 0.141,
    "aircraft": 0,
    "ship": 0,
    "structure": 0.2
@@ -138,10 +138,10 @@
    "structure": 0
   },
   "accelerator": {
-   "infantry": 0.2421,
+   "infantry": 0.2316,
    "light": 0.5,
    "medium": 0.7024,
-   "heavy": 0.8539,
+   "heavy": 0.8086,
    "aircraft": 0,
    "ship": 0.65,
    "structure": 0.65
@@ -172,14 +172,27 @@
    "aircraft": 0,
    "ship": 0,
    "structure": 0.7
+  },
+  "aa_laser": {
+   "infantry": 0.5,
+   "light": 0.4,
+   "medium": 0,
+   "heavy": 0,
+   "aircraft": 1,
+   "ship": 0,
+   "structure": 0
   }
  },
  "fitted": {
-  "date": "2026-11-06",
+  "date": "2026-11-07",
   "game_speed": 2.4,
   "rifle_squad": 5,
   "targets": {
    "rifle_squad_vs_tank_s": [
+    25,
+    30
+   ],
+   "set_up_mg_squad_vs_tank_s": [
     25,
     30
    ],
@@ -191,7 +204,8 @@
     10,
     15
    ]
-  }
+  },
+  "shell_damage_vs_infantry": 22
  },
  "shell_splash": {
   "cannon_heavy": [

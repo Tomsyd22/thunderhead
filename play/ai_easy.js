@@ -4,7 +4,8 @@
 //   slow defence (answers an attack on its base at most every 20 s), first attack at 7 game minutes with 4 units,
 //   then every 4 minutes, growing by one. No repairs, no engineers. Same rules and economy as everyone else.
 // Round 2: the same fog of war as Normal (targets only enemy structures it has seen, else the enemy start pad) and only
-//   units that can get to the target go in a wave. When no enemy can be reached by land it adds a naval yard and keeps up
+//   units that can get to the target go in a wave. Round 3: the same anti-air rule as Normal (AI.pickUnit): anti-air-only
+//   units only once enemy aircraft are seen, anti-air first while it owns less than the enemy air it has seen. When no enemy can be reached by land it adds a naval yard and keeps up
 //   to three ships, which sail out together (no aircraft, still no more than 12 units).
 import { STRUCTURES, FACTIONS } from './rules.js';
 import { AI } from './ai.js';
@@ -29,7 +30,7 @@ export class EasyAI extends AI {
     const pickFrom = (list) => list.filter((k) => W.spec[k] && W.spec[k].weapons.length);
     const ships = this.cross && g.has(p, 'naval') && mine.filter((u) => u.dom === 'ship').length < 3 ? pickFrom(F.naval) : [];
     for (const [cat, list] of [['infantry', pickFrom(F.infantry)], ['vehicle', pickFrom(F.vehicle.filter((u) => u !== 'HV'))], ['naval', ships]]) {
-      if (!g.has(p, { infantry: 'barracks', vehicle: 'factory', naval: 'naval' }[cat]) || p.queues[cat].length || !list.length) continue; const k = list[(this.next++) % list.length]; if (p.credits > g.costOf(cat, k) + 1000) g.enqueue(p, cat, k);
+      if (!g.has(p, { infantry: 'barracks', vehicle: 'factory', naval: 'naval' }[cat]) || p.queues[cat].length || !list.length) continue; const k = this.pickUnit(list); if (k && p.credits > g.costOf(cat, k) + 1000) g.enqueue(p, cat, k);
     }
   }
   army() {

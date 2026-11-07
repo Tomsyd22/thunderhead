@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Thunderhead armour: H03 Bastion Heavy Tank (Iron Legion), A03 Lancer Medium Tank (Vanguard Alliance),
-T03 Wisp Hover Tank (Nova Directive).
+T03 Wisp Hover Tank (Nova Directive), A06 anti-air vehicle (Vanguard Alliance; 6×6, twin coil-laser emitters).
 
-Run:  /home/claude/blender-env/bin/python /home/claude/thunderhead/units/blender/vehicles.py H03|A03|T03|all
+Run:  /home/claude/blender-env/bin/python /home/claude/thunderhead/units/blender/vehicles.py H03|A03|T03|A06|all
 
 Conventions follow units/CONTRACT.md: metres, Z up, +Y forward, +X = unit right, root empty at the ground under the hull
 centre. Shared toolkit = ulib.py (read-only here); extra helpers live in this file.
@@ -846,7 +846,239 @@ def build_T03():
                                 gun_pitch_deg=[-5, 15]))
 
 
-BUILD = {'H03': build_H03, 'A03': build_A03, 'T03': build_T03}
+# ═════════════════════════════ A06 ANTI-AIR VEHICLE (6×6, twin coil-laser emitters) ═════════════════════════════
+def tyre_wheel(name, r, w, sx, m_tyre, m_hub, seg=14, lugs=12):
+    """Off-road wheel (axis X), outer face toward sx*X: dished hub + tyre lathe, staggered tread lugs. Origin at the axle."""
+    hw = w / 2
+    prof = [(0.12 * r, hw + 0.03), (0.22 * r, hw + 0.03), (0.26 * r, hw - 0.01), (0.50 * r, hw - 0.06), (0.58 * r, hw - 0.01),
+            (0.64 * r, hw + 0.005), (0.86 * r, hw + 0.015), (0.95 * r, hw - 0.02), (r, hw - 0.07), (r, -hw + 0.07),
+            (0.95 * r, -hw + 0.02), (0.86 * r, -hw - 0.015), (0.64 * r, -hw), (0.30 * r, -hw + 0.04)]
+    prof = [(rr, sx * a) for rr, a in prof]
+    parts = [lathe(name + '_t', prof, seg, 'X', mats=[m_tyre, m_hub], bands=[1, 1, 1, 1, 1] + [0] * 8)]
+    for k in range(lugs):                              # chunky lugs, alternately offset across the tread
+        a = TAU * (k + 0.5) / lugs; rr = r - 0.002          # lug tips at r + 0.015 = rolling radius
+        parts.append(bx(f'{name}_lug{k}', (w * 0.58, 0.11, 0.034), ((-1) ** k * 0.07, rr * math.cos(a), rr * math.sin(a)),
+                        rot=(a - math.pi / 2, 0, 0), mat=m_tyre))
+    return join(name, parts)
+
+
+def dish(name, R, depth, t, seg=20, mats=None, bands=None):
+    """Shallow dish, axis Y, concave side toward +Y, rim at local y = 0 (origin). Front face = bands 0-2, rim + back = 3-6."""
+    prof = [(0.06 * R, -depth * 0.99), (0.5 * R, -depth * 0.72), (0.85 * R, -depth * 0.25), (R, 0.0), (R, -t),
+            (0.85 * R, -depth * 0.25 - t), (0.5 * R, -depth * 0.72 - t), (0.06 * R, -depth * 0.99 - t)]
+    return lathe(name, prof, seg, 'Y', mats=mats, bands=bands or [0, 0, 0, 1, 1, 1, 1])
+
+
+def build_A06():
+    """A06: fast 6×6 wheeled anti-air vehicle. Low wedge hull with a driver cab front-left; a compact hexagonal turret
+    (yaw) carries a yoke, a gun cradle (pitch, −5…+80°, clear of the roof at both stops) with two slim coil-laser
+    emitters on outriggers and a tracking dish, and a rotating elliptical search dish on the turret rear. A03 Lancer
+    palette, materials and marking style. Nodes follow the sandbox's GroundView (views.js), like A03: body → turret (yaw,
+    local Z) → gun (pitch, local X; rest pose = emitters level, as the engine sets pitch absolutely) → recoil (both
+    emitters, kick along local −Y) → muzzle_0 (left) / muzzle_1 (right); wheel_L/R_0..2 front to back roll about local X
+    with property r; radar spins about local Z (cosmetic; GroundView does not drive it yet); antenna sways."""
+    reset(); uid = 'A06'; P = PAL['A']
+    root = node('root')
+    GREY = '#60666C'
+    M = dict(
+        grey=paint('A_grey', GREY, scale=3, rough=0.55, metal=0.3, grime=0.4, wear=0.22, wear_col='#A9ADB0', mud_top=0.95, mud=0.45),
+        navy=paint('A_navy', P['primary'], scale=3, rough=0.55, metal=0.2, grime=0.38, wear=0.25, wear_col='#9AA0A6', mud_top=0.95, mud=0.45),
+        grey_t=paint('A_grey_t', GREY, scale=2.5, rough=0.55, metal=0.3, grime=0.38, wear=0.22, wear_col='#A9ADB0'),
+        navy_t=paint('A_navy_t', P['primary'], scale=2.5, rough=0.55, metal=0.2, grime=0.35, wear=0.25, wear_col='#9AA0A6'),
+        dark=paint('A_dark', P['steel_dark'], scale=1.0, rough=0.5, metal=0.45, grime=0.5, wear=0.2, wear_col='#8A8E92', mud_top=0.95, mud=0.4),
+        dark_t=paint('A_dark_t', P['steel_dark'], scale=1.0, rough=0.5, metal=0.45, grime=0.45, wear=0.2, wear_col='#8A8E92'),
+        tyre=paint('A_tyre', '#26282A', scale=0.6, rough=0.9, metal=0.0, grime=0.35, wear=0.12, wear_col='#55585B', mud_top=0.45, mud=0.6),
+        rim=paint('A_rim', '#5E6368', scale=0.6, rough=0.55, metal=0.35, grime=0.55, wear=0.3, wear_col='#A9ADB0', mud_top=0.45, mud=0.55),
+        barrel=paint('A_barrel', '#55595D', scale=1.5, rough=0.45, metal=0.5, grime=0.3, wear=0.25, wear_col='#A9ADB0'),
+        coil=gunmetal('A_coil', '#3C3F42', scale=0.5, wear=0.6),
+        bore=flat('A_bore', '#0A0A0A', 0.75),
+        ivory=paint('A_ivory', P['ivory'], scale=1.0, rough=0.5, metal=0.05, grime=0.25, wear=0.15, noise=0.15),
+        red=flat('A_tail', '#8C1C18', 0.35),
+        rubber=paint('A_rubber', '#1E1F20', scale=0.5, rough=0.95, metal=0.0, grime=0.3, wear=0.0, mud_top=0.95, mud=0.6),
+        amber=glow('amber', '#FFB347', 4.0), coilglow=glow('coil', '#FFB347', 4.0), glass=glass(), team=team(1.2),
+    )
+    for sx in (-1, 1):
+        M[f'soot{sx}'] = paint(f'A_soot{sx}', GREY, scale=1.5, rough=0.55, metal=0.3, grime=0.4, wear=0.2, wear_col='#A9ADB0',
+                               mud_top=0.95, mud=0.45, soot=(sx * 1.05, -3.62, 1.26, 0.32))
+    for k in ('grey', 'navy', 'soot-1', 'soot1'): grunge(M[k], streak=0.16, dust=0.32, scale=3.0, dust_col='#9A8E78', streak_col='#3A3832')
+    for k in ('grey_t', 'navy_t'): grunge(M[k], streak=0.12, dust=0.25, scale=2.5, dust_col='#9A8E78', streak_col='#3A3832')
+    for k in ('dark', 'dark_t', 'barrel'): grunge(M[k], streak=0.1, dust=0.2, scale=1.5, dust_col='#8A8070')
+
+    # ── running gear: three axles, big off-road tyres on trailing arms ──
+    WR, WW, WX = 0.56, 0.46, 1.30                             # rolling radius (lug tips), tyre width, track half-width
+    AX = [2.30, 0.30, -1.70]                                  # axle y, front -> back
+    HP = []
+    for side, sx in (('L', -1), ('R', 1)):
+        for i, y in enumerate(AX):
+            w = tyre_wheel(f'wheel_{side}_{i}', WR - 0.015, WW, sx, M['tyre'], M['rim'])
+            w.location = (sx * WX, y, WR); w['r'] = WR; smooth(w, 35); attach(w, root)
+            HP.append(bx(f'arm{side}{i}', (0.58, 0.24, 0.13), (sx * 0.82, y, WR), bevel=0.015, seg=1, mat=M['dark']))   # V-belly to hub
+            HP.append(tube(f'damp{side}{i}', (sx * 0.98, y + 0.2, 0.62), (sx * 1.04, y + 0.36, 1.19), 0.045, verts=6, mat=M['dark']))
+        for y in (AX[0] - 0.64, AX[2] - 0.64):                # mud flaps behind the front and rear axles
+            HP.append(bx(f'flap{side}{y:.1f}', (0.46, 0.02, 0.36), (sx * WX, y, 0.99), mat=M['rubber']))
+
+    # ── hull: narrow lower tub between the wheels, wide wedge upper hull over them ──
+    lo = loft('hull_lo', [                                     # V-section belly
+        (-3.42, sec6(0.45, 0.86, 0.80, 1.02, 0.80, 1.20)),
+        (-3.02, sec6(0.45, 0.50, 0.92, 0.80, 0.92, 1.20)),
+        (2.85, sec6(0.45, 0.50, 0.92, 0.80, 0.92, 1.20)),
+        (3.48, sec6(0.45, 1.00, 0.80, 1.08, 0.80, 1.20))], mat=M['grey'])
+    bev(lo, 0.018, 1, 30); HP.append(lo)
+    up = loft('hull_up', [
+        (-3.56, sec6(1.50, 1.20, 1.50, 1.40, 1.22, 1.58)),
+        (-3.46, sec6(1.58, 1.18, 1.58, 1.42, 1.28, 1.66)),
+        (1.75, sec6(1.58, 1.18, 1.58, 1.42, 1.28, 1.66)),
+        (2.95, sec6(1.58, 1.18, 1.58, 1.27, 1.18, 1.36)),
+        (3.42, sec6(1.52, 1.04, 1.52, 1.12, 1.12, 1.24)),
+        (3.58, sec6(1.44, 1.06, 1.44, 1.11, 1.04, 1.18))], mat=M['grey'])
+    set_faces_mat(up, M['navy'], lambda c, nn: 0.3 < abs(nn.x) < 0.9)    # navy deck chamfers (read from above); flanks grey
+    bev(up, 0.02, 1, 30); HP.append(up)
+    th = math.atan2(0.30, 1.20); gl = lambda y: 1.66 - (y - 1.75) * math.tan(th)
+    # driver cab, front left: sloped windscreen, side window, roof hatch
+    HP.append(wedge('cab', (0.95, 1.18, 0.46), (-0.62, 1.53, 1.80), moves=[('FT', (0, -0.46, 0)), ('BT', (0, 0.12, 0)), ('LT', (0.10, 0, 0))],
+                    bevel=0.02, seg=1, mat=M['grey']))
+    a = math.atan2(0.46, 0.46); cy0 = 1.53 + 0.59                       # windscreen slope; cab front-bottom edge y
+    HP.append(bx('cab_ws', (0.66, 0.02, 0.24), (-0.58, cy0 - 0.46 * 0.6 + 0.009, 1.57 + 0.46 * 0.6 + 0.009), rot=(a, 0, 0), mat=M['glass']))
+    HP.append(bx('cab_sw', (0.02, 0.46, 0.12), (-1.043, 1.30, 1.88), rot=(0, 0.214, 0), mat=M['glass']))
+    HP.append(bx('cab_hatch', (0.38, 0.38, 0.03), (-0.58, 1.28, 2.04), bevel=0.01, seg=1, mat=M['grey']))
+    HP.append(bx('cab_lamp', (0.1, 0.06, 0.04), (-0.3, 1.58, 2.05), mat=M['amber']))
+    for k in (-1, 1):                                          # ivory chevron "V" on the cab nose (bars rotated in the sloped face)
+        cv = bx(f'cabv{k}', (0.05, 0.02, 0.17), mat=M['ivory'])
+        cv.matrix_world = Matrix.Translation((-0.84 + k * 0.05, cy0 - 0.46 * 0.24 + 0.012, 1.57 + 0.46 * 0.24 + 0.012)) @ Matrix.Rotation(a, 4, 'X') @ Matrix.Rotation(k * 0.5, 4, 'Y')
+        HP.append(cv)
+    # front right: sensor / equipment bay with louvres, hull number on the glacis
+    HP.append(wedge('ebay', (0.72, 0.9, 0.16), (0.62, 1.32, 1.72), moves=[('FT', (0, -0.1, 0))], bevel=0.012, seg=1, mat=M['grey']))
+    for k in range(4):
+        HP.append(bx(f'ebl{k}', (0.6, 0.04, 0.02), (0.62, 1.02 + k * 0.17, 1.805), mat=M['dark']))
+    num = mark('glacis_num', 'A06', 0.36, (0, 0, 0), '+Z', M['ivory'])
+    num.matrix_world = Matrix.Translation((0.60, 2.50, gl(2.50) + 0.006)) @ Matrix.Rotation(-th, 4, 'X') @ Matrix.Rotation(math.pi, 4, 'Z')
+    HP.append(num)
+    for sx in (-1, 1):
+        # navy front fender guards with amber headlights; navy rear corners with tail lights
+        HP.append(wedge(f'fguard{sx}', (0.46, 0.75, 0.24), (sx * 1.34, 3.15, 1.33), moves=[('FT', (0, -0.28, -0.02))], bevel=0.02, seg=1, mat=M['navy']))
+        HP.append(bx(f'hl_box{sx}', (0.30, 0.12, 0.10), (sx * 1.28, 3.49, 1.26), bevel=0.012, seg=1, mat=M['dark']))
+        HP.append(bx(f'hl_lens{sx}', (0.22, 0.02, 0.06), (sx * 1.28, 3.555, 1.26), mat=M['amber']))
+        HP.append(bx(f'rcorner{sx}', (0.40, 0.24, 0.30), (sx * 1.36, -3.47, 1.42), bevel=0.018, seg=1, mat=M['navy']))
+        HP.append(bx(f'tail{sx}', (0.24, 0.02, 0.08), (sx * 1.34, -3.60, 1.45), mat=M['red']))
+        HP.append(lathe(f'exo{sx}', [(0.09, -3.50), (0.09, -3.64), (0.06, -3.64), (0.06, -3.56)], 12, 'Y',
+                        mats=[M[f'soot{sx}'], M['bore']], bands=[0, 0, 1], loc=(sx * 1.05, 0, 1.26)))
+        # flank armour: four raised panels on the navy side, team stripe along them, bolts
+        for k, (yc, ln) in enumerate(((-2.72, 1.30), (-1.30, 1.40), (0.18, 1.40), (1.52, 1.10))):
+            mv = [('FD', (0, -0.18, 0.08))] if k == 3 else ([('BD', (0, 0.12, 0.06))] if k == 0 else [])
+            HP.append(wedge(f'flank{sx}{k}', (0.03, ln, 0.21), (sx * 1.594, yc, 1.30), moves=mv, bevel=0.008, seg=1, mat=M['navy'] if k in (0, 3) else M['grey']))
+            for e in (-1, 1):
+                HP.append(cyl(f'fbolt{sx}{k}{e}', 0.022, 0.02, (sx * 1.612, yc + e * (ln / 2 - 0.1), 1.37), 'X', 6, mat=M['dark']))
+        HP.append(bx(f'steam{sx}', (0.012, 5.3, 0.06), (sx * 1.612, -0.62, 1.25), mat=M['team']))
+        # forward stowage bins on the deck edge; rear deck team panels, grab eyes; tow hooks
+        HP.append(bx(f'bin{sx}', (0.34, 0.86, 0.15), (sx * 1.30, 1.34, 1.735), bevel=0.012, seg=1, mat=M['grey']))
+        HP.append(bx(f'binl{sx}', (0.36, 0.05, 0.03), (sx * 1.30, 1.74, 1.80), mat=M['dark']))
+        HP.append(bx(f'rteam{sx}', (0.32, 0.5, 0.012), (sx * 1.26, -3.05, 1.665), mat=M['team']))
+        HP.append(torus(f'reye{sx}', 0.06, 0.018, (sx * 1.45, -3.40, 1.70), (0, math.pi / 2, 0), mat=M['dark']))
+        HP.append(bx(f'fhook_m{sx}', (0.14, 0.1, 0.12), (sx * 0.55, 3.30, 0.86), bevel=0.012, seg=1, mat=M['dark']))
+        HP.append(torus(f'fhook{sx}', 0.075, 0.022, (sx * 0.55, 3.38, 0.78), (0, math.pi / 2, 0), seg=8, arc=0.62, mat=M['dark']))
+    HP.append(grille('rgrille', 1.6, 0.30, 6, depth=0.05, loc=(0, -3.57, 1.40), rot=(0, 0, math.pi), mat=M['dark']))
+    HP.append(grille('dgrille', 1.7, 0.8, 9, depth=0.035, loc=(0, -2.95, 1.665), rot=(math.pi / 2, 0, 0), mat=M['dark']))
+    HP.append(bx('rhook_m', (0.22, 0.12, 0.14), (0, -3.38, 0.80), bevel=0.015, seg=1, mat=M['dark']))
+    HP.append(torus('rhook', 0.08, 0.024, (0, -3.44, 0.71), (0, math.pi / 2, 0), seg=8, arc=0.62, mat=M['dark']))
+    body = join('body', HP); smooth(body, 35); attach(body, root)
+
+    # ── turret: low hexagonal drum, yoke for the gun cradle, team-banded bustle ──
+    RY, RZ = -0.80, 1.66
+    TP = [cyl('tring', 0.98, 0.08, (0, RY, 1.69), 'Z', 20, mat=M['dark_t'])]
+    sh = loft('tshell', [
+        (RY - 1.20, sec6(0.86, 1.70, 0.90, 1.88, 0.72, 2.06)),
+        (RY - 0.95, sec6(1.06, 1.70, 1.10, 1.88, 0.92, 2.10)),
+        (RY + 0.72, sec6(1.06, 1.70, 1.10, 1.88, 0.92, 2.10)),
+        (RY + 1.35, sec6(0.44, 1.70, 0.46, 1.86, 0.36, 2.00))], mat=M['grey_t'])
+    set_faces_mat(sh, M['navy_t'], lambda c, nn: c.y > RY + 0.6 and abs(nn.x) > 0.25 and nn.z < 0.6)
+    bev(sh, 0.025, 1, 30); TP.append(sh)
+    GY, GZ = RY + 0.15, 2.62                                   # trunnion axis
+    TP.append(wedge('plinth', (1.0, 1.0, 0.12), (0, GY, 2.15), moves=[('FT', (0, -0.12, 0))], bevel=0.015, seg=1, mat=M['grey_t']))
+    for sx in (-1, 1):
+        TP.append(wedge(f'yoke{sx}', (0.09, 0.84, 0.60), (sx * 0.42, GY, 2.38), moves=[('FT', (0, -0.28, 0)), ('BT', (0, 0.24, 0))],
+                        bevel=0.012, seg=1, mat=M['navy_t']))
+        TP.append(cyl(f'trun{sx}', 0.12, 0.05, (sx * 0.49, GY, GZ), 'X', 12, mat=M['dark_t']))
+    TP.append(bx('bustle', (1.56, 0.36, 0.30), (0, RY - 1.33, 1.86), bevel=0.02, seg=1, mat=M['grey_t']))
+    TP.append(bx('bustle_team', (1.60, 0.26, 0.05), (0, RY - 1.33, 2.0), mat=M['team']))
+    for k in range(3):
+        TP.append(bx(f'bvent{k}', (0.32, 0.03, 0.16), (-0.5 + k * 0.5, RY - 1.52, 1.86), mat=M['dark_t']))
+    for sx, face in ((-1, '-X'), (1, '+X')):
+        TP.append(bx(f'tside{sx}', (0.04, 1.05, 0.15), (sx * 1.08, RY - 0.05, 1.80), bevel=0.01, seg=1, mat=M['navy_t']))
+        TP.append(mark(f'tmark{sx}', 'A06', 0.17, (sx * 1.103, RY + 0.06 if sx > 0 else RY - 0.16, 1.80), face, M['ivory']))
+        vy = RY - 0.42 if sx > 0 else RY + 0.32                 # chevron "V" ahead of the number on both sides
+        for k in (-1, 1):
+            TP.append(bx(f'tv{sx}{k}', (0.008, 0.035, 0.14), (sx * 1.103, vy + k * 0.035, 1.80), rot=(-k * 0.5, 0, 0), mat=M['ivory']))
+        TP.append(bx(f'smkb{sx}', (0.09, 0.36, 0.06), (sx * 0.98, RY - 0.62, 2.0), mat=M['dark_t']))
+        for k in range(3):
+            a0 = (sx * 1.0, RY - 0.74 + k * 0.11, 2.02); b0 = (a0[0] + sx * 0.10, a0[1] + 0.06, a0[2] + 0.07)
+            TP.append(tube(f'smk{sx}{k}', a0, b0, 0.035, verts=8, mat=M['dark_t']))
+    TP.append(bx('t_hatch', (0.40, 0.40, 0.035), (0.0, RY - 0.62, 2.115), bevel=0.01, seg=1, mat=M['grey_t']))
+    TP.append(wedge('t_sight', (0.24, 0.26, 0.14), (-0.62, RY + 0.62, 2.16), moves=[('FT', (0, -0.05, 0))], bevel=0.012, seg=1, mat=M['grey_t']))
+    TP.append(bx('t_sight_l', (0.16, 0.02, 0.06), (-0.62, RY + 0.755, 2.15), mat=M['amber']))
+    TP.append(cyl('eo_base', 0.11, 0.06, (0.62, RY + 0.70, 2.12), 'Z', 12, mat=M['dark_t']))
+    TP.append(ball('eo_ball', 0.12, (0.62, RY + 0.70, 2.21), seg=12, rings=8, mat=M['grey_t']))
+    TP.append(bx('eo_lens', (0.12, 0.02, 0.08), (0.62, RY + 0.815, 2.22), mat=M['glass']))
+    turret = pivot_mesh('turret', TP, (0, RY, RZ), body); smooth(turret, 35)
+
+    # ── gun (pitch about local X at the trunnions): cradle drum, tracking dish, outriggers, two coil-laser emitters ──
+    EX, TIP = 0.84, GY + 2.95                                  # emitter axis x, muzzle y
+    GP = [cyl('drum', 0.25, 0.74, (0, GY, GZ), 'X', 16, mat=M['grey_t']),
+          wedge('trk_house', (0.50, 0.42, 0.38), (0, GY + 0.36, GZ), moves=[('FT', (0, -0.05, -0.03)), ('FD', (0, -0.05, 0.03))], bevel=0.02, seg=1, mat=M['navy_t'])]
+    td = dish('trk_dish', 0.19, 0.06, 0.02, 16, mats=[M['ivory'], M['dark_t']], bands=[0, 0, 0, 1, 0, 0, 0]); td.location = (0, GY + 0.59, GZ + 0.02); GP.append(td)
+    GP.append(cyl('trk_feed', 0.025, 0.12, (0, GY + 0.59, GZ + 0.02), 'Y', 8, mat=M['dark_t']))
+    EP = []                                                    # emitters ride on 'recoil' (fire kick along local -Y)
+    for sx in (-1, 1):
+        x = sx * EX
+        GP.append(cyl(f'outr{sx}', 0.09, 0.36, (sx * 0.55, GY, GZ), 'X', 12, mat=M['dark_t']))
+        GP.append(wedge(f'pylon{sx}', (0.16, 0.42, 0.20), (sx * 0.62, GY + 0.06, GZ), moves=[('F', (0, -0.04, 0))], bevel=0.015, seg=1, mat=M['navy_t']))
+        GP.append(bx(f'cap{sx}', (0.15, 0.5, 0.12), (x, GY + 0.05, GZ - 0.16), bevel=0.012, seg=1, mat=M['dark_t']))
+        y0 = GY - 0.36
+        prof = [(0.06, y0), (0.135, y0 + 0.02), (0.165, y0 + 0.09), (0.165, GY + 0.60), (0.125, GY + 0.71), (0.088, GY + 0.78),
+                (0.088, TIP - 0.32), (0.105, TIP - 0.28), (0.12, TIP - 0.21), (0.12, TIP - 0.05), (0.105, TIP), (0.068, TIP), (0.068, TIP - 0.12)]
+        EP.append(lathe(f'emit{sx}', prof, 14, 'Y', mats=[M['navy_t'], M['barrel'], M['bore']], bands=[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2], loc=(x, 0, GZ)))
+        EP.append(lathe(f'eteam{sx}', [(0.168, GY + 0.02), (0.168, GY + 0.18)], 14, 'Y', mats=[M['team']], loc=(x, 0, GZ), cap0=False, cap1=False))
+        EP.append(cyl(f'elens{sx}', 0.066, 0.01, (x, TIP - 0.11, GZ), 'Y', 12, mat=M['coilglow']))
+        for k in (-1, 0, 1):                                   # cooling fins along the top of the housing
+            EP.append(bx(f'efin{sx}{k}', (0.018, 0.46, 0.05), (x + k * 0.06, GY + 0.28, GZ + 0.17 - abs(k) * 0.012), mat=M['dark_t']))
+        for k in range(6):                                     # coil rings, glowing windings between them
+            yc = GY + 0.95 + k * 0.30
+            EP.append(lathe(f'coil{sx}{k}', [(0.088, yc - 0.05), (0.13, yc - 0.04), (0.13, yc + 0.04), (0.088, yc + 0.05)], 14, 'Y',
+                            mats=[M['coil']], loc=(x, 0, GZ), cap0=False, cap1=False))
+            if k < 5:
+                EP.append(lathe(f'cglow{sx}{k}', [(0.093, yc + 0.09), (0.093, yc + 0.21)], 14, 'Y', mats=[M['coilglow']], loc=(x, 0, GZ), cap0=False, cap1=False))
+    gun = pivot_mesh('gun', GP, (0, GY, GZ), turret); smooth(gun, 35)
+    recoil = pivot_mesh('recoil', EP, (0, GY, GZ), gun); smooth(recoil, 35)
+    for k, sx in enumerate((-1, 1)):
+        node(f'muzzle_{k}', (sx * EX, TIP, GZ), recoil)
+
+    # ── search radar on the turret rear (spins about local Z): wide elliptical dish tilted up, IFF ring on the head ──
+    RRY, DT = RY - 0.98, math.radians(30)
+    RP = [cyl('r_post', 0.075, 0.52, (0, RRY, 2.36), 'Z', 10, mat=M['dark_t']),
+          cyl('r_collar', 0.14, 0.06, (0, RRY, 2.13), 'Z', 12, mat=M['dark_t']),
+          bx('r_head', (0.24, 0.18, 0.16), (0, RRY - 0.04, 2.62), bevel=0.015, seg=1, mat=M['grey_t']),
+          torus('r_iff', 0.17, 0.018, (0, RRY - 0.04, 2.47), seg=14, mat=M['dark_t'])]
+    sd = dish('r_dish', 0.62, 0.13, 0.035, 22, mats=[M['ivory'], M['dark_t']], bands=[0, 0, 0, 1, 0, 0, 0])
+    sd.scale = (1.45, 1.0, 0.62); sd.rotation_euler = (DT, 0, 0); sd.location = (0, RRY + 0.06, 2.66); RP.append(sd)
+    fa = Vector((0, RRY + 0.06, 2.66)); fd = Vector((0, math.cos(DT), math.sin(DT)))
+    RP.append(tube('r_feed', tuple(fa - fd * 0.08), tuple(fa + fd * 0.36), 0.02, verts=6, mat=M['dark_t']))
+    RP.append(bx('r_horn', (0.09, 0.09, 0.06), tuple(fa + fd * 0.38), rot=(DT, 0, 0), mat=M['dark_t']))
+    pivot_mesh('radar', RP, (0, RRY, 2.10), turret)
+
+    # ── antenna on the hull's rear left corner (sway pivot at its base; below the emitters' sweep) ──
+    AB = (-1.30, -3.36, 1.66)
+    ant = [cyl('ant_base', 0.05, 0.07, (AB[0], AB[1], AB[2] + 0.035), 'Z', 8, mat=M['dark']),
+           tube('ant_whip', (AB[0], AB[1], AB[2] + 0.06), (AB[0], AB[1], 2.36), 0.011, verts=6, r2=0.005, mat=M['dark'])]
+    pivot_mesh('antenna', ant, AB, body)
+
+    for sx, s in ((-1, 'L'), (1, 'R')):
+        node(f'fx_exhaust_{s}', (sx * 1.05, -3.66, 1.26), body)
+        node(f'fx_dust_{s}', (sx * WX, AX[-1] - 0.6, 0.1), root)
+    node('hit', (0, 0, 1.3), body)
+    node('badge', (0, 0, 3.5), root)
+    finish_unit(uid, root, dict(turret_ring=[0, RY, RZ], gun_pitch_deg=[-5, 80], recoil_m=0.03, emitters=2, emitter_m=round(TIP - GY, 3), muzzle_d_m=0.136,
+                                wheel_r_m=WR, axle_y_m=AX, drive='6x6 wheeled; wheel_L/R_0..2 front to back roll about local X (property r)'))
+
+BUILD = {'H03': build_H03, 'A03': build_A03, 'T03': build_T03, 'A06': build_A06}
 
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('-')] or ['all']

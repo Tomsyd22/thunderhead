@@ -6,14 +6,14 @@
 // comes from the pack (weapon.targets by target class).
 export const ARMOUR = {
   H01: 'infantry', H02: 'infantry', HE: 'infantry', AE: 'infantry', TE: 'infantry', A01: 'infantry', A02: 'infantry', T01: 'infantry', T02: 'infantry',
-  H03: 'heavy', A03: 'medium', T03: 'light', HV: 'heavy',
+  H03: 'heavy', A03: 'medium', T03: 'light', A06: 'light', HV: 'heavy',
   H04: 'aircraft', A04: 'aircraft', T04: 'aircraft',
   H05: 'ship', A05: 'ship', T05: 'ship',
 };
 export const WEAPON_TYPE = {
   'H01:0': 'rifle', 'A01:0': 'carbine', 'A01:1': 'mg', 'T01:0': 'pulse', 'T04:0': 'pulse_light',
   'H02:0': 'at_rocket', 'H02:1': 'aa_rocket', 'T02:0': 'lance', 'T02:1': 'lance_aa',
-  'H03:0': 'cannon_heavy', 'A03:0': 'cannon_precision', 'T03:0': 'accelerator',
+  'H03:0': 'cannon_heavy', 'A03:0': 'cannon_precision', 'T03:0': 'accelerator', 'A06:0': 'aa_laser', 'A06:1': 'aa_laser',   // Halo: one coil-laser row, air mode and weak ground mode
   'H04:0': 'attack_rocket', 'A04:0': 'bomb', 'H05:0': 'naval_gun',
   'A05:0': 'ship_missile', 'A05:1': 'aa_missile', 'T05:0': 'raider_sea', 'T05:1': 'raider_shore',
 };

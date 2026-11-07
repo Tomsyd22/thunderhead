@@ -29,6 +29,8 @@
   { "pack_id": "A03", "pack_name": "Lancer Medium Tank", "faction": "helix", "slot": "hlx_arbiter", "display_name": "Arbiter", "in_game": true,
     "rename": "clashes with the Lattice's Lancer (lat_lancer); takes the name of the slot it fills" },
   { "pack_id": "A04", "pack_name": "Kestrel Strike Jet", "faction": "helix", "slot": "hlx_specter", "display_name": "Kestrel", "in_game": true, "note": "fills the strike-bomber slot; no stealth" },
-  { "pack_id": "A05", "pack_name": "Sentinel Missile Frigate", "faction": "helix", "slot": "hlx_warden", "display_name": "Sentinel", "in_game": true }
+  { "pack_id": "A05", "pack_name": "Sentinel Missile Frigate", "faction": "helix", "slot": "hlx_warden", "display_name": "Sentinel", "in_game": true },
+  { "pack_id": "A06", "pack_name": "Halo Anti-Air Carrier", "faction": "helix", "slot": "hlx_halo (new, round 3)", "display_name": "Halo", "in_game": true,
+    "note": "not in the pack: Helix's land anti-air vehicle (Helix keeps no rocket infantry); spec added to units/sandbox/data/unit_specs.json, model built separately" }
  ]
 }

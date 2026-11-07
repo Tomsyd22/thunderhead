@@ -31,6 +31,10 @@ export const MECH = {
          death: 1.4, wreckNoCollide: 2, fade: 12, maxHullPitch: 3 },
   A03: { kind: 'tracked', accel: 4.5, hullTurn: 75, turretYaw: 110, pitch: [-8, 22], tol: 4, recoil: [0.16, 0.06, 0.25], wheels: 6,
          death: 1.2, wreckNoCollide: 2, fade: 12, maxHullPitch: 3, antenna: true },
+  // A06 Halo (Helix land anti-air, round 3; not in the pack, so every value here is assumed): skid-steer carrier with a
+  // turret mast and two coil-laser emitters on one pitch yoke that fire alternately (twin); it always prefers an air target
+  A06: { kind: 'tracked', accel: 5, hullTurn: 80, turretYaw: 160, pitch: [-5, 80], pitchRate: 90, tol: 6, recoil: [0.03, 0.02, 0.08], wheels: 6,
+         death: 1.2, wreckNoCollide: 2, fade: 12, maxHullPitch: 3, preferAir: true, twin: true },
   T03: { kind: 'hover', accel: 5, hullTurn: 110, turretYaw: 140, pitch: [-6, 15] /* assumed */, tol: 4 /* assumed */, clearance: 0.45,
          precharge: 0.25, recovery: 0.35, chargeSpeed: 0.65, bank: 5, bob: [0.06, 1.8], death: 1.1, fade: 10, finSpread: 0.08 },
   H04: { kind: 'heli', accel: 7, hullTurn: 95, alt: 12, fireSpeed: 0.5, hold: 36, podYaw: 10, pitchMax: 12, bankMax: 15, bob: [0.15, 2.4], death: 1.8 },
@@ -56,6 +60,7 @@ export const isAir = (u) => u.sp.armor === 'air';
 function defaultGeom(sp, m) {
   const L = sp.dimensions_m.length, W = sp.dimensions_m.width, H = sp.dimensions_m.height;
   if (m.kind === 'foot') return { muzzle: [[0.14, 0.78, 1.42]], eye: 1.65, hitZ: 1.15 };
+  if (m.twin) return { turret: [0, -0.1 * L, 0.6 * H], gun: [0, 0.1, 0.3 * H], muzzle: [[-0.45, 1.3, 0.0], [0.45, 1.3, 0.0]], eye: H, hitZ: 0.45 * H };   // mast with two emitters
   if (m.kind === 'tracked' || m.kind === 'hover') return { turret: [0, -0.06 * L, 0.68 * H], gun: [0, 0.18 * L, 0.12 * H], muzzle: [[0, 0.5 * L, 0.0]], eye: H, hitZ: 0.5 * H };
   if (m.kind === 'heli') return { muzzle: [[-1.8, 1.5, 0.6], [1.8, 1.5, 0.6]], eye: 2, hitZ: 1.6 };
   if (m.kind === 'jet') return { muzzle: [[-2.2, 0.5, 0.0], [2.2, 0.5, 0.0]], eye: 2, hitZ: 1.2 };
@@ -737,7 +742,7 @@ export class World {
     const ry = m.turretYaw * D2R * dt; let e = wrap(yDes - u.turret);
     if (m.yawLimit) e = yDes - u.turret; // can't wrap through the hard stops
     u.turret = m.yawLimit ? clamp(u.turret + clamp(e, -ry, ry), -m.yawLimit * D2R, m.yawLimit * D2R) : wrap(u.turret + clamp(e, -ry, ry));
-    const pr = 25 * D2R * dt; pDes = clamp(pDes, m.pitch[0] * D2R, m.pitch[1] * D2R); u.pitch += clamp(pDes - u.pitch, -pr, pr);
+    const pr = (m.pitchRate || 25) * D2R * dt; pDes = clamp(pDes, m.pitch[0] * D2R, m.pitch[1] * D2R); u.pitch += clamp(pDes - u.pitch, -pr, pr);
   }
   _aaTurret(u, dt) {
     const s = u.sys[1]; const tg = s && s.target != null ? this.byId.get(s.target) : null; const m = u.m;
@@ -904,7 +909,7 @@ export class World {
     if (w.burst > 1) { s.burst = w.burst - 1; s.burstAt = this.t + w.burst_gap_s; s.burstT = tg.id; s.burstW = w; }
   }
   _fire(u, s, w, tg, n) {
-    const muzzleIdx = u.kind === 'heli' ? n % 2 : (u.uid === 'T05' ? n % 2 : (u.uid === 'A05' && w.i === 0 ? n % 4 : 0));
+    const muzzleIdx = u.kind === 'heli' || u.m.twin ? n % 2 : (u.uid === 'T05' ? n % 2 : (u.uid === 'A05' && w.i === 0 ? n % 4 : 0));
     const mz = this.muzzle(u, s, muzzleIdx); const hp = this.hitPoint(tg); this.stats.shots++;
     const vet = [1, 1.12, 1.25][u.rank]; const ev = { id: u.id, w: w.i, sys: u.sys.indexOf(s), n, muzzle: muzzleIdx, x: mz[0], y: mz[1], z: mz[2], tx: hp[0], ty: hp[1], tz: hp[2], target: tg.id };
     if (u.uid === 'A05' || u.uid === 'T05') s.lid = (s.lid + 1) % (u.uid === 'A05' ? 4 : 2);

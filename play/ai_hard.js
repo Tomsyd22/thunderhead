@@ -26,7 +26,7 @@
 //   attacking when it faces several opponents, goes first for the opponent whose army can hurt its hovercraft least (from
 //   what it has seen of each), approaches a naval yard from the water, raids harvesters with hovercraft, and does not keep
 //   rebuilding a naval yard that keeps being sunk (3, 6, 12 game min waits)
-//   outnumbered or across water, with enemy aircraft about: anti-air infantry may grow past the home-guard cap, stands
+//   outnumbered or across water, with enemy aircraft about: anti-air infantry (and Helix's Halo) may grow past the home-guard cap, stands
 //   among the structures (yard first), and meets an air raid alone — the rest of the army neither stays home for it nor
 //   is called back; two engineers wait by the yard for the yard or a war factory that is going down
 //   several opponents: the enemy-army estimate counts only units of the opponent it is going for
@@ -332,7 +332,7 @@ export class HardAI extends AI {
     const airOnly = airToo && (foes.length > 0 || !!ev) && foes.every((e) => e.dom === 'air') && (!ev || srcAir(ev));
     this.homeThreat = !airOnly && (foes.length > 0 || !!ev); if (ev && ev.building && !airOnly) this.homeThreatT = g.t;
     if (airOnly) { const pt = foes.length ? this.centroid(foes.slice().sort((a, b) => D([a.x, a.y], this.home) - D([b.x, b.y], this.home)).slice(0, 6)) : [ev.x, ev.y];
-      this.lastDefend = g.t; this.sendGroup(home.filter((u) => u.dom === 'foot' && this.dpsVs(u.sp, 'aircraft', u.uid) > 0), pt[0], pt[1]); }
+      this.lastDefend = g.t; this.sendGroup(home.filter((u) => u.dom !== 'air' && u.dom !== 'ship' && this.dpsVs(u.sp, 'aircraft', u.uid) > 0), pt[0], pt[1]); }   // anti-air infantry and Helix's Halo
     else if (this.homeThreat) {
       const tv = foes.reduce((a, e) => a + this.val(e), 0), hv = home.reduce((a, u) => a + this.val(u), 0);
       this.raidSeen = Math.max(this.raidSeen && g.t - this.raidSeenT < 300 ? this.raidSeen : 0, tv); if (tv >= this.raidSeen) this.raidSeenT = g.t;   // biggest push on the base lately
@@ -349,7 +349,7 @@ export class HardAI extends AI {
       // outnumbered or across water, with enemy aircraft about: anti-air infantry stands among the structures (aircraft hit
       // buildings from ~36 m, so the guns have to be close by): the yard first, then production and refineries
       if (airToo && this.airThreat()) { const DEF = { yard: 0, factory: 1, refinery: 2, barracks: 3, airpad: 4, radar: 5, power: 6 }, bs = this.structs.filter((b) => b.kind !== 'naval').sort((a, b) => (DEF[a.kind] ?? 9) - (DEF[b.kind] ?? 9));
-        const aa = home.filter((u) => u.dom === 'foot' && u.sys.length && this.dpsVs(u.sp, 'aircraft', u.uid) > 0 && u.target == null && !u.path && (u.order.type === 'idle' || u.order.type === 'guard' || u.order.type === 'attackMove')).sort((a, b) => a.id - b.id);
+        const aa = home.filter((u) => u.dom !== 'air' && u.dom !== 'ship' && u.sys.length && this.dpsVs(u.sp, 'aircraft', u.uid) > 0 && u.target == null && !u.path && (u.order.type === 'idle' || u.order.type === 'guard' || u.order.type === 'attackMove')).sort((a, b) => a.id - b.id);
         if (bs.length) aa.forEach((u, i) => { const b = bs[i % bs.length], a = (u.id * 2.39996) % 6.2832, pt = [b.x + Math.cos(a) * 20, b.y + Math.sin(a) * 20];
           if (!(u.order.type === 'guard' && Math.hypot(u.order.x - pt[0], u.order.y - pt[1]) < 10)) W.order(u, { type: 'guard', x: pt[0], y: pt[1] }); }); }
       for (const u of home) if (u.order.type === 'idle' && u.target == null && !u.path && D([u.x, u.y], this.stage) > 45 && !(u.deploy === 'deployed')) W.order(u, { type: 'attackMove', x: this.stage[0] + ((u.id * 37) % 41 - 20), y: this.stage[1] + ((u.id * 53) % 41 - 20) });
@@ -534,11 +534,19 @@ export class HardAI extends AI {
     }
   }
   // ── deployable infantry (Helix MG teams): set up when an enemy is inside machine-gun range; the next move packs up ──
+  // (round 3) the trigger also looks at every visible enemy ground unit, not only the unit's current target: the mobile
+  // carbine acquires only inside its own 18 m, so a team waiting for a target walked into longer-ranged rifles (Pulse
+  // Troopers, 23 m) before it set up. Plain moves (retreats, regrouping) and garrison orders never set up.
   deployMicro() {
     const W = this.W, P = this.op;
-    for (const u of this.g.unitsOf(this.p)) { if (!u.m.deploy || u.deploy !== 'mobile' || u.target == null || this.retreating.has(u.id) || u.id === this.scout) continue;
+    for (const u of this.g.unitsOf(this.p)) { if (!u.m.deploy || u.deploy !== 'mobile' || this.retreating.has(u.id) || u.id === this.scout || u.garrisonIn) continue;
+      if (u.order.type === 'move' || u.order.type === 'garrison') continue;
       if (P && P.stage === 'flank' && this.wave.has(u.id)) continue;
-      const tg = W.byId.get(u.target); if (!tg || !tg.alive || tg.isBuilding) continue; const set = MECH[u.uid].deploy.deployed.map((i) => u.sp.weapons[i]).filter(Boolean);
-      const r = Math.max(0, ...set.filter((w) => this.wDps(w, tg.sp.armour_type || tg.sp.armor) > 0).map((w) => w.range_m)); if (r > 0 && D([u.x, u.y], [tg.x, tg.y]) < Math.min(30, r * 1.2)) { this.focusPrev.delete(u.id); W.order(u, { type: 'deploy' }); } }
+      const set = MECH[u.uid].deploy.deployed.map((i) => u.sp.weapons[i]).filter(Boolean);
+      const reach = (o) => Math.max(0, ...set.filter((w) => this.wDps(w, o.sp.armour_type || o.sp.armor) > 0).map((w) => w.range_m));
+      const tg = u.target != null ? W.byId.get(u.target) : null; let go = false;
+      if (tg && tg.alive && !tg.isBuilding) { const r = reach(tg); go = r > 0 && D([u.x, u.y], [tg.x, tg.y]) < Math.min(30, r * 1.2); }
+      if (!go) for (const e of W.units) { if (!e.alive || e.team === u.team || e.hidden || e.dom === 'air' || !W.visible(u.team, e)) continue; const r = reach(e); if (r > 0 && W.surfDist(u, e) <= r) { go = true; break; } }
+      if (go) { this.focusPrev.delete(u.id); W.order(u, { type: 'deploy' }); } }
   }
 }
